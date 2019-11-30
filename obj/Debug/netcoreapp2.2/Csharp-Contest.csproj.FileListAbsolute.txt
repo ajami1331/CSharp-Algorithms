@@ -1,0 +1,11 @@
+/mnt/e/code/Csharp-Contest/bin/Debug/netcoreapp2.2/Csharp-Contest.deps.json
+/mnt/e/code/Csharp-Contest/bin/Debug/netcoreapp2.2/Csharp-Contest.runtimeconfig.json
+/mnt/e/code/Csharp-Contest/bin/Debug/netcoreapp2.2/Csharp-Contest.runtimeconfig.dev.json
+/mnt/e/code/Csharp-Contest/bin/Debug/netcoreapp2.2/Csharp-Contest.dll
+/mnt/e/code/Csharp-Contest/bin/Debug/netcoreapp2.2/Csharp-Contest.pdb
+/mnt/e/code/Csharp-Contest/obj/Debug/netcoreapp2.2/Csharp-Contest.csprojAssemblyReference.cache
+/mnt/e/code/Csharp-Contest/obj/Debug/netcoreapp2.2/Csharp-Contest.csproj.CoreCompileInputs.cache
+/mnt/e/code/Csharp-Contest/obj/Debug/netcoreapp2.2/Csharp-Contest.AssemblyInfoInputs.cache
+/mnt/e/code/Csharp-Contest/obj/Debug/netcoreapp2.2/Csharp-Contest.AssemblyInfo.cs
+/mnt/e/code/Csharp-Contest/obj/Debug/netcoreapp2.2/Csharp-Contest.dll
+/mnt/e/code/Csharp-Contest/obj/Debug/netcoreapp2.2/Csharp-Contest.pdb
