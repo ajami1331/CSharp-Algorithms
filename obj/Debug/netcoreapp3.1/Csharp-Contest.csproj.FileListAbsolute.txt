@@ -1,0 +1,11 @@
+/home/clown1331/code/Csharp-Contest/bin/Debug/netcoreapp3.1/Csharp-Contest
+/home/clown1331/code/Csharp-Contest/bin/Debug/netcoreapp3.1/Csharp-Contest.deps.json
+/home/clown1331/code/Csharp-Contest/bin/Debug/netcoreapp3.1/Csharp-Contest.runtimeconfig.json
+/home/clown1331/code/Csharp-Contest/bin/Debug/netcoreapp3.1/Csharp-Contest.runtimeconfig.dev.json
+/home/clown1331/code/Csharp-Contest/bin/Debug/netcoreapp3.1/Csharp-Contest.dll
+/home/clown1331/code/Csharp-Contest/bin/Debug/netcoreapp3.1/Csharp-Contest.pdb
+/home/clown1331/code/Csharp-Contest/obj/Debug/netcoreapp3.1/Csharp-Contest.csprojAssemblyReference.cache
+/home/clown1331/code/Csharp-Contest/obj/Debug/netcoreapp3.1/Csharp-Contest.AssemblyInfoInputs.cache
+/home/clown1331/code/Csharp-Contest/obj/Debug/netcoreapp3.1/Csharp-Contest.AssemblyInfo.cs
+/home/clown1331/code/Csharp-Contest/obj/Debug/netcoreapp3.1/Csharp-Contest.dll
+/home/clown1331/code/Csharp-Contest/obj/Debug/netcoreapp3.1/Csharp-Contest.pdb

@@ -12,7 +12,7 @@ namespace Csharp_Contest
             DisjointSet dsu = new DisjointSet(n);
 
             int[] prev = new int[256];
-
+            
             for (int i = 1; i <= n; i++) {
                 string h = Console.ReadLine();
                 foreach (char c in h) {

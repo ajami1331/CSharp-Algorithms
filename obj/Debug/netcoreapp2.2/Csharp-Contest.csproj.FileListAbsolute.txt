@@ -9,3 +9,13 @@
 /mnt/e/code/Csharp-Contest/obj/Debug/netcoreapp2.2/Csharp-Contest.AssemblyInfo.cs
 /mnt/e/code/Csharp-Contest/obj/Debug/netcoreapp2.2/Csharp-Contest.dll
 /mnt/e/code/Csharp-Contest/obj/Debug/netcoreapp2.2/Csharp-Contest.pdb
+/home/clown1331/code/Csharp-Contest/bin/Debug/netcoreapp2.2/Csharp-Contest.deps.json
+/home/clown1331/code/Csharp-Contest/bin/Debug/netcoreapp2.2/Csharp-Contest.runtimeconfig.json
+/home/clown1331/code/Csharp-Contest/bin/Debug/netcoreapp2.2/Csharp-Contest.runtimeconfig.dev.json
+/home/clown1331/code/Csharp-Contest/bin/Debug/netcoreapp2.2/Csharp-Contest.dll
+/home/clown1331/code/Csharp-Contest/bin/Debug/netcoreapp2.2/Csharp-Contest.pdb
+/home/clown1331/code/Csharp-Contest/obj/Debug/netcoreapp2.2/Csharp-Contest.csprojAssemblyReference.cache
+/home/clown1331/code/Csharp-Contest/obj/Debug/netcoreapp2.2/Csharp-Contest.AssemblyInfoInputs.cache
+/home/clown1331/code/Csharp-Contest/obj/Debug/netcoreapp2.2/Csharp-Contest.AssemblyInfo.cs
+/home/clown1331/code/Csharp-Contest/obj/Debug/netcoreapp2.2/Csharp-Contest.dll
+/home/clown1331/code/Csharp-Contest/obj/Debug/netcoreapp2.2/Csharp-Contest.pdb
