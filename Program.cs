@@ -13,22 +13,22 @@ namespace Csharp_Contest
         static void Solve()
         {
             string s = Console.ReadLine();
-            int q = NextInt;
+            int q = NextInt();
             int n = s.Length;
             SegmentTree tree = new SegmentTree(n, s);
             int ty, l, r, qr;
             while ((q--) > 0)
             {
-                ty = NextInt;
+                ty = NextInt();
                 if (ty == 1)
                 {
-                    l = NextInt;
-                    tree.Update(1, 0, n - 1, l - 1, 1 << (NextString[0] - 'a'));
+                    l = NextInt();
+                    tree.Update(1, 0, n - 1, l - 1, 1 << (NextString()[0] - 'a'));
                 }
                 else
                 {
-                    l = NextInt;
-                    r = NextInt;
+                    l = NextInt();
+                    r = NextInt();
                     qr = tree.Query(1, 0, n - 1, l - 1, r - 1);
                     Console.WriteLine(BitCount(qr));
                 }
@@ -118,11 +118,11 @@ namespace Csharp_Contest
                 return p1 | p2;
             }
         }
-        static int NextInt => int.Parse(Console_.NextString());
-        static long NextLong => long.Parse(Console_.NextString());
-        static double NextDouble => double.Parse(Console_.NextString());
-        static string NextString => Console_.NextString();
-        static string NextLine => Console.ReadLine();
+        static int NextInt () => int.Parse(Console_.NextString());
+        static long NextLong () => long.Parse(Console_.NextString());
+        static double NextDouble () => double.Parse(Console_.NextString());
+        static string NextString () => Console_.NextString();
+        static string NextLine () => Console.ReadLine();
         static IEnumerable<T> OrderByRand<T>(this IEnumerable<T> x) => x.OrderBy(_ => xorshift);
         static long Count<T>(this IEnumerable<T> x, Func<T, bool> pred) => Enumerable.Count(x, pred);
         static IEnumerable<T> Repeat<T>(T v, long n) => Enumerable.Repeat<T>(v, (int)n);
@@ -138,7 +138,7 @@ namespace Csharp_Contest
             {
                 if (param.Count == 0)
                 {
-                    foreach (var item in NextLine.Split(' '))
+                    foreach (var item in NextLine().Split(' '))
                     {
                         param.Enqueue(item);
                     }
