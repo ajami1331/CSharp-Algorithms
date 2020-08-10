@@ -1,44 +1,67 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-
-namespace Csharp_Contest
+﻿namespace Csharp_Contest
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.IO;
+    using System.Linq;
+    using System.Text;
+    using System.Threading;
+    using System.Diagnostics;
+
     static class Program
     {
+        private const long Mod = (long) (1e9 + 7);
         static void Solve()
         {
-            int n = NextInt();
-            for (int i = 0; i < n; i++) 
+            long n = NextLong();
+            long factorial = n;
+            long power = 1;
+            for (long i = 1; i < n; i++)
             {
-                int a = NextInt();
-                int b = NextInt();
-                int rem = (a % b == 0) ? 0 : (((a / b) + 1) * b) - a;
-                Console.WriteLine(rem);
+                factorial = (factorial * i) % Mod;
+                power = (power * 2) % Mod;
             }
+
+            long ans = factorial - power;
+            while (ans < 0)
+            {
+                ans += Mod;
+            }
+
+            ans %= Mod;
+
+            Console.WriteLine(ans);
         }
 
         public static void Main(string[] args)
         {
+#if CLown1331
+            for (int testCase = 0; testCase < 3; testCase++)
+            {
+                Solve();
+            }
+#else
             if (args.Length == 0)
             {
                 Console.SetOut(new Printer(Console.OpenStandardOutput()));
             }
-            var t = new Thread(Solve, 134217728); 
-            t.Start(); 
-            t.Join(); 
+
+            Thread t = new Thread(Solve, 134217728);
+            t.Start();
+            t.Join();
             Console.Out.Flush();
+#endif
+#if CLown1331
+            if (Debugger.IsAttached) Thread.Sleep(Timeout.Infinite);
+#endif
         }
 
-        static int NextInt () => int.Parse(Console_.NextString());
-        static long NextLong () => long.Parse(Console_.NextString());
-        static double NextDouble () => double.Parse(Console_.NextString());
-        static string NextString () => Console_.NextString();
-        static string NextLine () => Console.ReadLine();
+        static int NextInt() => int.Parse(Console_.NextString());
+        static long NextLong() => long.Parse(Console_.NextString());
+        static double NextDouble() => double.Parse(Console_.NextString());
+        static string NextString() => Console_.NextString();
+        static string NextLine() => Console.ReadLine();
         static IEnumerable<T> OrderByRand<T>(this IEnumerable<T> x) => x.OrderBy(_ => xorshift);
         static long Count<T>(this IEnumerable<T> x, Func<T, bool> pred) => Enumerable.Count(x, pred);
         static IEnumerable<T> Repeat<T>(T v, long n) => Enumerable.Repeat<T>(v, (int)n);
@@ -54,7 +77,7 @@ namespace Csharp_Contest
             {
                 if (param.Count == 0)
                 {
-                    foreach (var item in NextLine().Split(' '))
+                    foreach (string item in NextLine().Split(' '))
                     {
                         param.Enqueue(item);
                     }
@@ -64,7 +87,7 @@ namespace Csharp_Contest
         }
         class Printer : StreamWriter
         {
-            public override IFormatProvider FormatProvider { get { return CultureInfo.InvariantCulture; } }
+            public override IFormatProvider FormatProvider => CultureInfo.InvariantCulture;
             public Printer(Stream stream) : base(stream, new UTF8Encoding(false, true)) { base.AutoFlush = false; }
             public Printer(Stream stream, Encoding encoding) : base(stream, encoding) { base.AutoFlush = false; }
         }
