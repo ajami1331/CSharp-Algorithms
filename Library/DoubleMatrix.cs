@@ -1,5 +1,8 @@
-﻿namespace Csharp_Contest.Library
-{
+﻿namespace Csharp_Contest
+{ 
+/*
+ * #import_Matrix.cs
+ */
     public class DoubleMatrix : Matrix<double>
     {
         public DoubleMatrix(int size) : base(size)

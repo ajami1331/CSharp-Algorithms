@@ -1,4 +1,4 @@
-﻿namespace Csharp_Contest.Library
+﻿namespace Csharp_Contest
 {
     using System;
     public class FenwickTree<T>

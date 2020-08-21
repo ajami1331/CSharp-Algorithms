@@ -8,8 +8,10 @@
     using System.Text;
     using System.Threading;
     using System.Diagnostics;
-    using Csharp_Contest.Library;
-
+/*
+ * #import_Matrix.cs
+ * #import_DoubleMatrix.cs
+ */
     static class Program
     {
         static void Solve()
@@ -32,6 +34,9 @@
             {
                 Solve();
             }
+
+            Utils.CreateFileForSubmission();
+            if (Debugger.IsAttached) Thread.Sleep(Timeout.Infinite);
 #else
             if (args.Length == 0)
             {
@@ -42,9 +47,6 @@
             t.Start();
             t.Join();
             Console.Out.Flush();
-#endif
-#if CLown1331
-            if (Debugger.IsAttached) Thread.Sleep(Timeout.Infinite);
 #endif
         }
 

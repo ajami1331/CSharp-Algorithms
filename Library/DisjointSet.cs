@@ -1,4 +1,4 @@
-﻿namespace Csharp_Contest.Library
+﻿namespace Csharp_Contest
 {
     public class DisjointSet
     {
