@@ -1,8 +1,7 @@
-﻿using System.Diagnostics;
-using System.Linq;
-
-namespace Csharp_Contest
+﻿namespace Csharp_Contest
 {
+    using System.Diagnostics;
+    using System.Linq;
     using System.Text;
     using System.IO;
     using System;
