@@ -1,5 +1,5 @@
 ﻿namespace Csharp_Contest
-{ 
+{
 /*
  * #import_Matrix.cs
  */

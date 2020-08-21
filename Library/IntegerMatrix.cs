@@ -3,11 +3,11 @@
 /*
  * #import_Matrix.cs
  */
-    public class LongMatrix: Matrix<long>
+    public class IntegerMatrix: Matrix<int>
     {
-        private readonly long mod;
+        private readonly int mod;
 
-        public LongMatrix(int size, long mod) : base(size)
+        public IntegerMatrix(int size, int mod) : base(size)
         {
             this.mod = mod;
         }
@@ -23,9 +23,9 @@
             }
         }
 
-        protected override Matrix<long> Add(Matrix<long> right)
+        protected override Matrix<int> Add(Matrix<int> right)
         {
-            LongMatrix temp = new LongMatrix(this.Size, this.mod);
+            IntegerMatrix temp = new IntegerMatrix(this.Size, this.mod);
             temp.Reset();
             for (int i = 0; i < this.Size; i++)
             {
@@ -42,9 +42,9 @@
             return temp;
         }
 
-        protected override Matrix<long> Multiply(Matrix<long> right)
+        protected override Matrix<int> Multiply(Matrix<int> right)
         {
-            LongMatrix temp = new LongMatrix(this.Size, this.mod);
+            IntegerMatrix temp = new IntegerMatrix(this.Size, this.mod);
             temp.Reset();
             for (int i = 0; i < this.Size; i++)
             {
@@ -52,7 +52,7 @@
                 {
                     for (int k = 0; k < this.Size; k++)
                     {
-                        temp[i, k] += (this[i, j] * right[j, k]) % this.mod;
+                        temp[i, k] += (int)((1L * this[i, j] * right[j, k]) % this.mod);
                         while (temp[i, k] >= this.mod)
                         {
                             temp[i, k] -= this.mod;
@@ -64,19 +64,19 @@
             return temp;
         }
 
-        protected override Matrix<long> Power(long power)
+        protected override Matrix<int> Power(long power)
         {
-            LongMatrix ans = new LongMatrix(this.Size, this.mod);
+            IntegerMatrix ans = new IntegerMatrix(this.Size, this.mod);
             ans.Identity();
-            LongMatrix num = this;
+            IntegerMatrix num = this;
             for (; power > 0; power >>= 1)
             {
                 if (power % 2 == 1)
                 {
-                    ans = (LongMatrix)(ans * num);
+                    ans = (IntegerMatrix)(ans * num);
                 }
 
-                num = (LongMatrix)(num * num);
+                num = (IntegerMatrix)(num * num);
             }
 
             return ans;

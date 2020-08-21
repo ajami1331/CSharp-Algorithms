@@ -8,48 +8,55 @@
 
         private int numberOfComponent;
 
-        public int NumberOfComponent { get { return numberOfComponent; } }
+        public int NumberOfComponent { get { return this.numberOfComponent; } }
+
         public DisjointSet(int size)
         {
             this.size = size;
             this.numberOfComponent = size;
             this.parent = new int[size];
             this.count = new int[size];
-            Reset();
+            this.Reset();
         }
+
         public void Reset()
         {
-            for (int i = 0; i < size; i++)
+            for (int i = 0; i < this.size; i++)
             {
-                count[i] = 1;
-                parent[i] = i;
+                this.count[i] = 1;
+                this.parent[i] = i;
             }
-            numberOfComponent = size;
+
+            this.numberOfComponent = this.size;
         }
+
         public int FindParent(int u)
         {
-            if (parent[u] == u)
+            if (this.parent[u] == u)
             {
                 return u;
             }
-            return parent[u] = FindParent(parent[u]);
+
+            return this.parent[u] = this.FindParent(this.parent[u]);
         }
 
         public bool IsSameSet(int u, int v)
         {
-            return FindParent(u) == FindParent(v);
+            return this.FindParent(u) == this.FindParent(v);
         }
+
         public void MergeSet(int u, int v)
         {
-            if (IsSameSet(u, v))
+            if (this.IsSameSet(u, v))
             {
                 return;
             }
-            u = FindParent(u);
-            v = FindParent(v);
-            parent[u] = parent[v];
-            count[v] += count[u];
-            numberOfComponent--;
+
+            u = this.FindParent(u);
+            v = this.FindParent(v);
+            this.parent[u] = this.parent[v];
+            this.count[v] += this.count[u];
+            this.numberOfComponent--;
         }
     }
 }

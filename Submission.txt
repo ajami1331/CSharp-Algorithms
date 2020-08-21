@@ -2,35 +2,52 @@ namespace Csharp_Contest
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Text;
     using System.Threading;
-    using System.Diagnostics;
 /*
- * #import_Matrix.cs
- * #import_DoubleMatrix.cs
+ * #import_IntegerMatrix.cs
  */
     static class Program
     {
+        private static int mod = (int)(1e9) + 7;
+
         static void Solve()
         {
             int n = NextInt();
-            double p = NextDouble();
-            DoubleMatrix matrix = new DoubleMatrix(2);
-            matrix[0, 0] = (1.0 - p);
-            matrix[0, 1] = p;
-            matrix[1, 0] = p;
-            matrix[1, 1] = (1.0 - p);
-            DoubleMatrix ans = (matrix ^ n) as DoubleMatrix;
-            Console.WriteLine("{0:0.0000000000}", ans?[0, 0]);
+            int m = NextInt();
+            int k = NextInt();
+            IntegerMatrix matrix = new IntegerMatrix(n, mod);
+            for (int i = 0; i < m; i++)
+            {
+                int x = NextInt() - 1;
+                int y = NextInt() - 1;
+                matrix[x, y] = 1;
+            }
+
+            var ans = matrix ^ k;
+            long paths = 0;
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < n; j++)
+                {
+                    paths += ans[i, j];
+                    while (paths >= mod)
+                    {
+                        paths -= mod;
+                    }
+                }
+            }
+            Console.WriteLine(paths);
         }
 
         public static void Main(string[] args)
         {
 #if CLown1331
-            for (int testCase = 0; testCase < 3; testCase++)
+            for (int testCase = 0; testCase < 2; testCase++)
             {
                 Solve();
             }
@@ -83,6 +100,91 @@ namespace Csharp_Contest
             public override IFormatProvider FormatProvider => CultureInfo.InvariantCulture;
             public Printer(Stream stream) : base(stream, new UTF8Encoding(false, true)) { base.AutoFlush = false; }
             public Printer(Stream stream, Encoding encoding) : base(stream, encoding) { base.AutoFlush = false; }
+        }
+    }
+}
+namespace Csharp_Contest
+{
+/*
+ * #import_Matrix.cs
+ */
+    public class IntegerMatrix: Matrix<int>
+    {
+        private readonly int mod;
+
+        public IntegerMatrix(int size, int mod) : base(size)
+        {
+            this.mod = mod;
+        }
+
+        public override void Identity()
+        {
+            for (int i = 0; i < this.Size; i++)
+            {
+                for (int j = 0; j < this.Size; j++)
+                {
+                    this[i, j] = (i == j) ? 1 : 0;
+                }
+            }
+        }
+
+        protected override Matrix<int> Add(Matrix<int> right)
+        {
+            IntegerMatrix temp = new IntegerMatrix(this.Size, this.mod);
+            temp.Reset();
+            for (int i = 0; i < this.Size; i++)
+            {
+                for (int j = 0; j < this.Size; j++)
+                {
+                    temp[i, j] = (this[i, j] + right[i, j]) % this.mod;
+                    while (temp[i, j] >= this.mod)
+                    {
+                        temp[i, j] -= this.mod;
+                    }
+                }
+            }
+
+            return temp;
+        }
+
+        protected override Matrix<int> Multiply(Matrix<int> right)
+        {
+            IntegerMatrix temp = new IntegerMatrix(this.Size, this.mod);
+            temp.Reset();
+            for (int i = 0; i < this.Size; i++)
+            {
+                for (int j = 0; j < this.Size; j++)
+                {
+                    for (int k = 0; k < this.Size; k++)
+                    {
+                        temp[i, k] += (int)((1L * this[i, j] * right[j, k]) % this.mod);
+                        while (temp[i, k] >= this.mod)
+                        {
+                            temp[i, k] -= this.mod;
+                        }
+                    }
+                }
+            }
+
+            return temp;
+        }
+
+        protected override Matrix<int> Power(long power)
+        {
+            IntegerMatrix ans = new IntegerMatrix(this.Size, this.mod);
+            ans.Identity();
+            IntegerMatrix num = this;
+            for (; power > 0; power >>= 1)
+            {
+                if (power % 2 == 1)
+                {
+                    ans = (IntegerMatrix)(ans * num);
+                }
+
+                num = (IntegerMatrix)(num * num);
+            }
+
+            return ans;
         }
     }
 }
@@ -145,75 +247,5 @@ namespace Csharp_Contest
         protected abstract Matrix<T> Power(long power);
 
         public int Size => this.size;
-    }
-}
-namespace Csharp_Contest
-{ 
-/*
- * #import_Matrix.cs
- */
-    public class DoubleMatrix : Matrix<double>
-    {
-        public DoubleMatrix(int size) : base(size)
-        {
-        }
-
-        public override void Identity()
-        {
-            for (int i = 0; i < this.Size; i++)
-            {
-                for (int j = 0; j < this.Size; j++)
-                {
-                    this[i, j] = (i == j) ? 1.0 : 0;
-                }
-            }
-        }
-
-        protected override Matrix<double> Add(Matrix<double> right)
-        {
-            DoubleMatrix temp = new DoubleMatrix(this.Size);
-            temp.Reset();
-            for (int i = 0; i < this.Size; i++)
-            {
-                for (int j = 0; j < this.Size; j++)
-                {
-                    temp[i, j] = this[i, j] + right[i, j];
-                }
-            }
-            return temp;
-        }
-
-        protected override Matrix<double> Multiply(Matrix<double> right)
-        {
-            DoubleMatrix temp = new DoubleMatrix(this.Size);
-            temp.Reset();
-            for (int i = 0; i < this.Size; i++)
-            {
-                for (int j = 0; j < this.Size; j++)
-                {
-                    for (int k = 0; k < this.Size; k++)
-                    {
-                        temp[i, k] += this[i, j] * right[j, k];
-                    }
-                }
-            }
-            return temp;
-        }
-
-        protected override Matrix<double> Power(long power)
-        {
-            DoubleMatrix ans = new DoubleMatrix(this.Size);
-            ans.Identity();
-            DoubleMatrix num = this;
-            for (; power > 0; power >>= 1)
-            {
-                if (power % 2 == 1)
-                {
-                    ans = (DoubleMatrix) (ans * num);
-                }
-                num = (DoubleMatrix) (num * num);
-            }
-            return ans;
-        }
     }
 }

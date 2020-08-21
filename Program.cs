@@ -2,35 +2,53 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Text;
     using System.Threading;
-    using System.Diagnostics;
 /*
- * #import_Matrix.cs
- * #import_DoubleMatrix.cs
+ * #import_IntegerMatrix.cs
  */
     static class Program
     {
+        private static int mod = (int)(1e9) + 7;
+
         static void Solve()
         {
             int n = NextInt();
-            double p = NextDouble();
-            DoubleMatrix matrix = new DoubleMatrix(2);
-            matrix[0, 0] = (1.0 - p);
-            matrix[0, 1] = p;
-            matrix[1, 0] = p;
-            matrix[1, 1] = (1.0 - p);
-            DoubleMatrix ans = (matrix ^ n) as DoubleMatrix;
-            Console.WriteLine("{0:0.0000000000}", ans?[0, 0]);
+            int m = NextInt();
+            int k = NextInt();
+            IntegerMatrix matrix = new IntegerMatrix(n, mod);
+            for (int i = 0; i < m; i++)
+            {
+                int x = NextInt() - 1;
+                int y = NextInt() - 1;
+                matrix[x, y] = 1;
+            }
+
+            var ans = matrix ^ k;
+            long paths = 0;
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < n; j++)
+                {
+                    paths += ans[i, j];
+                    while (paths >= mod)
+                    {
+                        paths -= mod;
+                    }
+                }
+            }
+
+            Console.WriteLine(paths);
         }
 
         public static void Main(string[] args)
         {
 #if CLown1331
-            for (int testCase = 0; testCase < 3; testCase++)
+            for (int testCase = 0; testCase < 2; testCase++)
             {
                 Solve();
             }
