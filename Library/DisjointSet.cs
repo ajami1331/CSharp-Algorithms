@@ -1,6 +1,6 @@
 ﻿namespace Csharp_Contest.Library
 {
-    class DisjointSet
+    public class DisjointSet
     {
         private int size;
         private int[] parent;

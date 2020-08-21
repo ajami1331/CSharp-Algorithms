@@ -8,171 +8,27 @@
     using System.Text;
     using System.Threading;
     using System.Diagnostics;
+    using Csharp_Contest.Library;
 
     static class Program
     {
-        private const long Mod = (long)(1e9 + 7);
-
         static void Solve()
         {
             int n = NextInt();
-            int[] types = new int[n];
-            int[] spellPowers = new int[n];
-            FenwickTree<long> treeSum = new FenwickTree<long>(
-                n + 1, 
-                (long l, long r) => l + r, 
-                (long l, long r) => Math.Sign(l - r));
-            FenwickTree<int> treeCount = new FenwickTree<int>(
-                n + 1, 
-                (int l, int r) => l + r, 
-                (int l, int r) => Math.Sign(l - r));
-            SortedSet<int> lightingSpells = new SortedSet<int>();
-            List<int> spells = new List<int>();
-            Dictionary<int, int> compressed = new Dictionary<int, int>();
-            for (int i = 0; i < n; i++)
-            {
-                types[i] = NextInt();
-                spellPowers[i] = NextInt();
-                spells.Add(Math.Abs(spellPowers[i]));
-            }
-
-            spells = spells.OrderBy(x => x).Distinct().ToList();
-
-            for (int i = 0; i < spells.Count; i++)
-            {
-                compressed[spells[i]] = i + 1;
-                compressed[-spells[i]] = i + 1;
-            }
-
-            for (int i = 0; i < n; i++)
-            {
-                int type = types[i];
-                int spellPower = spellPowers[i];
-                if (spellPower > 0)
-                {
-                    treeCount.Update(compressed[spellPower], 1);
-                    treeSum.Update(compressed[spellPower], spellPower);
-                    if (type == 1)
-                    {
-                        lightingSpells.Add(spellPower);
-                    }
-                }
-                else
-                {
-                    if (type == 1)
-                    {
-                        lightingSpells.Remove(-spellPower);
-                    }
-                    treeCount.Update(compressed[spellPower], -1);
-                    treeSum.Update(compressed[spellPower], spellPower);
-                }
-
-                int smallestLightingSpell = lightingSpells.FirstOrDefault();
-
-                if (smallestLightingSpell > 0)
-                {
-                    treeCount.Update(compressed[smallestLightingSpell], -1);
-                    treeSum.Update(compressed[smallestLightingSpell], -smallestLightingSpell);
-                }
-
-                long ans = smallestLightingSpell;
-
-                long totalSum = treeSum.Query(n);
-
-                int totalSpell = treeCount.Query(n);
-
-                if (totalSpell > 0)
-                {
-                    int doubleCount = Math.Min(totalSpell, lightingSpells.Count);
-
-                    int singleCount = totalSpell - doubleCount;
-
-                    int index = treeCount.LowerBound(singleCount);
-
-                    ans = ans + 2 * totalSum - treeSum.Query(index);
-                }
-
-                Console.WriteLine(ans);
-
-                if (smallestLightingSpell > 0)
-                {
-                    treeCount.Update(compressed[smallestLightingSpell], 1);
-                    treeSum.Update(compressed[smallestLightingSpell], smallestLightingSpell);
-                }
-            }
-        }
-
-        class FenwickTree<T> 
-        {
-            private readonly T[] tree;
-            private readonly int size;
-            private readonly Func<T, T, T> func;
-            private readonly int logn;
-            private Func<T, T, int> comp;
-
-            public FenwickTree(int size, Func<T, T, T> func, Func<T, T, int> comp)
-            {
-                this.size = size;
-                this.tree = new T[size];
-                this.func = func;
-                this.logn = (int) Math.Floor(Math.Log(this.size, 2));
-                this.comp = comp;
-            }
-
-            public void Update(int index, T value)
-            {
-                for (; index < size; index += index & -index)
-                {
-                    this.tree[index] = this.func(this.tree[index], value);
-                }
-            }
-
-            public T Query(int index)
-            {
-                T ret = default(T);
-                for (; index > 0; index -= index & -index)
-                {
-                    ret = this.func(ret, this.tree[index]);
-                }
-
-                return ret;
-            }
-
-            public int LowerBound(T value)
-            {
-                int l = 1;
-                int r = this.size - 1;
-                while (r - l > 4)
-                {
-                    int mid = l + (r - l) / 2;
-                    T sum = this.Query(mid);
-                    if (this.comp(sum, value) < 0)
-                    {
-                        l = mid;
-                    }
-                    else
-                    {
-                        r = mid;
-                    }
-                }
-
-                for (; l <= r; l++)
-                {
-                    T sum = this.Query(l);
-                    if (this.comp(sum, value) == 0)
-                    {
-                        return l;
-                    }
-                }
-
-                return -1;
-            }
+            double p = NextDouble();
+            DoubleMatrix matrix = new DoubleMatrix(2);
+            matrix[0, 0] = (1.0 - p);
+            matrix[0, 1] = p;
+            matrix[1, 0] = p;
+            matrix[1, 1] = (1.0 - p);
+            DoubleMatrix ans = (matrix ^ n) as DoubleMatrix;
+            Console.WriteLine("{0:0.0000000000}", ans?[0, 0]);
         }
 
         public static void Main(string[] args)
         {
 #if CLown1331
-            for (int testCase = 0; testCase < 1; testCase++)
+            for (int testCase = 0; testCase < 3; testCase++)
             {
                 Solve();
             }
