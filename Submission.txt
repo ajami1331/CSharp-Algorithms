@@ -41,6 +41,7 @@ namespace Csharp_Contest
                     }
                 }
             }
+
             Console.WriteLine(paths);
         }
 
@@ -207,7 +208,7 @@ namespace Csharp_Contest
             {
                 for (int j = 0; j < this.size; j++)
                 {
-                    this.a[i, j] = default(T);
+                    this[i, j] = default(T);
                 }
             }
         }

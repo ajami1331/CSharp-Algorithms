@@ -17,7 +17,7 @@
             {
                 for (int j = 0; j < this.size; j++)
                 {
-                    this.a[i, j] = default(T);
+                    this[i, j] = default(T);
                 }
             }
         }
