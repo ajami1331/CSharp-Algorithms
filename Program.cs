@@ -9,46 +9,48 @@
     using System.Text;
     using System.Threading;
 /*
- * #import_IntegerMatrix.cs
+ * #import_UnsignedMatrix.cs
  */
     static class Program
     {
         private static int mod = (int)(1e9) + 7;
+        private static readonly int[] Dx = { 1, 1, 2, 2, -1, -1, -2, -2 };
+        private static readonly int[] Dy = { 2, -2, 1, -1, 2, -2, 1, -1 };
 
         static void Solve()
         {
-            int n = NextInt();
-            int m = NextInt();
-            int k = NextInt();
-            IntegerMatrix matrix = new IntegerMatrix(n, mod);
-            for (int i = 0; i < m; i++)
+            long n = NextLong();
+            UnsignedMatrix matrix = new UnsignedMatrix(8 * 8 + 1);
+            matrix.Reset();
+            for (int i = 0; i < 8; i++)
             {
-                int x = NextInt() - 1;
-                int y = NextInt() - 1;
-                matrix[x, y] = 1;
-            }
-
-            var ans = matrix ^ k;
-            long paths = 0;
-            for (int i = 0; i < n; i++)
-            {
-                for (int j = 0; j < n; j++)
+                for (int j = 0; j < 8; j++)
                 {
-                    paths += ans[i, j];
-                    while (paths >= mod)
+                    int x = (i * 8) + j;
+                    matrix[x, 64] = 1;
+                    for (int k = 0; k < Dx.Length; k++)
                     {
-                        paths -= mod;
+                        int nx = i + Dx[k];
+                        int ny = j + Dy[k];
+                        if (nx >= 0 && nx < 8 && ny >= 0 && ny < 8)
+                        {
+                            int y = (nx * 8) + ny;
+                            matrix[x, y] = 1;
+                            matrix[y, x] = 1;
+                        }
                     }
                 }
             }
 
-            Console.WriteLine(paths);
+            matrix[64, 64] = 1;
+            var ans = matrix ^ n + 1;
+            Console.WriteLine(ans[0, 64]);
         }
 
         public static void Main(string[] args)
         {
 #if CLown1331
-            for (int testCase = 0; testCase < 2; testCase++)
+            for (int testCase = 0; testCase < 3; testCase++)
             {
                 Solve();
             }
