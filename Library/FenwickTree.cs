@@ -1,6 +1,7 @@
 ﻿namespace Csharp_Contest
 {
     using System;
+
     public class FenwickTree<T>
     {
         private readonly T[] tree;
