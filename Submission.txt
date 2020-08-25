@@ -9,48 +9,58 @@ namespace Csharp_Contest
     using System.Text;
     using System.Threading;
 /*
- * #import_UnsignedMatrix.cs
+ * #import_FenwickTree.cs
  */
     static class Program
     {
         private static int mod = (int)(1e9) + 7;
-        private static readonly int[] Dx = { 1, 1, 2, 2, -1, -1, -2, -2 };
-        private static readonly int[] Dy = { 2, -2, 1, -1, 2, -2, 1, -1 };
 
         static void Solve()
         {
-            long n = NextLong();
-            UnsignedMatrix matrix = new UnsignedMatrix(8 * 8 + 1);
-            matrix.Reset();
-            for (int i = 0; i < 8; i++)
+            int n = NextInt();
+            int q = NextInt();
+            char[] s = NextLine().ToCharArray();
+            FenwickTree<int>[] trees = Repeat(0, 26).Select(_ => new FenwickTree<int>(n + 1, Add, CompareInt)).ToArray();
+            for (int i = 0; i < s.Length; i++)
             {
-                for (int j = 0; j < 8; j++)
-                {
-                    int x = (i * 8) + j;
-                    matrix[x, 64] = 1;
-                    for (int k = 0; k < Dx.Length; k++)
-                    {
-                        int nx = i + Dx[k];
-                        int ny = j + Dy[k];
-                        if (nx >= 0 && nx < 8 && ny >= 0 && ny < 8)
-                        {
-                            int y = (nx * 8) + ny;
-                            matrix[x, y] = 1;
-                            matrix[y, x] = 1;
-                        }
-                    }
-                }
+                trees[s[i] - 'a'].Update(i + 1, 1);
             }
 
-            matrix[64, 64] = 1;
-            var ans = matrix ^ n + 1;
-            Console.WriteLine(ans[0, 64]);
+            while (q-- > 0)
+            {
+                int type = NextInt();
+                if (type == 1)
+                {
+                    int index = NextInt();
+                    char c = NextString().First();
+                    trees[s[index - 1] - 'a'].Update(index, -1);
+                    s[index - 1] = c;
+                    trees[s[index - 1] - 'a'].Update(index, 1);
+                }
+                else
+                {
+                    int l = NextInt();
+                    int r = NextInt();
+                    char c = NextString().First();
+                    Console.WriteLine(trees[c - 'a'].Query(r) - trees[c - 'a'].Query(l - 1));
+                }
+            }
+        }
+
+        private static int CompareInt(int arg1, int arg2)
+        {
+            return Math.Sign(arg1 - arg2);
+        }
+
+        private static int Add(int arg1, int arg2)
+        {
+            return arg1 + arg2;
         }
 
         public static void Main(string[] args)
         {
 #if CLown1331
-            for (int testCase = 0; testCase < 3; testCase++)
+            for (int testCase = 0; testCase < 1; testCase++)
             {
                 Solve();
             }
@@ -92,6 +102,11 @@ namespace Csharp_Contest
                 {
                     foreach (string item in NextLine().Split(' '))
                     {
+                        if (string.IsNullOrWhiteSpace(item))
+                        {
+                            continue;
+                        }
+
                         param.Enqueue(item);
                     }
                 }
@@ -108,142 +123,72 @@ namespace Csharp_Contest
 }
 namespace Csharp_Contest
 {
-/*
- * #import_Matrix.cs
- */
-    public class UnsignedMatrix: Matrix<uint>
+    using System;
+
+    public class FenwickTree<T>
     {
-        public UnsignedMatrix(int size) : base(size)
-        {
-        }
-
-        public override void Identity()
-        {
-            for (int i = 0; i < this.Size; i++)
-            {
-                for (int j = 0; j < this.Size; j++)
-                {
-                    this[i, j] = (i == j) ? 1u : 0;
-                }
-            }
-        }
-
-        protected override Matrix<uint> Add(Matrix<uint> right)
-        {
-            UnsignedMatrix temp = new UnsignedMatrix(this.Size);
-            temp.Reset();
-            for (int i = 0; i < this.Size; i++)
-            {
-                for (int j = 0; j < this.Size; j++)
-                {
-                    unchecked
-                    {
-                        temp[i, j] = this[i, j] + right[i, j];
-                    }
-                }
-            }
-
-            return temp;
-        }
-
-        protected override Matrix<uint> Multiply(Matrix<uint> right)
-        {
-            UnsignedMatrix temp = new UnsignedMatrix(this.Size);
-            temp.Reset();
-            for (int i = 0; i < this.Size; i++)
-            {
-                for (int j = 0; j < this.Size; j++)
-                {
-                    for (int k = 0; k < this.Size; k++)
-                    {
-                        unchecked
-                        {
-                            temp[i, k] += this[i, j] * right[j, k];
-                        }
-                    }
-                }
-            }
-
-            return temp;
-        }
-
-        protected override Matrix<uint> Power(long power)
-        {
-            UnsignedMatrix ans = new UnsignedMatrix(this.Size);
-            ans.Identity();
-            UnsignedMatrix num = this;
-            for (; power > 0; power >>= 1)
-            {
-                if (power % 2 == 1)
-                {
-                    ans = (UnsignedMatrix)(ans * num);
-                }
-
-                num = (UnsignedMatrix)(num * num);
-            }
-
-            return ans;
-        }
-    }
-}
-namespace Csharp_Contest
-{
-    public abstract class Matrix<T>
-    {
-        private T[,] a;
+        private readonly T[] tree;
         private readonly int size;
+        private readonly Func<T, T, T> func;
+        private readonly int logn;
+        private Func<T, T, int> comp;
 
-        protected Matrix(int size)
+        public FenwickTree(int size, Func<T, T, T> func, Func<T, T, int> comp)
         {
             this.size = size;
-            this.a = new T[this.size, this.size];
+            this.tree = new T[size];
+            this.func = func;
+            this.logn = (int)Math.Floor(Math.Log(this.size, 2));
+            this.comp = comp;
         }
 
-        public void Reset()
+        public void Update(int index, T value)
         {
-            for (int i = 0; i < this.size; i++)
+            for (; index < size; index += index & -index)
             {
-                for (int j = 0; j < this.size; j++)
-                {
-                    this[i, j] = default(T);
-                }
+                this.tree[index] = this.func(this.tree[index], value);
             }
         }
 
-        public abstract void Identity();
-
-        public static Matrix<T> operator+ (Matrix<T> a, Matrix<T> b)
+        public T Query(int index)
         {
-            return a.Add(b);
+            T ret = default(T);
+            for (; index > 0; index -= index & -index)
+            {
+                ret = this.func(ret, this.tree[index]);
+            }
+
+            return ret;
         }
 
-        protected abstract Matrix<T> Add(Matrix<T> right);
-
-        public static Matrix<T> operator *(Matrix<T> a, Matrix<T> b)
+        public int LowerBound(T value)
         {
-            return a.Multiply(b);
+            int l = 1;
+            int r = this.size - 1;
+            while (r - l > 4)
+            {
+                int mid = l + (r - l) / 2;
+                T sum = this.Query(mid);
+                if (this.comp(sum, value) < 0)
+                {
+                    l = mid;
+                }
+                else
+                {
+                    r = mid;
+                }
+            }
+
+            for (; l <= r; l++)
+            {
+                T sum = this.Query(l);
+                if (this.comp(sum, value) == 0)
+                {
+                    return l;
+                }
+            }
+
+            return -1;
         }
-
-        protected abstract Matrix<T> Multiply(Matrix<T> right);
-
-        public static Matrix<T> operator ^(Matrix<T> a, long power)
-        {
-            return a.Power(power);
-        }
-
-        public static Matrix<T> operator ^(Matrix<T> a, int power)
-        {
-            return a.Power(power);
-        }
-
-        public T this[int i, int j]
-        {
-            get => this.a[i, j];
-            set => this.a[i, j] = value;
-        }
-
-        protected abstract Matrix<T> Power(long power);
-
-        public int Size => this.size;
     }
 }

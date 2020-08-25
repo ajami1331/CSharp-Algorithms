@@ -9,48 +9,58 @@
     using System.Text;
     using System.Threading;
 /*
- * #import_UnsignedMatrix.cs
+ * #import_FenwickTree.cs
  */
     static class Program
     {
         private static int mod = (int)(1e9) + 7;
-        private static readonly int[] Dx = { 1, 1, 2, 2, -1, -1, -2, -2 };
-        private static readonly int[] Dy = { 2, -2, 1, -1, 2, -2, 1, -1 };
 
         static void Solve()
         {
-            long n = NextLong();
-            UnsignedMatrix matrix = new UnsignedMatrix(8 * 8 + 1);
-            matrix.Reset();
-            for (int i = 0; i < 8; i++)
+            int n = NextInt();
+            int q = NextInt();
+            char[] s = NextLine().ToCharArray();
+            FenwickTree<int>[] trees = Repeat(0, 26).Select(_ => new FenwickTree<int>(n + 1, Add, CompareInt)).ToArray();
+            for (int i = 0; i < s.Length; i++)
             {
-                for (int j = 0; j < 8; j++)
-                {
-                    int x = (i * 8) + j;
-                    matrix[x, 64] = 1;
-                    for (int k = 0; k < Dx.Length; k++)
-                    {
-                        int nx = i + Dx[k];
-                        int ny = j + Dy[k];
-                        if (nx >= 0 && nx < 8 && ny >= 0 && ny < 8)
-                        {
-                            int y = (nx * 8) + ny;
-                            matrix[x, y] = 1;
-                            matrix[y, x] = 1;
-                        }
-                    }
-                }
+                trees[s[i] - 'a'].Update(i + 1, 1);
             }
 
-            matrix[64, 64] = 1;
-            var ans = matrix ^ n + 1;
-            Console.WriteLine(ans[0, 64]);
+            while (q-- > 0)
+            {
+                int type = NextInt();
+                if (type == 1)
+                {
+                    int index = NextInt();
+                    char c = NextString().First();
+                    trees[s[index - 1] - 'a'].Update(index, -1);
+                    s[index - 1] = c;
+                    trees[s[index - 1] - 'a'].Update(index, 1);
+                }
+                else
+                {
+                    int l = NextInt();
+                    int r = NextInt();
+                    char c = NextString().First();
+                    Console.WriteLine(trees[c - 'a'].Query(r) - trees[c - 'a'].Query(l - 1));
+                }
+            }
+        }
+
+        private static int CompareInt(int arg1, int arg2)
+        {
+            return Math.Sign(arg1 - arg2);
+        }
+
+        private static int Add(int arg1, int arg2)
+        {
+            return arg1 + arg2;
         }
 
         public static void Main(string[] args)
         {
 #if CLown1331
-            for (int testCase = 0; testCase < 3; testCase++)
+            for (int testCase = 0; testCase < 1; testCase++)
             {
                 Solve();
             }
@@ -92,6 +102,11 @@
                 {
                     foreach (string item in NextLine().Split(' '))
                     {
+                        if (string.IsNullOrWhiteSpace(item))
+                        {
+                            continue;
+                        }
+
                         param.Enqueue(item);
                     }
                 }
