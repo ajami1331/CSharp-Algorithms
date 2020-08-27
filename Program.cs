@@ -9,52 +9,61 @@
     using System.Text;
     using System.Threading;
 /*
- * #import_FenwickTree.cs
+ *  #import_SegmentTree.cs
  */
     static class Program
     {
         private static int mod = (int)(1e9) + 7;
+        private static int[] ar;
+        private static int n;
+        private static int m;
 
         static void Solve()
         {
-            int n = NextInt();
-            int q = NextInt();
-            char[] s = NextLine().ToCharArray();
-            FenwickTree<int>[] trees = Repeat(0, 26).Select(_ => new FenwickTree<int>(n + 1, Add, CompareInt)).ToArray();
-            for (int i = 0; i < s.Length; i++)
-            {
-                trees[s[i] - 'a'].Update(i + 1, 1);
-            }
-
-            while (q-- > 0)
+            n = NextInt();
+            m = NextInt();
+            ar = Repeat(0, n).Select((_, index) => NextInt()).ToArray();
+            SegmentTree<int> tree = new SegmentTree<int>(ar, Merge, 0);
+            while (m-- > 0)
             {
                 int type = NextInt();
                 if (type == 1)
                 {
                     int index = NextInt();
-                    char c = NextString().First();
-                    trees[s[index - 1] - 'a'].Update(index, -1);
-                    s[index - 1] = c;
-                    trees[s[index - 1] - 'a'].Update(index, 1);
+                    int value = NextInt();
+                    tree.Update(1, 0, n - 1, index, value);
                 }
                 else
                 {
+                    int k = NextInt();
                     int l = NextInt();
-                    int r = NextInt();
-                    char c = NextString().First();
-                    Console.WriteLine(trees[c - 'a'].Query(r) - trees[c - 'a'].Query(l - 1));
+                    Console.WriteLine(tree.Kth(1, 0, n - 1, k, l));
                 }
+
             }
         }
 
-        private static int CompareInt(int arg1, int arg2)
+        private static int Kth(this SegmentTree<int> tree, int node, int b, int e, int k, int l)
         {
-            return Math.Sign(arg1 - arg2);
+            if (b == e)
+            {
+                return (tree[node] >= k) ? b : -1;
+            }
+
+            int mid = (b + e) >> 1;
+            int left = node << 1;
+            int right = left | 1;
+            if (tree[left] < k || mid <= l)
+            {
+                return tree.Kth(right, mid + 1, e, k, l);
+            }
+
+            return tree.Kth(left, b, mid, k, l);
         }
 
-        private static int Add(int arg1, int arg2)
+        private static int Merge(int arg1, int arg2)
         {
-            return arg1 + arg2;
+            return Math.Max(arg1, arg2);
         }
 
         public static void Main(string[] args)
