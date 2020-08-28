@@ -9,62 +9,129 @@ namespace Csharp_Contest
     using System.Text;
     using System.Threading;
     /*
-     *  #import_EdmondsKarp.cs
+     *  #import_Dinic.cs
      */
     static class Program
     {
-        private static int mod = (int)(1e9) + 7;
-        private static int[] from;
-        private static int[] to;
-        private static double[] cap;
+        private const int mod = (int)(1e9) + 7;
+        private const int sz = (int)4e4;
+        private static List<int> primes;
+        private static int totalV;
+        private static int[] factor;
+        private static List<int>[] G;
 
         static void Solve()
         {
             int n = NextInt();
             int m = NextInt();
-            int x = NextInt();
-            EdmondsKarp flowGraph = new EdmondsKarp(n);
-            from = new int[m];
-            to = new int[m];
-            cap = new double[m];
-            for (int i = 0; i < m; i++)
+            G = Repeat(0, n).Select(_ => new List<int>()).ToArray();
+            primes = Sieve(sz);
+            factor = new int[sz];
+            totalV = 0;
+            int src = 0;
+            for (int i = 0; i < n; i++)
             {
-                from[i] = NextInt();
-                to[i] = NextInt();
-                cap[i] = NextInt();
-                --from[i];
-                --to[i];
+                int x = NextInt();
+                Factorise(i, x);
             }
 
-            double lo = 1.0 / x, hi = 1e9, mid = 0;
-            int flow;
+            int sink = totalV + 1;
+            Dinic flowGraph = new Dinic(sink + 1);
 
-            for (int iter = 0; iter < 128; iter++)
+            while (m-- > 0)
             {
-                mid = (lo + hi) / 2;
-                for (int j = 0; j < m; j++)
+                int x = NextInt() - 1;
+                int y = NextInt() - 1;
+                if (x % 2 == 1)
                 {
-                    flowGraph.SetEdgeCap(from[j], to[j], (int)(cap[j] / mid), false);
+                    (x, y) = (y, x);
                 }
 
-                flow = flowGraph.MaxFlow(0, n - 1);
-                if (flow >= x)
+                foreach (int u in G[x])
                 {
-                    lo = mid;
+                    foreach (int v in G[y])
+                    {
+                        if (factor[u] == factor[v])
+                        {
+                            flowGraph.AddEdge(u, v, 1);
+                        }
+                    }
                 }
-                else
+
+            }
+
+            for (int i = 0; i < n; i++)
+            {
+                foreach (int u in G[i])
                 {
-                    hi = mid;
+                    flowGraph.AddEdge(i % 2 == 1 ? u : src, i % 2 == 1 ? sink : u, 1);
                 }
             }
 
-            Console.WriteLine("{0:F16}", mid * x);
+            Console.WriteLine("{0}", flowGraph.MaxFlow(src, sink));
+        }
+
+        private static void Factorise(int i, int num)
+        {
+            foreach (int x in primes)
+            {
+                while (num % x == 0)
+                {
+                    num /= x;
+                    totalV++;
+                    G[i].Add(totalV);
+                    factor[totalV] = x;
+                }
+            }
+
+            if (num > 1)
+            {
+                totalV++;
+                G[i].Add(totalV);
+                factor[totalV] = num;
+            }
+        }
+
+        static List<int> Sieve(int n)
+        {
+            List<int> pr = new List<int>();
+            bool[] fl = new bool[n];
+            for (int i = 4; i < n; i += 2)
+            {
+                fl[i] = true;
+            }
+
+            for (int i = 3; i * i < n; i += 2)
+            {
+                if (fl[i])
+                {
+                    continue;
+                }
+
+                for (int j = i * i; j < n; j += i)
+                {
+                    fl[j] = true;
+                }
+            }
+
+            pr.Add(2);
+            for (int i = 3; i < n; i += 2)
+            {
+                if (fl[i])
+                {
+                    continue;
+                }
+
+                pr.Add(i);
+            }
+
+            return pr;
         }
 
         public static void Main(string[] args)
         {
 #if CLown1331
-            for (int testCase = 0; testCase < 2; testCase++)
+            for (int testCase = 0; testCase < 3; testCase++)
             {
                 Solve();
             }
@@ -94,8 +161,7 @@ namespace Csharp_Contest
         static IEnumerable<T> Repeat<T>(T v, long n) => Enumerable.Repeat<T>(v, (int)n);
         static IEnumerable<int> Range(long s, long c) => Enumerable.Range((int)s, (int)c);
         static uint xorshift { get { _xsi.MoveNext(); return _xsi.Current; } }
-        static IEnumerator<uint> _xsi = _xsc();
-        static IEnumerator<uint> _xsc() { uint x = 123456789, y = 362436069, z = 521288629, w = (uint)(DateTime.Now.Ticks & 0xffffffff); while (true) { var t = x ^ (x << 11); x = y; y = z; z = w; w = (w ^ (w >> 19)) ^ (t ^ (t >> 8)); yield return w; } }
+        static IEnumerator<uint> _xsi = _xsc(); static IEnumerator<uint> _xsc() { uint x = 123456789, y = 362436069, z = 521288629, w = (uint)(DateTime.Now.Ticks & 0xffffffff); while (true) { var t = x ^ (x << 11); x = y; y = z; z = w; w = (w ^ (w >> 19)) ^ (t ^ (t >> 8)); yield return w; } }
 
         static class Console_
         {
@@ -129,71 +195,85 @@ namespace Csharp_Contest
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
-    /// <summary>
-    ///   <para>Implementation of Edmonds-Karp max flow algorithm. </para>
-    ///   <para>Running time:<br />        O(|V|*|E|^2)</para>
-    /// </summary>
-    public class EdmondsKarp
+    public class Dinic
     {
-        private readonly int[] parents;
-        private readonly int[,] graph;
-        private readonly bool[] visited;
+        private int nodes;
+        private List<Edge> edges;
+        private List<int>[] adj;
+        private int[] level;
+        private int[] ptr;
 
-        /// <summary>Initializes a new instance of the <see cref="EdmondsKarp" /> class.</summary>
-        /// <param name="nodes">The nodes.</param>
-        public EdmondsKarp(int nodes)
+        internal class Edge
         {
-            this.Nodes = nodes;
-            this.parents = new int[nodes];
-            this.visited = new bool[nodes];
-            this.graph = new int[nodes, nodes];
-        }
+            public int from;
+            public int to;
+            public long capacity;
+            public long flow;
 
-        /// <summary>Gets the number of nodes.</summary>
-        /// <value>The nodes.</value>
-        public int Nodes { get; }
-
-        /// <summary>Adds the edge.</summary>
-        /// <param name="from">From.</param>
-        /// <param name="to">To.</param>
-        /// <param name="capacity">The capacity.</param>
-        /// <param name="directed">if set to <c>true</c> [directed].</param>
-        public void AddEdge(int from, int to, int capacity, bool directed)
-        {
-            this.graph[from, to] += capacity;
-            if (directed)
+            internal Edge()
             {
-                this.graph[to, from] += capacity;
+
+            }
+
+            internal Edge(int from, int to, long capacity, long flow)
+            {
+                this.from = from;
+                this.to = to;
+                this.capacity = capacity;
+                this.flow = flow;
             }
         }
 
-        /// <summary>Sets the edge capacity.</summary>
-        /// <param name="from">From.</param>
-        /// <param name="to">To.</param>
-        /// <param name="capacity">The capacity.</param>
-        /// <param name="directed">if set to <c>true</c> [directed].</param>
-        public void SetEdgeCap(int from, int to, int capacity, bool directed)
+        public Dinic(int nodes)
         {
-            this.graph[from, to] = capacity;
-            if (directed)
+            this.nodes = nodes;
+            this.edges = new List<Edge>();
+            this.adj = Enumerable
+                        .Repeat(0, nodes)
+                        .Select(_ => new List<int>())
+                        .ToArray();
+            this.level = new int[nodes];
+            this.ptr = new int[nodes];
+        }
+
+        public void ClearFlow()
+        {
+            for (int i = 0; i < this.edges.Count; i++)
             {
-                this.graph[to, from] = capacity;
+                this.edges[i].flow = 0;
             }
         }
 
-        /// <summary>  Computes the maximum flow.</summary>
-        /// <param name="src">The source.</param>
-        /// <param name="sink">The sink.</param>
-        /// <returns>The maximum flow.</returns>
-        public int MaxFlow(int src, int sink)
+        public void AddEdge(int from, int to, long capacity)
         {
-            int maxFlow = 0;
-            while (this.Bfs(src, sink))
+            this.edges.Add(new Edge(from, to, capacity, 0));
+            this.edges.Add(new Edge(to, from, 0, 0));
+            this.adj[from].Add(this.edges.Count - 2);
+            this.adj[to].Add(this.edges.Count - 1);
+        }
+
+        public long MaxFlow(int src, int sink)
+        {
+            long maxFlow = 0;
+            while (true)
             {
-                int minCap;
-                this.AugmentPath(minCap = this.MinValue(sink), sink);
-                maxFlow += minCap;
+                if (!this.Bfs(src, sink))
+                {
+                    break;
+                }
+
+                for (int i = 0; i < this.nodes; i++)
+                {
+                    this.ptr[i] = 0;
+                }
+
+                long flow;
+                while ((flow = this.Dfs(src, sink, long.MaxValue)) > 0)
+                {
+                    maxFlow += flow;
+                }
             }
 
             return maxFlow;
@@ -201,55 +281,73 @@ namespace Csharp_Contest
 
         private bool Bfs(int src, int sink)
         {
-            for (int i = 0; i < this.Nodes; i++)
+
+            for (int i = 0; i < this.nodes; i++)
             {
-                this.visited[i] = false;
-                this.parents[i] = -1;
+                this.level[i] = -1;
             }
 
-            this.visited[src] = true;
             Queue<int> q = new Queue<int>();
+            this.level[src] = 0;
             q.Enqueue(src);
+
             while (q.Count > 0)
             {
                 int u = q.Dequeue();
-                if (u == sink)
+                foreach (int v in this.adj[u])
                 {
-                    return true;
-                }
-
-                for (int i = 0; i < this.Nodes; i++)
-                {
-                    if (this.graph[u, i] > 0 && !this.visited[i])
+                    if (this.edges[v].capacity - this.edges[v].flow < 1)
                     {
-                        q.Enqueue(i);
-                        this.visited[i] = true;
-                        this.parents[i] = u;
+                        continue;
                     }
+
+                    if (this.level[this.edges[v].to] != -1)
+                    {
+                        continue;
+                    }
+
+                    this.level[this.edges[v].to] = this.level[u] + 1;
+                    q.Enqueue(this.edges[v].to);
                 }
-            }
 
-            return this.parents[sink] != -1;
+            }
+            return this.level[sink] != -1;
         }
 
-        private int MinValue(int i)
+        private long Dfs(int u, int t, long pushed)
         {
-            int ret = int.MaxValue;
-            for (; this.parents[i] != -1; i = this.parents[i])
+            if (pushed == 0)
             {
-                ret = Math.Min(ret, this.graph[this.parents[i], i]);
+                return 0;
             }
 
-            return ret;
-        }
-
-        private void AugmentPath(int value, int i)
-        {
-            for (; this.parents[i] != -1; i = this.parents[i])
+            if (u == t)
             {
-                this.graph[this.parents[i], i] -= value;
-                this.graph[i, this.parents[i]] += value;
+                return pushed;
             }
+
+            for (; this.ptr[u] < this.adj[u].Count; this.ptr[u]++)
+            {
+                int index = this.adj[u][this.ptr[u]];
+                int v = this.edges[index].to;
+                long candidate = this.edges[index].capacity - this.edges[index].flow;
+                if (this.level[u] + 1 != this.level[v] || candidate < 1)
+                {
+                    continue;
+                }
+
+                long flow = this.Dfs(v, t, Math.Min(pushed, candidate));
+                if (flow == 0)
+                {
+                    continue;
+                }
+
+                this.edges[index].flow += flow;
+                this.edges[index ^ 1].flow -= flow;
+                return flow;
+            }
+
+            return 0;
         }
     }
 }

@@ -9,62 +9,129 @@
     using System.Text;
     using System.Threading;
     /*
-     *  #import_EdmondsKarp.cs
+     *  #import_Dinic.cs
      */
     static class Program
     {
-        private static int mod = (int)(1e9) + 7;
-        private static int[] from;
-        private static int[] to;
-        private static double[] cap;
+        private const int mod = (int)(1e9) + 7;
+        private const int sz = (int)4e4;
+        private static List<int> primes;
+        private static int totalV;
+        private static int[] factor;
+        private static List<int>[] G;
 
         static void Solve()
         {
             int n = NextInt();
             int m = NextInt();
-            int x = NextInt();
-            EdmondsKarp flowGraph = new EdmondsKarp(n);
-            from = new int[m];
-            to = new int[m];
-            cap = new double[m];
-            for (int i = 0; i < m; i++)
+            G = Repeat(0, n).Select(_ => new List<int>()).ToArray();
+            primes = Sieve(sz);
+            factor = new int[sz];
+            totalV = 0;
+            int src = 0;
+            for (int i = 0; i < n; i++)
             {
-                from[i] = NextInt();
-                to[i] = NextInt();
-                cap[i] = NextInt();
-                --from[i];
-                --to[i];
+                int x = NextInt();
+                Factorise(i, x);
             }
 
-            double lo = 1.0 / x, hi = 1e9, mid = 0;
-            int flow;
+            int sink = totalV + 1;
+            Dinic flowGraph = new Dinic(sink + 1);
 
-            for (int iter = 0; iter < 128; iter++)
+            while (m-- > 0)
             {
-                mid = (lo + hi) / 2;
-                for (int j = 0; j < m; j++)
+                int x = NextInt() - 1;
+                int y = NextInt() - 1;
+                if (x % 2 == 1)
                 {
-                    flowGraph.SetEdgeCap(from[j], to[j], (int)(cap[j] / mid), false);
+                    (x, y) = (y, x);
                 }
 
-                flow = flowGraph.MaxFlow(0, n - 1);
-                if (flow >= x)
+                foreach (int u in G[x])
                 {
-                    lo = mid;
+                    foreach (int v in G[y])
+                    {
+                        if (factor[u] == factor[v])
+                        {
+                            flowGraph.AddEdge(u, v, 1);
+                        }
+                    }
                 }
-                else
+
+            }
+
+            for (int i = 0; i < n; i++)
+            {
+                foreach (int u in G[i])
                 {
-                    hi = mid;
+                    flowGraph.AddEdge(i % 2 == 1 ? u : src, i % 2 == 1 ? sink : u, 1);
                 }
             }
 
-            Console.WriteLine("{0:F16}", mid * x);
+            Console.WriteLine("{0}", flowGraph.MaxFlow(src, sink));
+        }
+
+        private static void Factorise(int i, int num)
+        {
+            foreach (int x in primes)
+            {
+                while (num % x == 0)
+                {
+                    num /= x;
+                    totalV++;
+                    G[i].Add(totalV);
+                    factor[totalV] = x;
+                }
+            }
+
+            if (num > 1)
+            {
+                totalV++;
+                G[i].Add(totalV);
+                factor[totalV] = num;
+            }
+        }
+
+        static List<int> Sieve(int n)
+        {
+            List<int> pr = new List<int>();
+            bool[] fl = new bool[n];
+            for (int i = 4; i < n; i += 2)
+            {
+                fl[i] = true;
+            }
+
+            for (int i = 3; i * i < n; i += 2)
+            {
+                if (fl[i])
+                {
+                    continue;
+                }
+
+                for (int j = i * i; j < n; j += i)
+                {
+                    fl[j] = true;
+                }
+            }
+
+            pr.Add(2);
+            for (int i = 3; i < n; i += 2)
+            {
+                if (fl[i])
+                {
+                    continue;
+                }
+
+                pr.Add(i);
+            }
+
+            return pr;
         }
 
         public static void Main(string[] args)
         {
 #if CLown1331
-            for (int testCase = 0; testCase < 2; testCase++)
+            for (int testCase = 0; testCase < 3; testCase++)
             {
                 Solve();
             }
@@ -94,8 +161,7 @@
         static IEnumerable<T> Repeat<T>(T v, long n) => Enumerable.Repeat<T>(v, (int)n);
         static IEnumerable<int> Range(long s, long c) => Enumerable.Range((int)s, (int)c);
         static uint xorshift { get { _xsi.MoveNext(); return _xsi.Current; } }
-        static IEnumerator<uint> _xsi = _xsc();
-        static IEnumerator<uint> _xsc() { uint x = 123456789, y = 362436069, z = 521288629, w = (uint)(DateTime.Now.Ticks & 0xffffffff); while (true) { var t = x ^ (x << 11); x = y; y = z; z = w; w = (w ^ (w >> 19)) ^ (t ^ (t >> 8)); yield return w; } }
+        static IEnumerator<uint> _xsi = _xsc(); static IEnumerator<uint> _xsc() { uint x = 123456789, y = 362436069, z = 521288629, w = (uint)(DateTime.Now.Ticks & 0xffffffff); while (true) { var t = x ^ (x << 11); x = y; y = z; z = w; w = (w ^ (w >> 19)) ^ (t ^ (t >> 8)); yield return w; } }
 
         static class Console_
         {

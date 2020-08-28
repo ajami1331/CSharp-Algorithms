@@ -31,28 +31,18 @@
         /// <param name="from">From.</param>
         /// <param name="to">To.</param>
         /// <param name="capacity">The capacity.</param>
-        /// <param name="directed">if set to <c>true</c> [directed].</param>
-        public void AddEdge(int from, int to, int capacity, bool directed)
+        public void AddEdge(int from, int to, int capacity)
         {
             this.graph[from, to] += capacity;
-            if (directed)
-            {
-                this.graph[to, from] += capacity;
-            }
         }
 
         /// <summary>Sets the edge capacity.</summary>
         /// <param name="from">From.</param>
         /// <param name="to">To.</param>
         /// <param name="capacity">The capacity.</param>
-        /// <param name="directed">if set to <c>true</c> [directed].</param>
-        public void SetEdgeCap(int from, int to, int capacity, bool directed)
+        public void SetEdgeCap(int from, int to, int capacity)
         {
             this.graph[from, to] = capacity;
-            if (directed)
-            {
-                this.graph[to, from] = capacity;
-            }
         }
 
         /// <summary>  Computes the maximum flow.</summary>
