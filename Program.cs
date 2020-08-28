@@ -8,68 +8,63 @@
     using System.Linq;
     using System.Text;
     using System.Threading;
-/*
- *  #import_SegmentTree.cs
- */
+    /*
+     *  #import_EdmondsKarp.cs
+     */
     static class Program
     {
         private static int mod = (int)(1e9) + 7;
-        private static int[] ar;
-        private static int n;
-        private static int m;
+        private static int[] from;
+        private static int[] to;
+        private static double[] cap;
 
         static void Solve()
         {
-            n = NextInt();
-            m = NextInt();
-            ar = Repeat(0, n).Select((_, index) => NextInt()).ToArray();
-            SegmentTree<int> tree = new SegmentTree<int>(ar, Merge, 0);
-            while (m-- > 0)
+            int n = NextInt();
+            int m = NextInt();
+            int x = NextInt();
+            EdmondsKarp flowGraph = new EdmondsKarp(n);
+            from = new int[m];
+            to = new int[m];
+            cap = new double[m];
+            for (int i = 0; i < m; i++)
             {
-                int type = NextInt();
-                if (type == 1)
+                from[i] = NextInt();
+                to[i] = NextInt();
+                cap[i] = NextInt();
+                --from[i];
+                --to[i];
+            }
+
+            double lo = 1.0 / x, hi = 1e9, mid = 0;
+            int flow;
+
+            for (int iter = 0; iter < 128; iter++)
+            {
+                mid = (lo + hi) / 2;
+                for (int j = 0; j < m; j++)
                 {
-                    int index = NextInt();
-                    int value = NextInt();
-                    tree.Update(1, 0, n - 1, index, value);
+                    flowGraph.SetEdgeCap(from[j], to[j], (int)(cap[j] / mid), false);
+                }
+
+                flow = flowGraph.MaxFlow(0, n - 1);
+                if (flow >= x)
+                {
+                    lo = mid;
                 }
                 else
                 {
-                    int k = NextInt();
-                    int l = NextInt();
-                    Console.WriteLine(tree.Kth(1, 0, n - 1, k, l));
+                    hi = mid;
                 }
-
-            }
-        }
-
-        private static int Kth(this SegmentTree<int> tree, int node, int b, int e, int k, int l)
-        {
-            if (b == e)
-            {
-                return (tree[node] >= k) ? b : -1;
             }
 
-            int mid = (b + e) >> 1;
-            int left = node << 1;
-            int right = left | 1;
-            if (tree[left] < k || mid <= l)
-            {
-                return tree.Kth(right, mid + 1, e, k, l);
-            }
-
-            return tree.Kth(left, b, mid, k, l);
-        }
-
-        private static int Merge(int arg1, int arg2)
-        {
-            return Math.Max(arg1, arg2);
+            Console.WriteLine("{0:F16}", mid * x);
         }
 
         public static void Main(string[] args)
         {
 #if CLown1331
-            for (int testCase = 0; testCase < 1; testCase++)
+            for (int testCase = 0; testCase < 2; testCase++)
             {
                 Solve();
             }

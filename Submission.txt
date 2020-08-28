@@ -8,68 +8,63 @@ namespace Csharp_Contest
     using System.Linq;
     using System.Text;
     using System.Threading;
-/*
- *  #import_SegmentTree.cs
- */
+    /*
+     *  #import_EdmondsKarp.cs
+     */
     static class Program
     {
         private static int mod = (int)(1e9) + 7;
-        private static int[] ar;
-        private static int n;
-        private static int m;
+        private static int[] from;
+        private static int[] to;
+        private static double[] cap;
 
         static void Solve()
         {
-            n = NextInt();
-            m = NextInt();
-            ar = Repeat(0, n).Select((_, index) => NextInt()).ToArray();
-            SegmentTree<int> tree = new SegmentTree<int>(ar, Merge, 0);
-            while (m-- > 0)
+            int n = NextInt();
+            int m = NextInt();
+            int x = NextInt();
+            EdmondsKarp flowGraph = new EdmondsKarp(n);
+            from = new int[m];
+            to = new int[m];
+            cap = new double[m];
+            for (int i = 0; i < m; i++)
             {
-                int type = NextInt();
-                if (type == 1)
+                from[i] = NextInt();
+                to[i] = NextInt();
+                cap[i] = NextInt();
+                --from[i];
+                --to[i];
+            }
+
+            double lo = 1.0 / x, hi = 1e9, mid = 0;
+            int flow;
+
+            for (int iter = 0; iter < 128; iter++)
+            {
+                mid = (lo + hi) / 2;
+                for (int j = 0; j < m; j++)
                 {
-                    int index = NextInt();
-                    int value = NextInt();
-                    tree.Update(1, 0, n - 1, index, value);
+                    flowGraph.SetEdgeCap(from[j], to[j], (int)(cap[j] / mid), false);
+                }
+
+                flow = flowGraph.MaxFlow(0, n - 1);
+                if (flow >= x)
+                {
+                    lo = mid;
                 }
                 else
                 {
-                    int k = NextInt();
-                    int l = NextInt();
-                    Console.WriteLine(tree.Kth(1, 0, n - 1, k, l));
+                    hi = mid;
                 }
-
-            }
-        }
-
-        private static int Kth(this SegmentTree<int> tree, int node, int b, int e, int k, int l)
-        {
-            if (b == e)
-            {
-                return (tree[node] >= k) ? b : -1;
             }
 
-            int mid = (b + e) >> 1;
-            int left = node << 1;
-            int right = left | 1;
-            if (tree[left] < k || mid <= l)
-            {
-                return tree.Kth(right, mid + 1, e, k, l);
-            }
-
-            return tree.Kth(left, b, mid, k, l);
-        }
-
-        private static int Merge(int arg1, int arg2)
-        {
-            return Math.Max(arg1, arg2);
+            Console.WriteLine("{0:F16}", mid * x);
         }
 
         public static void Main(string[] args)
         {
 #if CLown1331
-            for (int testCase = 0; testCase < 1; testCase++)
+            for (int testCase = 0; testCase < 2; testCase++)
             {
                 Solve();
             }
@@ -133,91 +128,128 @@ namespace Csharp_Contest
 namespace Csharp_Contest
 {
     using System;
+    using System.Collections.Generic;
 
-    public class SegmentTree<T>
+    /// <summary>
+    ///   <para>Implementation of Edmonds-Karp max flow algorithm. </para>
+    ///   <para>Running time:<br />        O(|V|*|E|^2)</para>
+    /// </summary>
+    public class EdmondsKarp
     {
-        private T[] tree;
-        private int length;
-        private Func<T, T, T> merge;
-        private T outOfBound;
+        private readonly int[] parents;
+        private readonly int[,] graph;
+        private readonly bool[] visited;
 
-        public T this[int node]
+        /// <summary>Initializes a new instance of the <see cref="EdmondsKarp" /> class.</summary>
+        /// <param name="nodes">The nodes.</param>
+        public EdmondsKarp(int nodes)
         {
-            get => this.tree[node];
-            set => this.tree[node] = value;
+            this.Nodes = nodes;
+            this.parents = new int[nodes];
+            this.visited = new bool[nodes];
+            this.graph = new int[nodes, nodes];
         }
 
-        public SegmentTree(int length, Func<T, T, T> merge, T outOfBound)
+        /// <summary>Gets the number of nodes.</summary>
+        /// <value>The nodes.</value>
+        public int Nodes { get; }
+
+        /// <summary>Adds the edge.</summary>
+        /// <param name="from">From.</param>
+        /// <param name="to">To.</param>
+        /// <param name="capacity">The capacity.</param>
+        /// <param name="directed">if set to <c>true</c> [directed].</param>
+        public void AddEdge(int from, int to, int capacity, bool directed)
         {
-            this.length = length;
-            this.tree = new T[length << 2];
-            this.merge = merge;
-            this.outOfBound = outOfBound;
+            this.graph[from, to] += capacity;
+            if (directed)
+            {
+                this.graph[to, from] += capacity;
+            }
         }
 
-        public SegmentTree(T[] arr, Func<T, T, T> merge, T outOfBound)
-            : this(arr.Length, merge, outOfBound)
+        /// <summary>Sets the edge capacity.</summary>
+        /// <param name="from">From.</param>
+        /// <param name="to">To.</param>
+        /// <param name="capacity">The capacity.</param>
+        /// <param name="directed">if set to <c>true</c> [directed].</param>
+        public void SetEdgeCap(int from, int to, int capacity, bool directed)
         {
-            this.Build(1, 0, arr.Length - 1, arr);
+            this.graph[from, to] = capacity;
+            if (directed)
+            {
+                this.graph[to, from] = capacity;
+            }
         }
 
-        public void Build(int node, int b, int e, T[] arr)
+        /// <summary>  Computes the maximum flow.</summary>
+        /// <param name="src">The source.</param>
+        /// <param name="sink">The sink.</param>
+        /// <returns>The maximum flow.</returns>
+        public int MaxFlow(int src, int sink)
         {
-            if (b == e)
+            int maxFlow = 0;
+            while (this.Bfs(src, sink))
             {
-                this[node] = arr[b];
-                return;
+                int minCap;
+                this.AugmentPath(minCap = this.MinValue(sink), sink);
+                maxFlow += minCap;
             }
 
-            int mid = (b + e) >> 1;
-            int left = node << 1;
-            int right = left | 1;
-            this.Build(left, b, mid, arr);
-            this.Build(right, mid + 1, e, arr);
-            this[node] = this.merge(this[left], this[right]);
+            return maxFlow;
         }
 
-        public T Query(int node, int b, int e, int l, int r)
+        private bool Bfs(int src, int sink)
         {
-            if (r < b || e < l)
+            for (int i = 0; i < this.Nodes; i++)
             {
-                return this.outOfBound;
+                this.visited[i] = false;
+                this.parents[i] = -1;
             }
 
-            if (b >= l && e <= r)
+            this.visited[src] = true;
+            Queue<int> q = new Queue<int>();
+            q.Enqueue(src);
+            while (q.Count > 0)
             {
-                return this[node];
+                int u = q.Dequeue();
+                if (u == sink)
+                {
+                    return true;
+                }
+
+                for (int i = 0; i < this.Nodes; i++)
+                {
+                    if (this.graph[u, i] > 0 && !this.visited[i])
+                    {
+                        q.Enqueue(i);
+                        this.visited[i] = true;
+                        this.parents[i] = u;
+                    }
+                }
             }
 
-            int left = node << 1;
-            int right = left | 1;
-            int mid = (b + e) >> 1;
-            T x = this.Query(left, b, mid, l, r);
-            T y = this.Query(right, mid + 1, e, l, r);
-            return this.merge(x, y);
+            return this.parents[sink] != -1;
         }
 
-        public void Update(int node, int b, int e, int index, T value)
+        private int MinValue(int i)
         {
-            if (b == e)
+            int ret = int.MaxValue;
+            for (; this.parents[i] != -1; i = this.parents[i])
             {
-                this[node] = value;
-                return;
+                ret = Math.Min(ret, this.graph[this.parents[i], i]);
             }
 
-            int left = node << 1;
-            int right = left | 1;
-            int mid = (b + e) >> 1;
-            if (index <= mid)
-            {
-                this.Update(left, b, mid, index, value);
-            }
-            else
-            {
-                this.Update(right, mid + 1, e, index, value);
-            }
+            return ret;
+        }
 
-            this[node] = this.merge(this[left], this[right]);
+        private void AugmentPath(int value, int i)
+        {
+            for (; this.parents[i] != -1; i = this.parents[i])
+            {
+                this.graph[this.parents[i], i] -= value;
+                this.graph[i, this.parents[i]] += value;
+            }
         }
     }
 }
