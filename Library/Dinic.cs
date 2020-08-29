@@ -64,13 +64,8 @@
         public long MaxFlow(int src, int sink)
         {
             long maxFlow = 0;
-            while (true)
+            while (this.Bfs(src, sink))
             {
-                if (!this.Bfs(src, sink))
-                {
-                    break;
-                }
-
                 for (int i = 0; i < this.nodes; i++)
                 {
                     this.ptr[i] = 0;
