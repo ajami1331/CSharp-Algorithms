@@ -9,7 +9,7 @@
     using System.Text;
     using System.Threading;
     /*
-     *  #import_Dinic.cs
+     *  #import_PushRelabel.cs
      */
     static class Program
     {
@@ -36,7 +36,7 @@
             }
 
             int sink = totalV + 1;
-            Dinic flowGraph = new Dinic(sink + 1);
+            PushRelabel flowGraph = new PushRelabel(sink + 1);
 
             while (m-- > 0)
             {
