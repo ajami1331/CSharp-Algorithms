@@ -4,6 +4,9 @@
     using System.Collections.Generic;
     using System.Linq;
 
+    /*
+     *  #import_Edge.cs
+     */
     public class PushRelabel
     {
         private int nodes;
@@ -14,29 +17,6 @@
         private int[] count;
         private List<int>[] B;
         private int b;
-
-        internal class Edge
-        {
-            public int from;
-            public int to;
-            public long capacity;
-            public long flow;
-            public int index;
-
-            internal Edge()
-            {
-
-            }
-
-            internal Edge(int from, int to, long capacity, long flow, int index)
-            {
-                this.from = from;
-                this.to = to;
-                this.capacity = capacity;
-                this.flow = flow;
-                this.index = index;
-            }
-        }
 
         public PushRelabel(int nodes)
         {
@@ -89,6 +69,8 @@
             return this.excess[t];
         }
 
+        public List<Edge> this[int i] => this.adj[i];
+
         private void Enqueue(int v)
         {
             if (!this.active[v] && this.excess[v] > 0 && this.dist[v] < this.nodes)
@@ -123,7 +105,6 @@
                     this.count[this.dist[v]]++;
                     this.Enqueue(v);
                 }
-
             }
         }
 

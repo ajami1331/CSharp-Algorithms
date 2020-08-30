@@ -4,6 +4,9 @@
     using System.Collections.Generic;
     using System.Linq;
 
+    /*
+     *  #import_Edge.cs
+     */
     public class Dinic
     {
         private int nodes;
@@ -12,35 +15,11 @@
         private int[] level;
         private int[] ptr;
 
-        internal class Edge
-        {
-            public int from;
-            public int to;
-            public long capacity;
-            public long flow;
-
-            internal Edge()
-            {
-
-            }
-
-            internal Edge(int from, int to, long capacity, long flow)
-            {
-                this.from = from;
-                this.to = to;
-                this.capacity = capacity;
-                this.flow = flow;
-            }
-        }
-
         public Dinic(int nodes)
         {
             this.nodes = nodes;
             this.edges = new List<Edge>();
-            this.adj = Enumerable
-                        .Repeat(0, nodes)
-                        .Select(_ => new List<int>())
-                        .ToArray();
+            this.adj = Enumerable.Repeat(0, nodes).Select(_ => new List<int>()).ToArray();
             this.level = new int[nodes];
             this.ptr = new int[nodes];
         }
@@ -55,8 +34,8 @@
 
         public void AddEdge(int from, int to, long capacity)
         {
-            this.edges.Add(new Edge(from, to, capacity, 0));
-            this.edges.Add(new Edge(to, from, 0, 0));
+            this.edges.Add(new Edge(from, to, capacity, 0, this.edges.Count + 1));
+            this.edges.Add(new Edge(to, from, 0, 0, this.edges.Count - 1));
             this.adj[from].Add(this.edges.Count - 2);
             this.adj[to].Add(this.edges.Count - 1);
         }
@@ -80,6 +59,8 @@
 
             return maxFlow;
         }
+
+        public List<int> this[int i] => this.adj[i];
 
         private bool Bfs(int src, int sink)
         {
@@ -151,6 +132,11 @@
             }
 
             return 0;
+        }
+
+        public Edge GetEdge(int id)
+        {
+            return this.edges[id];
         }
     }
 }

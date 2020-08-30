@@ -9,129 +9,83 @@ namespace Csharp_Contest
     using System.Text;
     using System.Threading;
     /*
-     *  #import_PushRelabel.cs
+     *  #import_Dinic.cs
      */
     static class Program
     {
+        private const int STACK_SIZE = 64 * (1 << 20);
         private const int mod = (int)(1e9) + 7;
         private const int sz = (int)4e4;
-        private static List<int> primes;
-        private static int totalV;
-        private static int[] factor;
-        private static List<int>[] G;
 
         static void Solve()
         {
+            int[] ar = Repeat(0, 6).Select(_ => NextInt()).ToArray();
             int n = NextInt();
-            int m = NextInt();
-            G = Repeat(0, n).Select(_ => new List<int>()).ToArray();
-            primes = Sieve(sz);
-            factor = new int[sz];
-            totalV = 0;
-            int src = 0;
-            for (int i = 0; i < n; i++)
+            string[] shirts = new[]
             {
-                int x = NextInt();
-                Factorise(i, x);
+                "S",
+                "M",
+                "L",
+                "XL",
+                "XXL",
+                "XXXL",
+            };
+            Dictionary<string, int> mp = new Dictionary<string, int>();
+            for (int i = 0; i < 6; i++)
+            {
+                mp.Add(shirts[i], i + 1);
             }
 
-            int sink = totalV + 1;
-            PushRelabel flowGraph = new PushRelabel(sink + 1);
-
-            while (m-- > 0)
+            Dinic graph = new Dinic(2 + 6 + n);
+            int src = 0;
+            int sink = 1 + 6 + n;
+            for (int i = 0; i < 6; i++)
             {
-                int x = NextInt() - 1;
-                int y = NextInt() - 1;
-                if (x % 2 == 1)
+                graph.AddEdge(src, i + 1, ar[i]);
+            }
+
+            for (int i = 1; i <= n; i++)
+            {
+                foreach (string s in NextLine().Split(','))
                 {
-                    (x, y) = (y, x);
+                    graph.AddEdge(mp[s], i + 6, 1);
                 }
 
-                foreach (int u in G[x])
+                graph.AddEdge(i + 6, sink, 1);
+            }
+
+            string[] ans = new string[n + 8];
+
+            if (graph.MaxFlow(src, sink) == n)
+            {
+                Console.WriteLine("YES");
+                for (int i = 1; i <= 6; i++)
                 {
-                    foreach (int v in G[y])
+                    foreach (int id in graph[i])
                     {
-                        if (factor[u] == factor[v])
+                        var e = graph.GetEdge(id);
+                        if (e.flow == 1)
                         {
-                            flowGraph.AddEdge(u, v, 1);
+                            ans[e.to] = shirts[i - 1];
                         }
                     }
                 }
 
-            }
-
-            for (int i = 0; i < n; i++)
-            {
-                foreach (int u in G[i])
+                for (int i = 7; i <= n + 6; i++)
                 {
-                    flowGraph.AddEdge(i % 2 == 1 ? u : src, i % 2 == 1 ? sink : u, 1);
+                    Console.WriteLine(ans[i]);
                 }
             }
-
-            Console.WriteLine("{0}", flowGraph.MaxFlow(src, sink));
-        }
-
-        private static void Factorise(int i, int num)
-        {
-            foreach (int x in primes)
+            else
             {
-                while (num % x == 0)
-                {
-                    num /= x;
-                    totalV++;
-                    G[i].Add(totalV);
-                    factor[totalV] = x;
-                }
+                Console.WriteLine("NO");
             }
-
-            if (num > 1)
-            {
-                totalV++;
-                G[i].Add(totalV);
-                factor[totalV] = num;
-            }
-        }
-
-        static List<int> Sieve(int n)
-        {
-            List<int> pr = new List<int>();
-            bool[] fl = new bool[n];
-            for (int i = 4; i < n; i += 2)
-            {
-                fl[i] = true;
-            }
-
-            for (int i = 3; i * i < n; i += 2)
-            {
-                if (fl[i])
-                {
-                    continue;
-                }
-
-                for (int j = i * i; j < n; j += i)
-                {
-                    fl[j] = true;
-                }
-            }
-
-            pr.Add(2);
-            for (int i = 3; i < n; i += 2)
-            {
-                if (fl[i])
-                {
-                    continue;
-                }
-
-                pr.Add(i);
-            }
-
-            return pr;
         }
 
         public static void Main(string[] args)
         {
 #if CLown1331
-            for (int testCase = 0; testCase < 3; testCase++)
+            for (int testCase = 0; testCase < 2; testCase++)
             {
                 Solve();
             }
@@ -144,7 +98,7 @@ namespace Csharp_Contest
                 Console.SetOut(new Printer(Console.OpenStandardOutput()));
             }
 
-            Thread t = new Thread(Solve, 134217728);
+            Thread t = new Thread(Solve, STACK_SIZE);
             t.Start();
             t.Join();
             Console.Out.Flush();
@@ -197,170 +151,165 @@ namespace Csharp_Contest
     using System.Collections.Generic;
     using System.Linq;
 
-    public class PushRelabel
+    /*
+     *  #import_Edge.cs
+     */
+    public class Dinic
     {
         private int nodes;
-        private List<Edge>[] adj;
-        private bool[] active;
-        private long[] excess;
-        private int[] dist;
-        private int[] count;
-        private List<int>[] B;
-        private int b;
+        private List<Edge> edges;
+        private List<int>[] adj;
+        private int[] level;
+        private int[] ptr;
 
-        internal class Edge
-        {
-            public int from;
-            public int to;
-            public long capacity;
-            public long flow;
-            public int index;
-
-            internal Edge()
-            {
-
-            }
-
-            internal Edge(int from, int to, long capacity, long flow, int index)
-            {
-                this.from = from;
-                this.to = to;
-                this.capacity = capacity;
-                this.flow = flow;
-                this.index = index;
-            }
-        }
-
-        public PushRelabel(int nodes)
+        public Dinic(int nodes)
         {
             this.nodes = nodes;
-            this.adj = Enumerable.Repeat(0, nodes).Select(_ => new List<Edge>()).ToArray();
-            this.active = new bool[nodes];
-            this.excess = new long[nodes];
-            this.count = new int[nodes + 1];
-            this.dist = new int[nodes];
-            this.B = Enumerable.Repeat(0, nodes).Select(_ => new List<int>()).ToArray();
+            this.edges = new List<Edge>();
+            this.adj = Enumerable.Repeat(0, nodes).Select(_ => new List<int>()).ToArray();
+            this.level = new int[nodes];
+            this.ptr = new int[nodes];
+        }
+
+        public void ClearFlow()
+        {
+            for (int i = 0; i < this.edges.Count; i++)
+            {
+                this.edges[i].flow = 0;
+            }
         }
 
         public void AddEdge(int from, int to, long capacity)
         {
-            this.adj[from].Add(new Edge(from, to, capacity, 0, this.adj[to].Count));
-            if (from == to)
-            {
-                this.adj[from].Last().index--;
-            }
-
-            this.adj[to].Add(new Edge(to, from, 0, 0, this.adj[from].Count - 1));
+            this.edges.Add(new Edge(from, to, capacity, 0, this.edges.Count + 1));
+            this.edges.Add(new Edge(to, from, 0, 0, this.edges.Count - 1));
+            this.adj[from].Add(this.edges.Count - 2);
+            this.adj[to].Add(this.edges.Count - 1);
         }
 
-        public long MaxFlow(int s, int t)
+        public long MaxFlow(int src, int sink)
         {
-            foreach (Edge e in this.adj[s])
+            long maxFlow = 0;
+            while (this.Bfs(src, sink))
             {
-                this.excess[s] += e.capacity;
-            }
-
-            this.count[0] = this.nodes;
-            this.Enqueue(s);
-            this.active[t] = true;
-
-            while (this.b >= 0)
-            {
-                if (this.B[this.b].Count > 0)
+                for (int i = 0; i < this.nodes; i++)
                 {
-                    int v = this.B[this.b].Last();
-                    this.B[this.b].RemoveAt(this.B[this.b].Count - 1);
-                    this.active[v] = false;
-                    this.Discharge(v);
+                    this.ptr[i] = 0;
                 }
-                else
+
+                long flow;
+                while ((flow = this.Dfs(src, sink, long.MaxValue)) > 0)
                 {
-                    this.b--;
+                    maxFlow += flow;
                 }
             }
 
-            return this.excess[t];
+            return maxFlow;
         }
 
-        private void Enqueue(int v)
+        public List<int> this[int i] => this.adj[i];
+
+        private bool Bfs(int src, int sink)
         {
-            if (!this.active[v] && this.excess[v] > 0 && this.dist[v] < this.nodes)
+
+            for (int i = 0; i < this.nodes; i++)
             {
-                this.active[v] = true;
-                this.B[this.dist[v]].Add(v);
-                this.b = Math.Max(this.b, this.dist[v]);
+                this.level[i] = -1;
             }
+
+            Queue<int> q = new Queue<int>();
+            this.level[src] = 0;
+            q.Enqueue(src);
+
+            while (q.Count > 0)
+            {
+                int u = q.Dequeue();
+                foreach (int v in this.adj[u])
+                {
+                    if (this.edges[v].capacity - this.edges[v].flow < 1)
+                    {
+                        continue;
+                    }
+
+                    if (this.level[this.edges[v].to] != -1)
+                    {
+                        continue;
+                    }
+
+                    this.level[this.edges[v].to] = this.level[u] + 1;
+                    q.Enqueue(this.edges[v].to);
+                }
+
+            }
+
+            return this.level[sink] != -1;
         }
 
-        private void Push(Edge e)
+        private long Dfs(int u, int t, long pushed)
         {
-            long amt = Math.Min(this.excess[e.from], e.capacity - e.flow);
-            if (this.dist[e.from] == this.dist[e.to] + 1 && amt > 0)
+            if (pushed == 0)
             {
-                e.flow += amt;
-                this.adj[e.to][e.index].flow -= amt;
-                this.excess[e.to] += amt;
-                this.excess[e.from] -= amt;
-                this.Enqueue(e.to);
+                return 0;
             }
+
+            if (u == t)
+            {
+                return pushed;
+            }
+
+            for (; this.ptr[u] < this.adj[u].Count; this.ptr[u]++)
+            {
+                int index = this.adj[u][this.ptr[u]];
+                int v = this.edges[index].to;
+                long candidate = this.edges[index].capacity - this.edges[index].flow;
+                if (this.level[u] + 1 != this.level[v] || candidate < 1)
+                {
+                    continue;
+                }
+
+                long flow = this.Dfs(v, t, Math.Min(pushed, candidate));
+                if (flow == 0)
+                {
+                    continue;
+                }
+
+                this.edges[index].flow += flow;
+                this.edges[index ^ 1].flow -= flow;
+                return flow;
+            }
+
+            return 0;
         }
 
-        private void Gap(int k)
+        public Edge GetEdge(int id)
         {
-            for (int v = 0; v < this.nodes; v++)
-            {
-                if (this.dist[v] >= k)
-                {
-                    this.count[this.dist[v]]--;
-                    this.dist[v] = Math.Max(this.dist[v], this.nodes);
-                    this.count[this.dist[v]]++;
-                    this.Enqueue(v);
-                }
-
-            }
-        }
-
-        private void Relabel(int v)
-        {
-            this.count[this.dist[v]]--;
-            this.dist[v] = this.nodes;
-            foreach (Edge e in this.adj[v])
-            {
-                if (e.capacity - e.flow > 0)
-                {
-                    this.dist[v] = Math.Min(this.dist[v], this.dist[e.to] + 1);
-                }
-            }
-
-            this.count[this.dist[v]]++;
-            this.Enqueue(v);
-        }
-
-        private void Discharge(int v)
-        {
-            for (int i = 0; i < this.adj[v].Count; i++)
-            {
-                if (this.excess[v] > 0)
-                {
-                    this.Push(this.adj[v][i]);
-                }
-                else
-                {
-                    break;
-                }
-            }
-
-            if (this.excess[v] > 0)
-            {
-                if (this.count[this.dist[v]] == 1)
-                {
-                    this.Gap(this.dist[v]);
-                }
-                else
-                {
-                    this.Relabel(v);
-                }
-            }
+            return this.edges[id];
         }
     }
+}
+namespace Csharp_Contest
+{
+    public class Edge
+    {
+        public int from;
+        public int to;
+        public long capacity;
+        public long flow;
+        public int index;
+
+        public Edge()
+        {
+
+        }
+
+        public Edge(int from, int to, long capacity, long flow, int index)
+        {
+            this.from = from;
+            this.to = to;
+            this.capacity = capacity;
+            this.flow = flow;
+            this.index = index;
+        }
+    }
+
 }

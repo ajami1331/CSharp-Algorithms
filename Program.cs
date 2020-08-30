@@ -9,129 +9,83 @@
     using System.Text;
     using System.Threading;
     /*
-     *  #import_PushRelabel.cs
+     *  #import_Dinic.cs
      */
     static class Program
     {
+        private const int STACK_SIZE = 64 * (1 << 20);
         private const int mod = (int)(1e9) + 7;
         private const int sz = (int)4e4;
-        private static List<int> primes;
-        private static int totalV;
-        private static int[] factor;
-        private static List<int>[] G;
 
         static void Solve()
         {
+            int[] ar = Repeat(0, 6).Select(_ => NextInt()).ToArray();
             int n = NextInt();
-            int m = NextInt();
-            G = Repeat(0, n).Select(_ => new List<int>()).ToArray();
-            primes = Sieve(sz);
-            factor = new int[sz];
-            totalV = 0;
-            int src = 0;
-            for (int i = 0; i < n; i++)
+            string[] shirts = new[]
             {
-                int x = NextInt();
-                Factorise(i, x);
+                "S",
+                "M",
+                "L",
+                "XL",
+                "XXL",
+                "XXXL",
+            };
+            Dictionary<string, int> mp = new Dictionary<string, int>();
+            for (int i = 0; i < 6; i++)
+            {
+                mp.Add(shirts[i], i + 1);
             }
 
-            int sink = totalV + 1;
-            PushRelabel flowGraph = new PushRelabel(sink + 1);
-
-            while (m-- > 0)
+            Dinic graph = new Dinic(2 + 6 + n);
+            int src = 0;
+            int sink = 1 + 6 + n;
+            for (int i = 0; i < 6; i++)
             {
-                int x = NextInt() - 1;
-                int y = NextInt() - 1;
-                if (x % 2 == 1)
+                graph.AddEdge(src, i + 1, ar[i]);
+            }
+
+            for (int i = 1; i <= n; i++)
+            {
+                foreach (string s in NextLine().Split(','))
                 {
-                    (x, y) = (y, x);
+                    graph.AddEdge(mp[s], i + 6, 1);
                 }
 
-                foreach (int u in G[x])
+                graph.AddEdge(i + 6, sink, 1);
+            }
+
+            string[] ans = new string[n + 8];
+
+            if (graph.MaxFlow(src, sink) == n)
+            {
+                Console.WriteLine("YES");
+                for (int i = 1; i <= 6; i++)
                 {
-                    foreach (int v in G[y])
+                    foreach (int id in graph[i])
                     {
-                        if (factor[u] == factor[v])
+                        var e = graph.GetEdge(id);
+                        if (e.flow == 1)
                         {
-                            flowGraph.AddEdge(u, v, 1);
+                            ans[e.to] = shirts[i - 1];
                         }
                     }
                 }
 
-            }
-
-            for (int i = 0; i < n; i++)
-            {
-                foreach (int u in G[i])
+                for (int i = 7; i <= n + 6; i++)
                 {
-                    flowGraph.AddEdge(i % 2 == 1 ? u : src, i % 2 == 1 ? sink : u, 1);
+                    Console.WriteLine(ans[i]);
                 }
             }
-
-            Console.WriteLine("{0}", flowGraph.MaxFlow(src, sink));
-        }
-
-        private static void Factorise(int i, int num)
-        {
-            foreach (int x in primes)
+            else
             {
-                while (num % x == 0)
-                {
-                    num /= x;
-                    totalV++;
-                    G[i].Add(totalV);
-                    factor[totalV] = x;
-                }
+                Console.WriteLine("NO");
             }
-
-            if (num > 1)
-            {
-                totalV++;
-                G[i].Add(totalV);
-                factor[totalV] = num;
-            }
-        }
-
-        static List<int> Sieve(int n)
-        {
-            List<int> pr = new List<int>();
-            bool[] fl = new bool[n];
-            for (int i = 4; i < n; i += 2)
-            {
-                fl[i] = true;
-            }
-
-            for (int i = 3; i * i < n; i += 2)
-            {
-                if (fl[i])
-                {
-                    continue;
-                }
-
-                for (int j = i * i; j < n; j += i)
-                {
-                    fl[j] = true;
-                }
-            }
-
-            pr.Add(2);
-            for (int i = 3; i < n; i += 2)
-            {
-                if (fl[i])
-                {
-                    continue;
-                }
-
-                pr.Add(i);
-            }
-
-            return pr;
         }
 
         public static void Main(string[] args)
         {
 #if CLown1331
-            for (int testCase = 0; testCase < 3; testCase++)
+            for (int testCase = 0; testCase < 2; testCase++)
             {
                 Solve();
             }
@@ -144,7 +98,7 @@
                 Console.SetOut(new Printer(Console.OpenStandardOutput()));
             }
 
-            Thread t = new Thread(Solve, 134217728);
+            Thread t = new Thread(Solve, STACK_SIZE);
             t.Start();
             t.Join();
             Console.Out.Flush();
