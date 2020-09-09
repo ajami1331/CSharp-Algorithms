@@ -9,83 +9,57 @@ namespace Csharp_Contest
     using System.Text;
     using System.Threading;
     /*
-     *  #import_Dinic.cs
+     *  #import_DisjointSet.cs
      */
     static class Program
     {
-        private const int STACK_SIZE = 64 * (1 << 20);
-        private const int mod = (int)(1e9) + 7;
-        private const int sz = (int)4e4;
+        private const int STACK_SIZE = 32 * (1 << 20);
+        private const int sz = (int) 1e5 + 10;
+        private static int[] ar;
 
         static void Solve()
         {
-            int[] ar = Repeat(0, 6).Select(_ => NextInt()).ToArray();
             int n = NextInt();
-            string[] shirts = new[]
+            int m = NextInt();
+            DisjointSet dsu = new DisjointSet(n);
+            ar = Repeat(0, n).Select((_, index) => 0).ToArray();
+            while (m-- > 0)
             {
-                "S",
-                "M",
-                "L",
-                "XL",
-                "XXL",
-                "XXXL",
-            };
-            Dictionary<string, int> mp = new Dictionary<string, int>();
-            for (int i = 0; i < 6; i++)
-            {
-                mp.Add(shirts[i], i + 1);
-            }
-
-            Dinic graph = new Dinic(2 + 6 + n);
-            int src = 0;
-            int sink = 1 + 6 + n;
-            for (int i = 0; i < 6; i++)
-            {
-                graph.AddEdge(src, i + 1, ar[i]);
-            }
-
-            for (int i = 1; i <= n; i++)
-            {
-                foreach (string s in NextLine().Split(','))
+                string s = NextString();
+                if (s.Equals("join"))
                 {
-                    graph.AddEdge(mp[s], i + 6, 1);
+                    int u = NextInt() - 1;
+                    int v = NextInt() - 1;
+                    dsu.MergeSet(u, v);
                 }
-
-                graph.AddEdge(i + 6, sink, 1);
-            }
-
-            string[] ans = new string[n + 8];
-
-            if (graph.MaxFlow(src, sink) == n)
-            {
-                Console.WriteLine("YES");
-                for (int i = 1; i <= 6; i++)
+                else if (s.Equals("add"))
                 {
-                    foreach (int id in graph[i])
-                    {
-                        var e = graph.GetEdge(id);
-                        if (e.flow == 1)
-                        {
-                            ans[e.to] = shirts[i - 1];
-                        }
-                    }
+                    int u = NextInt() - 1;
+                    int v = NextInt();
+                    ar[dsu[u]] += v;
                 }
-
-                for (int i = 7; i <= n + 6; i++)
+                else
                 {
-                    Console.WriteLine(ans[i]);
+                    int u = NextInt() - 1;
+                    Console.WriteLine($"{Traverse(u, dsu)}");
                 }
             }
-            else
+        }
+
+        private static int Traverse(int u, DisjointSet dsu)
+        {
+            if (dsu.RealParent[u] == u)
             {
-                Console.WriteLine("NO");
+                return ar[u];
             }
+
+            return ar[u] + Traverse(dsu.RealParent[u], dsu);
         }
 
         public static void Main(string[] args)
         {
 #if CLown1331
-            for (int testCase = 0; testCase < 2; testCase++)
+            for (int testCase = 0; testCase < 1; testCase++)
             {
                 Solve();
             }
@@ -147,169 +121,74 @@ namespace Csharp_Contest
 }
 namespace Csharp_Contest
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-
-    /*
-     *  #import_Edge.cs
-     */
-    public class Dinic
+    public class DisjointSet
     {
-        private int nodes;
-        private List<Edge> edges;
-        private List<int>[] adj;
-        private int[] level;
-        private int[] ptr;
+        private int size;
+        private int[] parent;
 
-        public Dinic(int nodes)
+        public int NumberOfComponent { get; private set; }
+
+        public int[] Count { get; }
+
+        public int[] RealParent { get; }
+
+        public int this[int u] => this.FindParent(u);
+
+        public DisjointSet(int size)
         {
-            this.nodes = nodes;
-            this.edges = new List<Edge>();
-            this.adj = Enumerable.Repeat(0, nodes).Select(_ => new List<int>()).ToArray();
-            this.level = new int[nodes];
-            this.ptr = new int[nodes];
+            this.size = size;
+            this.NumberOfComponent = size;
+            this.parent = new int[size];
+            this.RealParent = new int[size];
+            this.Count = new int[size];
+            this.Reset();
         }
 
-        public void ClearFlow()
+        public void Reset()
         {
-            for (int i = 0; i < this.edges.Count; i++)
+            for (int i = 0; i < this.size; i++)
             {
-                this.edges[i].flow = 0;
+                this.Count[i] = 1;
+                this.parent[i] = i;
+                this.RealParent[i] = i;
             }
+
+            this.NumberOfComponent = this.size;
         }
 
-        public void AddEdge(int from, int to, long capacity)
+        public int FindParent(int u)
         {
-            this.edges.Add(new Edge(from, to, capacity, 0, this.edges.Count + 1));
-            this.edges.Add(new Edge(to, from, 0, 0, this.edges.Count - 1));
-            this.adj[from].Add(this.edges.Count - 2);
-            this.adj[to].Add(this.edges.Count - 1);
+            if (this.parent[u] == u)
+            {
+                return u;
+            }
+
+            return this.parent[u] = this.FindParent(this.parent[u]);
         }
 
-        public long MaxFlow(int src, int sink)
+        public bool IsSameSet(int u, int v)
         {
-            long maxFlow = 0;
-            while (this.Bfs(src, sink))
-            {
-                for (int i = 0; i < this.nodes; i++)
-                {
-                    this.ptr[i] = 0;
-                }
-
-                long flow;
-                while ((flow = this.Dfs(src, sink, long.MaxValue)) > 0)
-                {
-                    maxFlow += flow;
-                }
-            }
-
-            return maxFlow;
+            return this.FindParent(u) == this.FindParent(v);
         }
 
-        public List<int> this[int i] => this.adj[i];
-
-        private bool Bfs(int src, int sink)
+        public void MergeSet(int u, int v)
         {
-
-            for (int i = 0; i < this.nodes; i++)
+            if (this.IsSameSet(u, v))
             {
-                this.level[i] = -1;
+                return;
             }
 
-            Queue<int> q = new Queue<int>();
-            this.level[src] = 0;
-            q.Enqueue(src);
-
-            while (q.Count > 0)
+            u = this.FindParent(u);
+            v = this.FindParent(v);
+            if (this.Count[u] < this.Count[v])
             {
-                int u = q.Dequeue();
-                foreach (int v in this.adj[u])
-                {
-                    if (this.edges[v].capacity - this.edges[v].flow < 1)
-                    {
-                        continue;
-                    }
-
-                    if (this.level[this.edges[v].to] != -1)
-                    {
-                        continue;
-                    }
-
-                    this.level[this.edges[v].to] = this.level[u] + 1;
-                    q.Enqueue(this.edges[v].to);
-                }
-
+                (u, v) = (v, u);
             }
 
-            return this.level[sink] != -1;
-        }
-
-        private long Dfs(int u, int t, long pushed)
-        {
-            if (pushed == 0)
-            {
-                return 0;
-            }
-
-            if (u == t)
-            {
-                return pushed;
-            }
-
-            for (; this.ptr[u] < this.adj[u].Count; this.ptr[u]++)
-            {
-                int index = this.adj[u][this.ptr[u]];
-                int v = this.edges[index].to;
-                long candidate = this.edges[index].capacity - this.edges[index].flow;
-                if (this.level[u] + 1 != this.level[v] || candidate < 1)
-                {
-                    continue;
-                }
-
-                long flow = this.Dfs(v, t, Math.Min(pushed, candidate));
-                if (flow == 0)
-                {
-                    continue;
-                }
-
-                this.edges[index].flow += flow;
-                this.edges[index ^ 1].flow -= flow;
-                return flow;
-            }
-
-            return 0;
-        }
-
-        public Edge GetEdge(int id)
-        {
-            return this.edges[id];
+            this.parent[u] = this.parent[v];
+            this.RealParent[u] = this.RealParent[v];
+            this.Count[v] += this.Count[u];
+            this.NumberOfComponent--;
         }
     }
-}
-namespace Csharp_Contest
-{
-    public class Edge
-    {
-        public int from;
-        public int to;
-        public long capacity;
-        public long flow;
-        public int index;
-
-        public Edge()
-        {
-
-        }
-
-        public Edge(int from, int to, long capacity, long flow, int index)
-        {
-            this.from = from;
-            this.to = to;
-            this.capacity = capacity;
-            this.flow = flow;
-            this.index = index;
-        }
-    }
-
 }

@@ -9,83 +9,57 @@
     using System.Text;
     using System.Threading;
     /*
-     *  #import_Dinic.cs
+     *  #import_DisjointSet.cs
      */
     static class Program
     {
-        private const int STACK_SIZE = 64 * (1 << 20);
-        private const int mod = (int)(1e9) + 7;
-        private const int sz = (int)4e4;
+        private const int STACK_SIZE = 32 * (1 << 20);
+        private const int sz = (int) 1e5 + 10;
+        private static int[] ar;
 
         static void Solve()
         {
-            int[] ar = Repeat(0, 6).Select(_ => NextInt()).ToArray();
             int n = NextInt();
-            string[] shirts = new[]
+            int m = NextInt();
+            DisjointSet dsu = new DisjointSet(n);
+            ar = Repeat(0, n).Select((_, index) => 0).ToArray();
+            while (m-- > 0)
             {
-                "S",
-                "M",
-                "L",
-                "XL",
-                "XXL",
-                "XXXL",
-            };
-            Dictionary<string, int> mp = new Dictionary<string, int>();
-            for (int i = 0; i < 6; i++)
-            {
-                mp.Add(shirts[i], i + 1);
-            }
-
-            Dinic graph = new Dinic(2 + 6 + n);
-            int src = 0;
-            int sink = 1 + 6 + n;
-            for (int i = 0; i < 6; i++)
-            {
-                graph.AddEdge(src, i + 1, ar[i]);
-            }
-
-            for (int i = 1; i <= n; i++)
-            {
-                foreach (string s in NextLine().Split(','))
+                string s = NextString();
+                if (s.Equals("join"))
                 {
-                    graph.AddEdge(mp[s], i + 6, 1);
+                    int u = NextInt() - 1;
+                    int v = NextInt() - 1;
+                    dsu.MergeSet(u, v);
                 }
-
-                graph.AddEdge(i + 6, sink, 1);
-            }
-
-            string[] ans = new string[n + 8];
-
-            if (graph.MaxFlow(src, sink) == n)
-            {
-                Console.WriteLine("YES");
-                for (int i = 1; i <= 6; i++)
+                else if (s.Equals("add"))
                 {
-                    foreach (int id in graph[i])
-                    {
-                        var e = graph.GetEdge(id);
-                        if (e.flow == 1)
-                        {
-                            ans[e.to] = shirts[i - 1];
-                        }
-                    }
+                    int u = NextInt() - 1;
+                    int v = NextInt();
+                    ar[dsu[u]] += v;
                 }
-
-                for (int i = 7; i <= n + 6; i++)
+                else
                 {
-                    Console.WriteLine(ans[i]);
+                    int u = NextInt() - 1;
+                    Console.WriteLine($"{Traverse(u, dsu)}");
                 }
             }
-            else
+        }
+
+        private static int Traverse(int u, DisjointSet dsu)
+        {
+            if (dsu.RealParent[u] == u)
             {
-                Console.WriteLine("NO");
+                return ar[u];
             }
+
+            return ar[u] + Traverse(dsu.RealParent[u], dsu);
         }
 
         public static void Main(string[] args)
         {
 #if CLown1331
-            for (int testCase = 0; testCase < 2; testCase++)
+            for (int testCase = 0; testCase < 1; testCase++)
             {
                 Solve();
             }

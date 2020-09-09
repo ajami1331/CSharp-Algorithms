@@ -1,12 +1,7 @@
-0 1 0 1 1 0
-3
-XL
-S,M
-XL,XXL
-1 1 2 0 1 1
-5
-S
-M
-S,M
-XXL,XXXL
-XL,XXL
+3 6
+add 1 100
+join 1 3
+add 1 50
+get 1
+get 2
+get 3
