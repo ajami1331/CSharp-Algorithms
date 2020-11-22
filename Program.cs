@@ -8,52 +8,69 @@
     using System.Linq;
     using System.Text;
     using System.Threading;
+
     /*
-     *  #import_DisjointSet.cs
+     *
      */
+
     static class Program
     {
-        private const int STACK_SIZE = 32 * (1 << 20);
-        private const int sz = (int) 1e5 + 10;
-        private static int[] ar;
+        private const int STACK_SIZE = 64 * (1 << 20);
+        private const int sz = (int)1e5 + 10;
+        private static long[] ar;
 
-        static void Solve()
+        private static void Solve()
         {
-            int n = NextInt();
-            int m = NextInt();
-            DisjointSet dsu = new DisjointSet(n);
-            ar = Repeat(0, n).Select((_, index) => 0).ToArray();
-            while (m-- > 0)
+            int t = NextInt();
+            while (t-- > 0)
             {
-                string s = NextString();
-                if (s.Equals("join"))
+                int n = NextInt();
+                int k = NextInt();
+                string a = NextLine();
+                string b = NextLine();
+                Dictionary<char, int> aDict = new Dictionary<char, int>();
+                Dictionary<char, int> bDict = new Dictionary<char, int>();
+                for (char c = 'a'; c <= 'z'; c++)
                 {
-                    int u = NextInt() - 1;
-                    int v = NextInt() - 1;
-                    dsu.MergeSet(u, v);
+                    aDict.Add(c, 0);
+                    bDict.Add(c, 0);
                 }
-                else if (s.Equals("add"))
-                {
-                    int u = NextInt() - 1;
-                    int v = NextInt();
-                    ar[dsu[u]] += v;
-                }
-                else
-                {
-                    int u = NextInt() - 1;
-                    Console.WriteLine($"{Traverse(u, dsu)}");
-                }
-            }
-        }
 
-        private static int Traverse(int u, DisjointSet dsu)
-        {
-            if (dsu.RealParent[u] == u)
-            {
-                return ar[u];
-            }
+                for (int i = 0; i < n; i++)
+                {
+                    aDict[a[i]]++;
+                    bDict[b[i]]++;
+                }
 
-            return ar[u] + Traverse(dsu.RealParent[u], dsu);
+                bool fl = true;
+
+                for (char c = 'a'; c <= 'z'; c++)
+                {
+                    int h = aDict[c] - bDict[c];
+                    if (h < 0)
+                    {
+                        fl = false;
+                        break;
+                    }
+
+                    if (c != 'z')
+                    {
+                        int nA = (h % k) + bDict[c];
+                        aDict[(char)(c + 1)] += aDict[c] - nA;
+                        aDict[c] = nA;
+                    }
+                }
+
+                for (char c = 'a'; c <= 'z'; c++)
+                {
+                    if (aDict[c] != bDict[c])
+                    {
+                        fl = false;
+                    }
+                }
+
+                Console.WriteLine(fl ? "Yes" : "No");
+            }
         }
 
         public static void Main(string[] args)
@@ -67,15 +84,15 @@
             Utils.CreateFileForSubmission();
             if (Debugger.IsAttached) Thread.Sleep(Timeout.Infinite);
 #else
-            if (args.Length == 0)
-            {
-                Console.SetOut(new Printer(Console.OpenStandardOutput()));
-            }
-
-            Thread t = new Thread(Solve, STACK_SIZE);
-            t.Start();
-            t.Join();
-            Console.Out.Flush();
+                if (args.Length == 0)
+                {
+                    Console.SetOut(new Printer(Console.OpenStandardOutput()));
+                }
+     
+                Thread t = new Thread(Solve, STACK_SIZE);
+                t.Start();
+                t.Join();
+                Console.Out.Flush();
 #endif
         }
 
