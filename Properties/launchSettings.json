@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "Csharp-Contest": {
-      "commandName": "Project",
-      "commandLineArgs": "< \"$(ProjectDir)input.txt\""
-    }
-  }
-}

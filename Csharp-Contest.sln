@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29806.167
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Csharp-Contest", "Csharp-Contest.csproj", "{359B43EF-63A1-48AE-8856-673C7BB2A8EF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Csharp-Contest", "Csharp-Contest\Csharp-Contest.csproj", "{49212E48-6281-442E-9204-CD16EF872A7F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{359B43EF-63A1-48AE-8856-673C7BB2A8EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{359B43EF-63A1-48AE-8856-673C7BB2A8EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{359B43EF-63A1-48AE-8856-673C7BB2A8EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{359B43EF-63A1-48AE-8856-673C7BB2A8EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49212E48-6281-442E-9204-CD16EF872A7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49212E48-6281-442E-9204-CD16EF872A7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49212E48-6281-442E-9204-CD16EF872A7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49212E48-6281-442E-9204-CD16EF872A7F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
