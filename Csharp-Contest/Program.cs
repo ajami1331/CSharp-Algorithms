@@ -17,60 +17,75 @@
     {
         private const int STACK_SIZE = 64 * (1 << 20);
         private const int sz = (int)1e5 + 10;
-        private static long[] ar;
 
         private static void Solve()
         {
-            int t = NextInt();
-            while (t-- > 0)
+            int n = NextInt();
+            int xor1_2 = Xor(1, 2);
+            int xor2_3= Xor(2, 3);
+            int xor1_3 = xor1_2 ^ xor2_3;
+            int and1_2 = And(1, 2);
+            int and2_3 = And(2, 3);
+            int and1_3 = And(1, 3);
+            int add1_2 = xor1_2 + and1_2 + and1_2;
+            int add1_3 = xor1_3 + and1_3 + and1_3;
+            int add2_3 = xor2_3 + and2_3 + and2_3;
+            int[] ans = new int[n + 1];
+            ans[1] = (add1_2 - add2_3 + add1_3) / 2;
+            ans[2] = add1_2 - ans[1];
+            ans[3] = add1_3 - ans[1];
+            for (int i = 4; i <= n; i++)
             {
-                int n = NextInt();
-                int k = NextInt();
-                string a = NextLine();
-                string b = NextLine();
-                Dictionary<char, int> aDict = new Dictionary<char, int>();
-                Dictionary<char, int> bDict = new Dictionary<char, int>();
-                for (char c = 'a'; c <= 'z'; c++)
-                {
-                    aDict.Add(c, 0);
-                    bDict.Add(c, 0);
-                }
-
-                for (int i = 0; i < n; i++)
-                {
-                    aDict[a[i]]++;
-                    bDict[b[i]]++;
-                }
-
-                bool fl = true;
-
-                for (char c = 'a'; c <= 'z'; c++)
-                {
-                    int h = aDict[c] - bDict[c];
-                    if (h < 0)
-                    {
-                        fl = false;
-                        break;
-                    }
-
-                    if (c != 'z')
-                    {
-                        int nA = (h % k) + bDict[c];
-                        aDict[(char)(c + 1)] += aDict[c] - nA;
-                        aDict[c] = nA;
-                    }
-                }
-
-                for (char c = 'a'; c <= 'z'; c++)
-                {
-                    if (aDict[c] != bDict[c])
-                    {
-                        fl = false;
-                    }
-                }
-
-                Console.WriteLine(fl ? "Yes" : "No");
+                ans[i] = Xor(1, i) ^ ans[1];
             }
+
+            Console.Write("!");
+            for (int i = 1; i <= n; i++)
+            {
+                Console.Write($" {ans[i]}");
+            }
+
+            Console.WriteLine();
+            Console.Out.Flush();
+        }
+
+        private static int Or(int a, int b)
+        {
+            Console.WriteLine($"OR {a} {b}");
+            Console.Out.Flush();
+            int v = NextInt();
+            if (v == -1)
+            {
+                Environment.Exit(0);
+            }
+
+            return v;
+        }
+
+        private static int And(int a, int b)
+        {
+            Console.WriteLine($"AND {a} {b}");
+            Console.Out.Flush();
+            int v = NextInt();
+            if (v == -1)
+            {
+                Environment.Exit(0);
+            }
+
+            return v;
+        }
+
+        private static int Xor(int a, int b)
+        {
+            Console.WriteLine($"XOR {a} {b}");
+            Console.Out.Flush();
+            int v = NextInt();
+            if (v == -1)
+            {
+                Environment.Exit(0);
+            }
+
+            return v;
         }
 
         public static void Main(string[] args)
