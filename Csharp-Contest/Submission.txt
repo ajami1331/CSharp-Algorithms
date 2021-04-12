@@ -15,77 +15,47 @@ namespace Csharp_Contest
 
     static class Program
     {
-        private const int STACK_SIZE = 64 * (1 << 20);
-        private const int sz = (int)1e5 + 10;
+        private const int StackSize = 64 * (1 << 20);
+        private const int Sz = (int)2e5 + 10;
+        private const int Mod = (int)1e9 + 7;
 
         private static void Solve()
         {
-            int n = NextInt();
-            int xor1_2 = Xor(1, 2);
-            int xor2_3= Xor(2, 3);
-            int xor1_3 = xor1_2 ^ xor2_3;
-            int and1_2 = And(1, 2);
-            int and2_3 = And(2, 3);
-            int and1_3 = And(1, 3);
-            int add1_2 = xor1_2 + and1_2 + and1_2;
-            int add1_3 = xor1_3 + and1_3 + and1_3;
-            int add2_3 = xor2_3 + and2_3 + and2_3;
-            int[] ans = new int[n + 1];
-            ans[1] = (add1_2 - add2_3 + add1_3) / 2;
-            ans[2] = add1_2 - ans[1];
-            ans[3] = add1_3 - ans[1];
-            for (int i = 4; i <= n; i++)
+            int[,] dp = new int[Sz, 10];
+            for (int j = 0; j <= 9; j++)
             {
-                ans[i] = Xor(1, i) ^ ans[1];
+                dp[0, j] = 1;
             }
 
-            Console.Write("!");
-            for (int i = 1; i <= n; i++)
+            for (int i = 1; i < Sz; i++)
             {
-                Console.Write($" {ans[i]}");
+                for (int j = 0; j <= 9; j++)
+                {
+                    if (j == 9)
+                    {
+                        dp[i, j] = (dp[i, j] + dp[i - 1, 0]) % Mod;
+                        dp[i, j] = (dp[i, j] + dp[i - 1, 1]) % Mod;
+                        continue;
+                    }
+
+                    dp[i, j] = (dp[i, j] + dp[i - 1, j + 1]) % Mod;
+                }
             }
 
-            Console.WriteLine();
-            Console.Out.Flush();
-        }
-
-        private static int Or(int a, int b)
-        {
-            Console.WriteLine($"OR {a} {b}");
-            Console.Out.Flush();
-            int v = NextInt();
-            if (v == -1)
+            int t = NextInt();
+            int ans = 0;
+            for (int cases = 1; cases <= t; cases++)
             {
-                Environment.Exit(0);
+                ans = 0;
+                string n = NextString();
+                int m = NextInt();
+                foreach (char c in n)
+                {
+                    ans = (ans + dp[m, c - '0']) % Mod;
+                }
+
+                OutputPrinter.WriteLine(ans);
             }
-
-            return v;
-        }
-
-        private static int And(int a, int b)
-        {
-            Console.WriteLine($"AND {a} {b}");
-            Console.Out.Flush();
-            int v = NextInt();
-            if (v == -1)
-            {
-                Environment.Exit(0);
-            }
-
-            return v;
-        }
-
-        private static int Xor(int a, int b)
-        {
-            Console.WriteLine($"XOR {a} {b}");
-            Console.Out.Flush();
-            int v = NextInt();
-            if (v == -1)
-            {
-                Environment.Exit(0);
-            }
-
-            return v;
         }
 
         public static void Main(string[] args)
@@ -99,55 +69,103 @@ namespace Csharp_Contest
             Utils.CreateFileForSubmission();
             if (Debugger.IsAttached) Thread.Sleep(Timeout.Infinite);
 #else
-                if (args.Length == 0)
-                {
-                    Console.SetOut(new Printer(Console.OpenStandardOutput()));
-                }
-     
-                Thread t = new Thread(Solve, STACK_SIZE);
-                t.Start();
-                t.Join();
-                Console.Out.Flush();
+            Thread t = new Thread(Solve, StackSize);
+            t.Start();
+            t.Join();
 #endif
+            OutputPrinter.Flush();
+            ErrorPrinter.Flush();
         }
 
-        static int NextInt() => int.Parse(Console_.NextString());
-        static long NextLong() => long.Parse(Console_.NextString());
-        static double NextDouble() => double.Parse(Console_.NextString());
-        static string NextString() => Console_.NextString();
-        static string NextLine() => Console.ReadLine();
-        static IEnumerable<T> OrderByRand<T>(this IEnumerable<T> x) => x.OrderBy(_ => xorshift);
-        static long Count<T>(this IEnumerable<T> x, Func<T, bool> pred) => Enumerable.Count(x, pred);
-        static IEnumerable<T> Repeat<T>(T v, long n) => Enumerable.Repeat<T>(v, (int)n);
-        static IEnumerable<int> Range(long s, long c) => Enumerable.Range((int)s, (int)c);
-        static uint xorshift { get { _xsi.MoveNext(); return _xsi.Current; } }
-        static IEnumerator<uint> _xsi = _xsc(); static IEnumerator<uint> _xsc() { uint x = 123456789, y = 362436069, z = 521288629, w = (uint)(DateTime.Now.Ticks & 0xffffffff); while (true) { var t = x ^ (x << 11); x = y; y = z; z = w; w = (w ^ (w >> 19)) ^ (t ^ (t >> 8)); yield return w; } }
+        private static int NextInt() => int.Parse(Reader.NextString());
 
-        static class Console_
+        private static long NextLong() => long.Parse(Reader.NextString());
+
+        private static double NextDouble() => double.Parse(Reader.NextString());
+
+        private static string NextString() => Reader.NextString();
+
+        private static string NextLine() => Reader.ReadLine();
+
+        private static IEnumerable<T> OrderByRand<T>(this IEnumerable<T> x) => x.OrderBy(_ => XorShift);
+
+        private static long Count<T>(this IEnumerable<T> x, Func<T, bool> pred) => Enumerable.Count(x, pred);
+
+        private static IEnumerable<T> Repeat<T>(T v, long n) => Enumerable.Repeat<T>(v, (int)n);
+
+        private static IEnumerable<int> Range(long s, long c) => Enumerable.Range((int)s, (int)c);
+
+        private static uint XorShift
         {
-            static Queue<string> param = new Queue<string>();
+            get
+            {
+                Xsc().MoveNext();
+                return Xsc().Current;
+            }
+        }
+
+        private static IEnumerator<uint> Xsc()
+        {
+            uint x = 123456789, y = 362436069, z = 521288629, w = (uint)(DateTime.Now.Ticks & 0xffffffff);
+            while (true)
+            {
+                uint t = x ^ (x << 11);
+                x = y;
+                y = z;
+                z = w;
+                w = (w ^ (w >> 19)) ^ (t ^ (t >> 8));
+                yield return w;
+            }
+        }
+
+        private static class Reader
+        {
+            private static readonly Queue<string> Param = new Queue<string>();
+#if CLown1331
+            private static readonly StreamReader InputReader = new StreamReader("input.txt");
+#else
+            private static readonly StreamReader InputReader = new StreamReader(Console.OpenStandardInput());
+#endif
+
             public static string NextString()
             {
-                if (param.Count == 0)
+                if (Param.Count == 0)
                 {
-                    foreach (string item in NextLine().Split(' '))
+                    foreach (string item in ReadLine().Split(' '))
                     {
                         if (string.IsNullOrWhiteSpace(item))
                         {
                             continue;
                         }
 
-                        param.Enqueue(item);
+                        Param.Enqueue(item);
                     }
                 }
-                return param.Dequeue();
+
+                return Param.Dequeue();
+            }
+
+            public static string ReadLine()
+            {
+                return InputReader.ReadLine();
             }
         }
-        class Printer : StreamWriter
+
+        private static Printer OutputPrinter = new Printer(Console.OpenStandardOutput());
+
+        private static Printer ErrorPrinter = new Printer(Console.OpenStandardError());
+
+        private sealed class Printer : StreamWriter
         {
+            public Printer(Stream stream)
+                : base(stream, new UTF8Encoding(false, true)) =>
+                this.AutoFlush = false;
+
+            public Printer(Stream stream, Encoding encoding)
+                : base(stream, encoding) =>
+                this.AutoFlush = false;
+
             public override IFormatProvider FormatProvider => CultureInfo.InvariantCulture;
-            public Printer(Stream stream) : base(stream, new UTF8Encoding(false, true)) { base.AutoFlush = false; }
-            public Printer(Stream stream, Encoding encoding) : base(stream, encoding) { base.AutoFlush = false; }
         }
     }
 }
