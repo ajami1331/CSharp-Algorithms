@@ -10,58 +10,28 @@ namespace Csharp_Contest
     using System.Threading;
 
     /*
-     *
+     * 
      */
 
     static class Program
     {
-        private const int StackSize = 64 * (1 << 20);
+        private const int StackSize = 32 * (1 << 20);
         private const int Sz = (int)2e5 + 10;
         private const int Mod = (int)1e9 + 7;
+        private static int n;
+        private static BitMap dp;
+        private static BitMap vp;
+        private static List<int> ar;
 
         private static void Solve()
         {
-            int[,] dp = new int[Sz, 10];
-            for (int j = 0; j <= 9; j++)
-            {
-                dp[0, j] = 1;
-            }
 
-            for (int i = 1; i < Sz; i++)
-            {
-                for (int j = 0; j <= 9; j++)
-                {
-                    if (j == 9)
-                    {
-                        dp[i, j] = (dp[i, j] + dp[i - 1, 0]) % Mod;
-                        dp[i, j] = (dp[i, j] + dp[i - 1, 1]) % Mod;
-                        continue;
-                    }
-
-                    dp[i, j] = (dp[i, j] + dp[i - 1, j + 1]) % Mod;
-                }
-            }
-
-            int t = NextInt();
-            int ans = 0;
-            for (int cases = 1; cases <= t; cases++)
-            {
-                ans = 0;
-                string n = NextString();
-                int m = NextInt();
-                foreach (char c in n)
-                {
-                    ans = (ans + dp[m, c - '0']) % Mod;
-                }
-
-                OutputPrinter.WriteLine(ans);
-            }
         }
 
         public static void Main(string[] args)
         {
 #if CLown1331
-            for (int testCase = 0; testCase < 1; testCase++)
+            for (int testCase = 0; testCase < 4; testCase++)
             {
                 Solve();
             }
@@ -151,19 +121,23 @@ namespace Csharp_Contest
             }
         }
 
-        private static Printer OutputPrinter = new Printer(Console.OpenStandardOutput());
+        private static readonly Printer OutputPrinter = new Printer(Console.OpenStandardOutput());
 
-        private static Printer ErrorPrinter = new Printer(Console.OpenStandardError());
+        private static readonly Printer ErrorPrinter = new Printer(Console.OpenStandardError());
 
         private sealed class Printer : StreamWriter
         {
             public Printer(Stream stream)
-                : base(stream, new UTF8Encoding(false, true)) =>
+                : base(stream, new UTF8Encoding(false, true))
+            {
                 this.AutoFlush = false;
+            }
 
             public Printer(Stream stream, Encoding encoding)
-                : base(stream, encoding) =>
+                : base(stream, encoding)
+            {
                 this.AutoFlush = false;
+            }
 
             public override IFormatProvider FormatProvider => CultureInfo.InvariantCulture;
         }

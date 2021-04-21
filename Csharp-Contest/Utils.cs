@@ -1,19 +1,21 @@
 ﻿namespace Csharp_Contest
 {
-    using System.Diagnostics;
-    using System.Linq;
-    using System.Text;
-    using System.IO;
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.IO;
+    using System.Linq;
+    using System.Text;
+
     public static class Utils
     {
         private const string Import = "#import_";
         private const string Library = "Library";
+
         public static void CreateFileForSubmission()
         {
             string path = Directory.GetCurrentDirectory();
-            path = Directory.GetParent(path).Parent.Parent.FullName;
+            path = Directory.GetParent(path)?.Parent.Parent.FullName;
             List<string> content = Process(path);
             string submissionFile = $"{path}/Submission.txt";
             using (StreamWriter w = File.CreateText(submissionFile))
@@ -23,6 +25,7 @@
                     w.WriteLine(line);
                 }
             }
+
             Console.WriteLine("Complete");
         }
 
@@ -52,9 +55,11 @@
                             files.Add(filePath);
                         }
                     }
+
                     content.Add(line);
                 }
             }
+
             return content;
         }
     }
