@@ -1,4 +1,4 @@
-﻿namespace Csharp_Contest
+﻿namespace CLown1331
 {
     using System;
     using System.Collections.Generic;
@@ -15,23 +15,77 @@
 
     static class Program
     {
-        private const int StackSize = 32 * (1 << 20);
+        private const int NumberOfTestCase = 1;
+        private const int StackSize = 64 * (1 << 20);
         private const int Sz = (int)2e5 + 10;
         private const int Mod = (int)1e9 + 7;
         private static int n;
-        private static BitMap dp;
-        private static BitMap vp;
+        private static int[,] dp = new int[2001, 2001];
         private static List<int> ar;
+        private static List<int> br = new List<int>();
 
         private static void Solve()
         {
+            int t = NextInt();
+            for (int cs = 1; cs <= t; cs++)
+            {
+                n = NextInt();
+                ar = Repeat(0, n).Select(_ => NextInt()).ToList();
+                br.Clear();
+                int _xor = 0;
+                br.Add(_xor);
+                for (int i = 0; i < n; i++)
+                {
+                    _xor ^= ar[i];
+                    br.Add(_xor);
+                }
 
+                for (int i = 0; i <= n; i++)
+                {
+                    for (int j = 0; j <= n; j++)
+                    {
+                        dp[i, j] = -1;
+                    }
+                }
+
+                bool fl = false;
+                for (int i = 0; i + 1 < n && fl == false; i++)
+                {
+                    fl = Possible(i + 2, i + 1) == 1;
+                }
+
+                OutputPrinter.WriteLine(fl ? "YES" : "NO");
+            }
+        }
+
+        private static int Possible(int x, int p)
+        {
+            if (x > n)
+            {
+                return 1;
+            }
+
+            if (dp[x, p] != -1)
+            {
+                return dp[x, p];
+            }
+
+            dp[x, p] = 0;
+            for (int i = x; i <= n; i++)
+            {
+                if ((br[i] ^ br[x - 1]) == br[p])
+                {
+                    dp[x, p] |= Possible(i + 1, p);
+                }
+            }
+
+            return dp[x, p];
         }
 
         public static void Main(string[] args)
         {
 #if CLown1331
-            for (int testCase = 0; testCase < 4; testCase++)
+            for (int testCase = 0; testCase < NumberOfTestCase; testCase++)
             {
                 Solve();
             }

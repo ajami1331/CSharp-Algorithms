@@ -4,7 +4,8 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp5</TargetFramework>
     <LangVersion>preview</LangVersion>
-    <RootNamespace>Csharp_Contest</RootNamespace>
+    <RootNamespace>CLown1331</RootNamespace>
+    <AssemblyName>CLown1331</AssemblyName>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
