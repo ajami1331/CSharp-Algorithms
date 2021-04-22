@@ -1,5 +1,6 @@
-﻿namespace CLown1331
+﻿namespace Library.LongMatrix
 {
+    using Library.Matrix;
 /*
  * #import_Matrix.cs
  */

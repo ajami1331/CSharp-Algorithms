@@ -1,15 +1,15 @@
-﻿namespace CLown1331
+﻿namespace Library.Bitmap
 {
     using System;
     using System.Collections;
     using System.Linq;
 
-    public class BitMap
+    public class Bitmap
     {
         private readonly BitArray bitArray;
         private readonly int[] dimensions;
 
-        public BitMap(params int[] dimensions)
+        public Bitmap(params int[] dimensions)
         {
             this.dimensions = dimensions;
             this.bitArray = new BitArray(this.dimensions.Aggregate((s, n) => s * n));

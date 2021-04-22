@@ -1,4 +1,4 @@
-﻿namespace CLown1331
+﻿namespace Library.EdmondsKarp
 {
     using System;
     using System.Collections.Generic;

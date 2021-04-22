@@ -1,4 +1,4 @@
-﻿namespace CLown1331
+﻿namespace Library.SegmentTreeLazy
 {
     using System;
     using System.Linq;

@@ -1,4 +1,4 @@
-﻿namespace CLown1331
+﻿namespace Library.Matrix
 {
     public abstract class Matrix<T>
     {

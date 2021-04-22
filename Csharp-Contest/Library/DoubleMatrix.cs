@@ -1,5 +1,6 @@
-﻿namespace CLown1331
+﻿namespace Library.DoubleMatrix
 {
+    using Library.Matrix;
 /*
  * #import_Matrix.cs
  */
