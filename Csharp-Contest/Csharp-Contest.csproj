@@ -23,6 +23,8 @@
     <None Update="input.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Compile Remove="Submission.cs" />
+    <None Include="Submission.cs" />
   </ItemGroup>
 
 </Project>

@@ -8,7 +8,6 @@
     using System.Linq;
     using System.Text;
     using System.Threading;
-    using Library.DisjointSet;
 
     /*
      *
@@ -16,29 +15,101 @@
 
     static class Program
     {
-        private const int NumberOfTestCase = 2;
-        private const int StackSize = 64 * (1 << 20);
+        private const int NumberOfTestCase = 3;
+        private const int StackSize = 256 * (1 << 20);
         private const int Sz = (int)2e5 + 10;
         private const int Mod = (int)1e9 + 7;
         private static int n;
+        private static int m;
+        private static int k;
+        private static int[,] ij1;
+        private static int[,] i1j;
+        private static int[,,] dp;
+        private static int[,,] vp;
+        private static int vv;
+        private static int mx = (int) 1e8;
 
         private static void Solve()
         {
             n = NextInt();
-            DisjointSet disjointSet = new DisjointSet(n);
+            m = NextInt();
+            k = NextInt();
+            i1j = new int[n, m];
+            ij1 = new int[n, m];
+            dp = new int[505, 505, 22];
+            vp = new int[505, 505, 22];
             for (int i = 0; i < n; i++)
             {
-                int x = NextInt() - 1;
-                disjointSet.MergeSet(x, i);
+                for (int j = 0; j + 1 < m; j++)
+                {
+                    ij1[i, j] = NextInt();
+                }
             }
 
-            int ans = 0;
+            for (int i = 0; i + 1 < n; i++)
+            {
+                for (int j = 0; j < m; j++)
+                {
+                    i1j[i, j] = NextInt();
+                }
+            }
+
+            int ans;
             for (int i = 0; i < n; i++)
             {
-                ans += (disjointSet[i] == i) ? 1 : 0;
+                for (int j = 0; j < m; j++)
+                {
+                    vv = 1;
+                    ans = Recur(k, i, j);
+                    OutputPrinter.Write(ans >= mx ? -1 : ans);
+                    OutputPrinter.Write(' ');
+                }
+
+                OutputPrinter.Write('\n');
+            }
+        }
+
+        private static int Recur(int kv, int ox, int oy)
+        {
+            if (ox < 0 || ox >= n || oy < 0 || oy >= m || kv < 0 || kv % 2 == 1)
+            {
+                return mx;
             }
 
-            OutputPrinter.WriteLine(ans);
+            if (kv == 0)
+            {
+                return 0;
+            }
+
+            if (vp[ox, oy, kv] == vv)
+            {
+                return dp[ox, oy, kv];
+            }
+
+            vp[ox, oy, kv] = vv;
+            dp[ox, oy, kv] = mx;
+
+            if (oy + 1 < m)
+            {
+                dp[ox, oy, kv] = Math.Min(dp[ox, oy, kv], Recur(kv - 2, ox, oy + 1) + ij1[ox, oy] * 2);
+            }
+
+            if (oy > 0)
+            {
+                dp[ox, oy, kv] = Math.Min(dp[ox, oy, kv], Recur(kv - 2, ox, oy - 1) + ij1[ox, oy - 1] * 2);
+            }
+
+            if (ox + 1 < n)
+            {
+                dp[ox, oy, kv] = Math.Min(dp[ox, oy, kv], Recur(kv - 2, ox + 1, oy) + i1j[ox, oy] * 2);
+            }
+
+            if (ox > 0)
+            {
+                dp[ox, oy, kv] = Math.Min(dp[ox, oy, kv], Recur(kv - 2, ox - 1, oy) + i1j[ox - 1, oy] * 2);
+            }
+
+            return dp[ox, oy, kv];
         }
 
         public static void Main(string[] args)
@@ -47,6 +118,7 @@
             for (int testCase = 0; testCase < NumberOfTestCase; testCase++)
             {
                 Solve();
+                OutputPrinter.WriteLine("--------");
             }
 
             Utils.CreateFileForSubmission();
@@ -78,12 +150,14 @@
 
         private static IEnumerable<int> Range(long s, long c) => Enumerable.Range((int)s, (int)c);
 
+        private static readonly IEnumerator<uint> Xsi = Xsc();
+
         private static uint XorShift
         {
             get
             {
-                Xsc().MoveNext();
-                return Xsc().Current;
+                Xsi.MoveNext();
+                return Xsi.Current;
             }
         }
 

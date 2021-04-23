@@ -18,7 +18,7 @@
             string path = Directory.GetCurrentDirectory();
             path = Directory.GetParent(path)?.Parent.Parent.FullName;
             List<string> content = ProcessUsing(path);
-            string submissionFile = $"{path}/Submission.txt";
+            string submissionFile = $"{path}/Submission.cs";
             using (StreamWriter w = File.CreateText(submissionFile))
             {
                 foreach (string line in content)
