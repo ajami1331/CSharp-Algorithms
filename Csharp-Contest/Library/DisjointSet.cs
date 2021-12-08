@@ -1,4 +1,9 @@
-﻿namespace Library.DisjointSet
+﻿// DisjointSet.cs
+// Authors: Araf Al-Jami
+// Created: 26-08-2020 11:48 PM
+// Updated: 08-07-2021 3:44 PM
+
+namespace Library.DisjointSet
 {
     public class DisjointSet
     {

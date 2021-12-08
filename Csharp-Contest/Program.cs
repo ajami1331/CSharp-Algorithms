@@ -1,4 +1,9 @@
-﻿namespace CLown1331
+﻿// Program.cs
+// Authors: Araf Al-Jami
+// Created: 23-11-2020 2:57 AM
+// Updated: 08-07-2021 3:44 PM
+
+namespace CLown1331
 {
     using System;
     using System.Collections.Generic;
@@ -8,6 +13,7 @@
     using System.Linq;
     using System.Text;
     using System.Threading;
+    using Library.EdmondsKarp;
 
     /*
      *
@@ -15,114 +21,75 @@
 
     static class Program
     {
-        private const int NumberOfTestCase = 3;
-        private const int StackSize = 256 * (1 << 20);
+        private const int NumberOfTestCase = 2;
+        private const int StackSize = 64 * (1 << 20);
         private const int Sz = (int)2e5 + 10;
         private const int Mod = (int)1e9 + 7;
-        private static int n;
-        private static int m;
-        private static int k;
-        private static int[,] ij1;
-        private static int[,] i1j;
-        private static int[,,] dp;
-        private static int[,,] vp;
-        private static int vv;
-        private static int mx = (int) 1e8;
+        private static int[] from;
+        private static int[] to;
+        private static double[] cap;
 
         private static void Solve()
         {
-            n = NextInt();
-            m = NextInt();
-            k = NextInt();
-            i1j = new int[n, m];
-            ij1 = new int[n, m];
-            dp = new int[505, 505, 22];
-            vp = new int[505, 505, 22];
-            for (int i = 0; i < n; i++)
+            int n = NextInt();
+            int m = NextInt();
+            int x = NextInt();
+            EdmondsKarp flowGraph = new EdmondsKarp(n);
+            from = new int[m];
+            to = new int[m];
+            cap = new double[m];
+            for (int i = 0; i < m; i++)
             {
-                for (int j = 0; j + 1 < m; j++)
-                {
-                    ij1[i, j] = NextInt();
-                }
+                from[i] = NextInt();
+                to[i] = NextInt();
+                cap[i] = NextInt();
+                --from[i];
+                --to[i];
             }
 
-            for (int i = 0; i + 1 < n; i++)
+            double lo = 1.0 / x, hi = 1e9, mid = 0;
+            int flow;
+
+            for (int iter = 0; iter < 128; iter++)
             {
+                mid = (lo + hi) / 2;
                 for (int j = 0; j < m; j++)
                 {
-                    i1j[i, j] = NextInt();
+                    flowGraph.SetEdgeCap(from[j], to[j], (int)(cap[j] / mid), false);
                 }
-            }
 
-            int ans;
-            for (int i = 0; i < n; i++)
-            {
-                for (int j = 0; j < m; j++)
+                flow = flowGraph.MaxFlow(0, n - 1);
+                if (flow >= x)
                 {
-                    vv = 1;
-                    ans = Recur(k, i, j);
-                    OutputPrinter.Write(ans >= mx ? -1 : ans);
-                    OutputPrinter.Write(' ');
+                    lo = mid;
                 }
-
-                OutputPrinter.Write('\n');
-            }
-        }
-
-        private static int Recur(int kv, int ox, int oy)
-        {
-            if (ox < 0 || ox >= n || oy < 0 || oy >= m || kv < 0 || kv % 2 == 1)
-            {
-                return mx;
+                else
+                {
+                    hi = mid;
+                }
             }
 
-            if (kv == 0)
-            {
-                return 0;
-            }
-
-            if (vp[ox, oy, kv] == vv)
-            {
-                return dp[ox, oy, kv];
-            }
-
-            vp[ox, oy, kv] = vv;
-            dp[ox, oy, kv] = mx;
-
-            if (oy + 1 < m)
-            {
-                dp[ox, oy, kv] = Math.Min(dp[ox, oy, kv], Recur(kv - 2, ox, oy + 1) + ij1[ox, oy] * 2);
-            }
-
-            if (oy > 0)
-            {
-                dp[ox, oy, kv] = Math.Min(dp[ox, oy, kv], Recur(kv - 2, ox, oy - 1) + ij1[ox, oy - 1] * 2);
-            }
-
-            if (ox + 1 < n)
-            {
-                dp[ox, oy, kv] = Math.Min(dp[ox, oy, kv], Recur(kv - 2, ox + 1, oy) + i1j[ox, oy] * 2);
-            }
-
-            if (ox > 0)
-            {
-                dp[ox, oy, kv] = Math.Min(dp[ox, oy, kv], Recur(kv - 2, ox - 1, oy) + i1j[ox - 1, oy] * 2);
-            }
-
-            return dp[ox, oy, kv];
+            OutputPrinter.WriteLine("{0:F16}", mid * x);
         }
 
         public static void Main(string[] args)
         {
 #if CLown1331
+            var stopWatch = new Stopwatch();
+            var totalTime = stopWatch.ElapsedMilliseconds;
+            stopWatch.Start();
             for (int testCase = 0; testCase < NumberOfTestCase; testCase++)
             {
+                stopWatch.Restart();
                 Solve();
-                OutputPrinter.WriteLine("--------");
+                stopWatch.Stop();
+                totalTime += stopWatch.ElapsedMilliseconds;
+                ErrorPrinter.WriteLine($"{testCase} -------- {stopWatch.ElapsedMilliseconds}ms");
             }
 
-            Utils.CreateFileForSubmission();
-            if (Debugger.IsAttached) Thread.Sleep(Timeout.Infinite);
+            ErrorPrinter.WriteLine($"Runtime: {totalTime}ms");
+            stopWatch.Restart();
+            Utils.CreateFileForSubmission(ErrorPrinter);
 #else
             Thread t = new Thread(Solve, StackSize);
             t.Start();
@@ -130,6 +97,7 @@
 #endif
             OutputPrinter.Flush();
             ErrorPrinter.Flush();
+            if (Debugger.IsAttached) Thread.Sleep(Timeout.Infinite);
         }
 
         private static int NextInt() => int.Parse(Reader.NextString());

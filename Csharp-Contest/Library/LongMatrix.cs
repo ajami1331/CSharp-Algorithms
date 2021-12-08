@@ -1,4 +1,9 @@
-﻿namespace Library.LongMatrix
+﻿// LongMatrix.cs
+// Authors: Araf Al-Jami
+// Created: 21-08-2020 2:52 PM
+// Updated: 08-07-2021 3:44 PM
+
+namespace Library.LongMatrix
 {
     using Library.Matrix;
 /*

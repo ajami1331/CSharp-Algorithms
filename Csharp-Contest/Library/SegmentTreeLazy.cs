@@ -1,4 +1,9 @@
-﻿namespace Library.SegmentTreeLazy
+﻿// SegmentTreeLazy.cs
+// Authors: Araf Al-Jami
+// Created: 15-09-2020 12:44 PM
+// Updated: 08-07-2021 3:44 PM
+
+namespace Library.SegmentTreeLazy
 {
     using System;
     using System.Linq;

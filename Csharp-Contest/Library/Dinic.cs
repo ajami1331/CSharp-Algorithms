@@ -1,4 +1,9 @@
-﻿namespace Library.Dinic
+﻿// Dinic.cs
+// Authors: Araf Al-Jami
+// Created: 28-08-2020 10:58 PM
+// Updated: 08-07-2021 3:44 PM
+
+namespace Library.Dinic
 {
     using System;
     using System.Collections.Generic;

@@ -1,4 +1,9 @@
-﻿namespace Library.UnsignedMatrix
+﻿// UnsignedMatrix.cs
+// Authors: Araf Al-Jami
+// Created: 22-08-2020 6:16 PM
+// Updated: 08-07-2021 3:44 PM
+
+namespace Library.UnsignedMatrix
 {
     using Library.Matrix;
 /*

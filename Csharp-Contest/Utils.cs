@@ -1,4 +1,11 @@
-﻿namespace CLown1331
+﻿// Utils.cs
+// Authors: Araf Al-Jami
+// Created: 23-08-2020 1:44 PM
+// Updated: 08-07-2021 3:44 PM
+
+using System.Diagnostics;
+
+namespace CLown1331
 {
     using System;
     using System.Collections.Generic;
@@ -13,11 +20,13 @@
         private const string NamespacePrefix = "Library.";
         private const string Library = "Library";
 
-        public static void CreateFileForSubmission()
+        public static void CreateFileForSubmission(StreamWriter writer)
         {
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
             string path = Directory.GetCurrentDirectory();
             path = Directory.GetParent(path)?.Parent.Parent.FullName;
-            List<string> content = ProcessUsing(path);
+            List<string> content = ProcessUsing(path, writer);
             string submissionFile = $"{path}/Submission.cs";
             using (StreamWriter w = File.CreateText(submissionFile))
             {
@@ -27,10 +36,11 @@
                 }
             }
 
-            Console.WriteLine("Complete");
+            stopWatch.Stop();
+            writer.WriteLine($"File created for submission: {stopWatch.ElapsedMilliseconds}ms");
         }
 
-        private static List<string> ProcessUsing(string path)
+        private static List<string> ProcessUsing(string path, StreamWriter writer)
         {
             string[] libraryFiles = Directory.GetFiles($"{path}/{Library}");
             List<string> content = new List<string>();
@@ -41,7 +51,7 @@
             while (queue.Count > 0)
             {
                 string u = queue.Dequeue();
-                Console.WriteLine(u);
+                writer.WriteLine(u);
                 foreach (string line in File.ReadAllLines(u))
                 {
                     if (line.Contains(Using))
@@ -70,7 +80,7 @@
             return content;
         }
 
-        private static List<string> ProcessImport(string path)
+        private static List<string> ProcessImport(string path, StreamWriter writer)
         {
             string[] libraryFiles = Directory.GetFiles($"{path}/{Library}");
             List<string> content = new List<string>();
@@ -81,7 +91,7 @@
             while (queue.Count > 0)
             {
                 string u = queue.Dequeue();
-                Console.WriteLine(u);
+                writer.WriteLine(u);
                 foreach (string line in File.ReadAllLines(u))
                 {
                     if (line.Contains(Import))

@@ -1,4 +1,9 @@
-﻿namespace Library.Bitmap
+﻿// Bitmap.cs
+// Authors: Araf Al-Jami
+// Created: 22-04-2021 5:16 AM
+// Updated: 08-07-2021 3:44 PM
+
+namespace Library.Bitmap
 {
     using System;
     using System.Collections;

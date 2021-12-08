@@ -1,4 +1,9 @@
-﻿namespace Library.Edge
+﻿// Edge.cs
+// Authors: Araf Al-Jami
+// Created: 30-08-2020 5:46 PM
+// Updated: 08-07-2021 3:44 PM
+
+namespace Library.Edge
 {
     public class Edge
     {
