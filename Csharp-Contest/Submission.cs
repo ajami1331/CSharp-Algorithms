@@ -13,7 +13,6 @@ namespace CLown1331
     using System.Linq;
     using System.Text;
     using System.Threading;
-    using Library.EdmondsKarp;
 
     /*
      *
@@ -25,51 +24,66 @@ namespace CLown1331
         private const int StackSize = 64 * (1 << 20);
         private const int Sz = (int)2e5 + 10;
         private const int Mod = (int)1e9 + 7;
-        private static int[] from;
-        private static int[] to;
-        private static double[] cap;
+        private static int n;
+        private static int foundCount;
+        private static int[] cnt;
+        private static int[] ar;
+        private static int maxLen;
+        private static StringBuilder sb;
+        private static LinkedList<string>[] ans;
 
         private static void Solve()
         {
-            int n = NextInt();
-            int m = NextInt();
-            int x = NextInt();
-            EdmondsKarp flowGraph = new EdmondsKarp(n);
-            from = new int[m];
-            to = new int[m];
-            cap = new double[m];
-            for (int i = 0; i < m; i++)
+            n = NextInt();
+            cnt = new int[1005];
+            maxLen = 0;
+            ar = Repeat(0, n).Select(_ =>
             {
-                from[i] = NextInt();
-                to[i] = NextInt();
-                cap[i] = NextInt();
-                --from[i];
-                --to[i];
-            }
-
-            double lo = 1.0 / x, hi = 1e9, mid = 0;
-            int flow;
-
-            for (int iter = 0; iter < 128; iter++)
+                int x = NextInt();
+                maxLen = Math.Max(maxLen, x);
+                cnt[x]++;
+                return x;
+            }).ToArray();
+            sb = new StringBuilder();
+            ans = Repeat(0, 1005).Select(_ => new LinkedList<string>()).ToArray();
+            foundCount = 0;
+            Traverse();
+            if (foundCount == n)
             {
-                mid = (lo + hi) / 2;
-                for (int j = 0; j < m; j++)
+                OutputPrinter.WriteLine("YES");
+                foreach (var x in ar)
                 {
-                    flowGraph.SetEdgeCap(from[j], to[j], (int)(cap[j] / mid), false);
-                }
-
-                flow = flowGraph.MaxFlow(0, n - 1);
-                if (flow >= x)
-                {
-                    lo = mid;
-                }
-                else
-                {
-                    hi = mid;
+                    OutputPrinter.WriteLine(ans[x].First());
+                    ans[x].RemoveFirst();
                 }
             }
+            else
+            {
+                OutputPrinter.WriteLine("NO");
+            }
+        }
 
-            OutputPrinter.WriteLine("{0:F16}", mid * x);
+        private static void Traverse()
+        {
+            if (sb.Length > maxLen || foundCount == n)
+            {
+                return;
+            }
+
+            if (cnt[sb.Length] > 0)
+            {
+                cnt[sb.Length]--;
+                foundCount++;
+                ans[sb.Length].AddLast(sb.ToString());
+                return;
+            }
+
+            sb.Append('0');
+            Traverse();
+            sb.Remove(sb.Length - 1, 1);
+            sb.Append('1');
+            Traverse();
+            sb.Remove(sb.Length - 1, 1);
         }
 
         public static void Main(string[] args)
@@ -90,14 +104,14 @@ namespace CLown1331
             ErrorPrinter.WriteLine($"Runtime: {totalTime}ms");
             stopWatch.Restart();
             Utils.CreateFileForSubmission(ErrorPrinter);
+            if (Debugger.IsAttached) Thread.Sleep(Timeout.Infinite);
 #else
             Thread t = new Thread(Solve, StackSize);
             t.Start();
             t.Join();
-#endif
             OutputPrinter.Flush();
             ErrorPrinter.Flush();
-            if (Debugger.IsAttached) Thread.Sleep(Timeout.Infinite);
+#endif
         }
 
         private static int NextInt() => int.Parse(Reader.NextString());
@@ -183,15 +197,16 @@ namespace CLown1331
         private sealed class Printer : StreamWriter
         {
             public Printer(Stream stream)
-                : base(stream, new UTF8Encoding(false, true))
-            {
-                this.AutoFlush = false;
-            }
+                : this(stream, new UTF8Encoding(false, true)) { }
 
             public Printer(Stream stream, Encoding encoding)
                 : base(stream, encoding)
             {
+#if CLown1331
+                this.AutoFlush = true;
+#else
                 this.AutoFlush = false;
+#endif
             }
 
             public override IFormatProvider FormatProvider => CultureInfo.InvariantCulture;
