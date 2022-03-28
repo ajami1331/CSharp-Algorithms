@@ -6,9 +6,7 @@
 namespace Library.DoubleMatrix
 {
     using Library.Matrix;
-/*
- * #import_Matrix.cs
- */
+
     public class DoubleMatrix : Matrix<double>
     {
         public DoubleMatrix(int size) : base(size)

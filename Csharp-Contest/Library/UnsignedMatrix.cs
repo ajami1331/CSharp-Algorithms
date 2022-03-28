@@ -6,9 +6,7 @@
 namespace Library.UnsignedMatrix
 {
     using Library.Matrix;
-/*
- * #import_Matrix.cs
- */
+
     public class UnsignedMatrix: Matrix<uint>
     {
         public UnsignedMatrix(int size) : base(size)

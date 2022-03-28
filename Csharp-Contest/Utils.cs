@@ -14,11 +14,9 @@ namespace CLown1331
 
     public static class Utils
     {
-        private const string Import = "#import_";
         private const string Using = "using";
         private const string SemiColon = ";";
         private const string NamespacePrefix = "Library.";
-        private const string Library = "Library";
 
         public static void CreateFileForSubmission(StreamWriter writer)
         {
@@ -45,7 +43,7 @@ namespace CLown1331
             List<string> content = new List<string>();
             HashSet<string> files = new HashSet<string>();
             Queue<string> queue = new Queue<string>();
-            string startingFile = Path.Combine(path, "program.cs");
+            string startingFile = Path.Combine(path, "Program.cs");
             queue.Enqueue(startingFile);
             files.Add(startingFile);
             while (queue.Count > 0)
@@ -54,24 +52,31 @@ namespace CLown1331
                 writer.WriteLine(u);
                 foreach (string line in File.ReadAllLines(u))
                 {
-                    if (line.Contains(Using))
+                    content.Add(line);
+
+                    if (!line.Contains(Using))
                     {
-                        string import = line.Split(' ')
-                            .SingleOrDefault(s => s.StartsWith(NamespacePrefix) && s.EndsWith(SemiColon))?
-                            .Split(SemiColon)
-                            .FirstOrDefault();
-                        if (!string.IsNullOrWhiteSpace(import))
-                        {
-                            string filePath = Path.Combine(path,  Path.Combine(import.Split("."))) + ".cs";
-                            if (!string.IsNullOrWhiteSpace(filePath) && !files.Contains(filePath))
-                            {
-                                queue.Enqueue(filePath);
-                                files.Add(filePath);
-                            }
-                        }
+                        continue;
                     }
 
-                    content.Add(line);
+                    string import = line.Split(' ')
+                        .SingleOrDefault(s => s.StartsWith(NamespacePrefix) && s.EndsWith(SemiColon))?
+                        .Split(SemiColon)
+                        .FirstOrDefault();
+
+                    if (string.IsNullOrWhiteSpace(import))
+                    {
+                        continue;
+                    }
+
+                    string filePath = Path.Combine(path,  Path.Combine(import.Split("."))) + ".cs";
+                    if (string.IsNullOrWhiteSpace(filePath) || !files.Contains(filePath))
+                    {
+                        continue;
+                    }
+
+                    queue.Enqueue(filePath);
+                    files.Add(filePath);
                 }
             }
 

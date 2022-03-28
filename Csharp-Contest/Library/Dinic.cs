@@ -10,9 +10,6 @@ namespace Library.Dinic
     using System.Linq;
     using Library.Edge;
 
-    /*
-     *  #import_Edge.cs
-     */
     public class Dinic
     {
         private int nodes;

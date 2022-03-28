@@ -9,9 +9,7 @@ namespace Library.PushRelabel
     using System.Collections.Generic;
     using System.Linq;
     using Library.Edge;
-    /*
-     *  #import_Edge.cs
-     */
+
     public class PushRelabel
     {
         private int nodes;

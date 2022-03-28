@@ -22,7 +22,7 @@ namespace CLown1331
     static class Program
     {
         private const int NumberOfTestCase = 3;
-        private const int StackSize = 8 * (1 << 20);
+        private const int StackSize = 64 * (1 << 20);
         private const int Sz = (int)2e5 + 10;
         private const int Mod = (int)1e9 + 7;
         private static int n;
@@ -58,40 +58,6 @@ namespace CLown1331
             }
  
             OutputPrinter.WriteLine(n == 0 ? 0 : ft.LowerBound(1));
-        }
-
-        private static int FastInt()
-        {
-            int ret = 0;
-            int sign = 1;
-            while (true)
-            {
-                int x = Reader.Read();
-                if (char.IsNumber((char)x))
-                {
-                    ret = x - '0';
-                    break;
-                }
-
-                if (x == '-')
-                {
-                    sign = -1;
-                    break;
-                }
-            }
-
-            while (true)
-            {
-                int x = Reader.Read();
-                if (!char.IsNumber((char)x))
-                {
-                    break;
-                }
-
-                ret = (ret * 10) + x - '0';
-            }
-
-            return ret * sign;
         }
 
         private static int LowerBound<T1, T2>(T1 arr, int l, int r, T2 value, Func<T2, T2, int> comp)
@@ -197,8 +163,6 @@ namespace CLown1331
         private static class Reader
         {
             private static readonly Queue<string> Param = new Queue<string>();
-
-            private static readonly StringBuilder Sb = new StringBuilder();
 #if CLown1331
             private static readonly StreamReader InputReader = new StreamReader("input.txt");
 #else
@@ -207,30 +171,6 @@ namespace CLown1331
 
             public static string NextString()
             {
-                Sb.Clear();
-                int x;
-                do
-                {
-                    x = Read();
-                    if (!(char.IsSeparator((char)x) || (char)x == '\r' || (char)x == '\n'))
-                    {
-                        Sb.Append((char)x);
-                        break;
-                    }
-                } while (x != -1);
-
-                do
-                {
-                    x = Read();
-                    if ((char.IsSeparator((char)x) || (char)x == '\r' || (char)x == '\n'))
-                    {
-                        break;
-                    }
-
-                    Sb.Append((char)x);
-                } while (x != -1);
-
-                return Sb.ToString();
                 if (Param.Count == 0)
                 {
                     foreach (string item in ReadLine().Split(' '))
@@ -278,89 +218,6 @@ namespace CLown1331
             }
 
             public override IFormatProvider FormatProvider => CultureInfo.InvariantCulture;
-        }
-    }
-}
-// FenwickTree.cs
-// Authors: Araf Al-Jami
-// Created: 21-08-2020 2:52 PM
-// Updated: 08-07-2021 3:44 PM
-
-namespace Library.FenwickTree
-{
-    using System;
-
-    public class FenwickTree<T>
-    {
-        private readonly T[] tree;
-        private readonly int size;
-        private readonly Func<T, T, T> merge;
-        private readonly int logn;
-        private Func<T, T, int> comp;
-
-        public FenwickTree(int size, Func<T, T, T> merge)
-            : this(size, merge, (arg1, arg2) => throw new NotImplementedException()) { }
-
-        public FenwickTree(int size, Func<T, T, T> merge, Func<T, T, int> comp)
-        {
-            this.size = size;
-            this.tree = new T[size];
-            this.merge = merge;
-            this.logn = (int)Math.Floor(Math.Log(this.size, 2));
-            this.comp = comp;
-        }
-
-        public T this[int node]
-        {
-            get => this.Query(node);
-            set => this.Update(node, value);
-        }
-
-        public void Update(int index, T value)
-        {
-            for (; index < this.size; index += index & -index)
-            {
-                this.tree[index] = this.merge(this.tree[index], value);
-            }
-        }
-
-        public T Query(int index)
-        {
-            T ret = default(T);
-            for (; index > 0; index -= index & -index)
-            {
-                ret = this.merge(ret, this.tree[index]);
-            }
-
-            return ret;
-        }
-
-        public int LowerBound(T value)
-        {
-            T sum = default(T);
-            T newSum = default(T);
-            int pos = 0;
-            int newPos = 0;
-            for (int i = logn; i >= 0; i--)
-            {
-                newPos = pos + (1 << i);
-                if (newPos >= this.size)
-                {
-                    continue;
-                }
-
-                newSum = this.merge(sum, this.tree[pos + (1 << i)]);
-
-                if (this.comp(newSum, value) >= 0)
-                {
-                    continue;
-                }
-
-                sum = newSum;
-                pos = newPos;
-            }
-
-            return pos + 1;
         }
     }
 }

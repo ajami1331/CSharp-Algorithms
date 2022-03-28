@@ -6,9 +6,7 @@
 namespace Library.IntegerMatrix
 {
     using Library.Matrix;
-/*
- * #import_Matrix.cs
- */
+
     public class IntegerMatrix: Matrix<int>
     {
         private readonly int mod;
