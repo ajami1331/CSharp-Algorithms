@@ -27,7 +27,7 @@ namespace CLown1331
             string path = Directory.GetCurrentDirectory();
             path = Directory.GetParent(path)?.Parent.Parent.FullName;
             List<string> content = ProcessUsing(path, writer);
-            string submissionFile = $"{path}/Submission.cs";
+            string submissionFile = Path.Combine(path, "Submission.cs");
             using (StreamWriter w = File.CreateText(submissionFile))
             {
                 foreach (string line in content)
@@ -42,12 +42,12 @@ namespace CLown1331
 
         private static List<string> ProcessUsing(string path, StreamWriter writer)
         {
-            string[] libraryFiles = Directory.GetFiles($"{path}/{Library}");
             List<string> content = new List<string>();
             HashSet<string> files = new HashSet<string>();
             Queue<string> queue = new Queue<string>();
-            queue.Enqueue($"{path}/program.cs");
-            files.Add($"{path}/program.cs");
+            string startingFile = Path.Combine(path, "program.cs");
+            queue.Enqueue(startingFile);
+            files.Add(startingFile);
             while (queue.Count > 0)
             {
                 string u = queue.Dequeue();
@@ -58,51 +58,12 @@ namespace CLown1331
                     {
                         string import = line.Split(' ')
                             .SingleOrDefault(s => s.StartsWith(NamespacePrefix) && s.EndsWith(SemiColon))?
-                            .Remove(0, NamespacePrefix.Length)
                             .Split(SemiColon)
                             .FirstOrDefault();
                         if (!string.IsNullOrWhiteSpace(import))
                         {
-                            string searchString = $"\\{import}";
-                            string filePath = libraryFiles.FirstOrDefault(s => s.Contains(searchString));
-                            if (!string.IsNullOrWhiteSpace(filePath) && !files.Contains(filePath))
-                            {
-                                queue.Enqueue(filePath);
-                                files.Add(filePath);
-                            }
-                        }
-                    }
-
-                    content.Add(line);
-                }
-            }
-
-            return content;
-        }
-
-        private static List<string> ProcessImport(string path, StreamWriter writer)
-        {
-            string[] libraryFiles = Directory.GetFiles($"{path}/{Library}");
-            List<string> content = new List<string>();
-            HashSet<string> files = new HashSet<string>();
-            Queue<string> queue = new Queue<string>();
-            queue.Enqueue($"{path}/program.cs");
-            files.Add($"{path}/program.cs");
-            while (queue.Count > 0)
-            {
-                string u = queue.Dequeue();
-                writer.WriteLine(u);
-                foreach (string line in File.ReadAllLines(u))
-                {
-                    if (line.Contains(Import))
-                    {
-                        string import = line.Split(' ')
-                                            .FirstOrDefault(s => s.StartsWith(Import))?
-                                            .Remove(0, Import.Length);
-                        if (!string.IsNullOrWhiteSpace(import))
-                        {
-                            string searchString = $"\\{import}";
-                            string filePath = libraryFiles.FirstOrDefault(s => s.Contains(searchString));
+                            string filePath = Path.Combine(path,  Path.Combine(import.Split("."))) + ".cs";
+                            string searchString = $"{import}.cs";
                             if (!string.IsNullOrWhiteSpace(filePath) && !files.Contains(filePath))
                             {
                                 queue.Enqueue(filePath);

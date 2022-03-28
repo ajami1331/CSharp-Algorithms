@@ -13,6 +13,7 @@ namespace CLown1331
     using System.Linq;
     using System.Text;
     using System.Threading;
+    using Library.FenwickTree;
 
     /*
      *
@@ -20,47 +21,43 @@ namespace CLown1331
 
     static class Program
     {
-        private const int NumberOfTestCase = 2;
-        private const int StackSize = 64 * (1 << 20);
+        private const int NumberOfTestCase = 3;
+        private const int StackSize = 8 * (1 << 20);
         private const int Sz = (int)2e5 + 10;
         private const int Mod = (int)1e9 + 7;
         private static int n;
-        private static int foundCount;
-        private static int[] cnt;
-        private static int[] ar;
-        private static int maxLen;
-        private static StringBuilder sb;
-        private static LinkedList<string>[] ans;
+        private static int q;
+        private static FenwickTree<int> ft;
 
         private static void Solve()
         {
             n = NextInt();
-            cnt = new int[1005];
-            maxLen = 0;
-            ar = Repeat(0, n).Select(_ =>
+            q = NextInt();
+            ft = new FenwickTree<int>(n + 10, (x, y) => x + y, (x, y) => Math.Sign(x - y));
+            int k;
+            for (int i = 0; i < n; i++)
             {
-                int x = NextInt();
-                maxLen = Math.Max(maxLen, x);
-                cnt[x]++;
-                return x;
-            }).ToArray();
-            sb = new StringBuilder();
-            ans = Repeat(0, 1005).Select(_ => new LinkedList<string>()).ToArray();
-            foundCount = 0;
-            Traverse();
-            if (foundCount == n)
+                k = NextInt();
+                ft.Update(k, 1);
+            }
+ 
+            for (int i = 0; i < q; i++)
             {
-                OutputPrinter.WriteLine("YES");
-                foreach (var x in ar)
+                k = NextInt();
+                if (k < 0)
                 {
-                    OutputPrinter.WriteLine(ans[x].First());
-                    ans[x].RemoveFirst();
+                    k = ft.LowerBound(-k);
+                    ft.Update(k, -1);
+                    n--;
+                }
+                else
+                {
+                    ft.Update(k, 1);
+                    n++;
                 }
             }
-            else
-            {
-                OutputPrinter.WriteLine("NO");
-            }
+ 
+            OutputPrinter.WriteLine(n == 0 ? 0 : ft.LowerBound(1));
         }
 
         private static int LowerBound<T1, T2>(T1 arr, int l, int r, T2 value, Func<T2, T2, int> comp)
@@ -90,29 +87,6 @@ namespace CLown1331
             }
 
             return -1;
-        }
-
-        private static void Traverse()
-        {
-            if (sb.Length > maxLen || foundCount == n)
-            {
-                return;
-            }
-
-            if (cnt[sb.Length] > 0)
-            {
-                cnt[sb.Length]--;
-                foundCount++;
-                ans[sb.Length].AddLast(sb.ToString());
-                return;
-            }
-
-            sb.Append('0');
-            Traverse();
-            sb.Remove(sb.Length - 1, 1);
-            sb.Append('1');
-            Traverse();
-            sb.Remove(sb.Length - 1, 1);
         }
 
         public static void Main(string[] args)

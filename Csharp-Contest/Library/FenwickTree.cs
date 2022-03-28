@@ -35,7 +35,7 @@ namespace Library.FenwickTree
 
         public void Update(int index, T value)
         {
-            for (; index < size; index += index & -index)
+            for (; index < this.size; index += index & -index)
             {
                 this.tree[index] = this.merge(this.tree[index], value);
             }
@@ -54,32 +54,30 @@ namespace Library.FenwickTree
 
         public int LowerBound(T value)
         {
-            int l = 1;
-            int r = this.size - 1;
-            while (r - l > 4)
+            T sum = default(T);
+            T newSum = default(T);
+            int pos = 0;
+            int newPos = 0;
+            for (int i = logn; i >= 0; i--)
             {
-                int mid = l + (r - l) / 2;
-                T sum = this.Query(mid);
-                if (this.comp(sum, value) < 0)
+                newPos = pos + (1 << i);
+                if (newPos >= this.size)
                 {
-                    l = mid;
+                    continue;
                 }
-                else
+
+                newSum = this.merge(sum, this.tree[pos + (1 << i)]);
+
+                if (this.comp(newSum, value) >= 0)
                 {
-                    r = mid;
+                    continue;
                 }
+
+                sum = newSum;
+                pos = newPos;
             }
 
-            for (; l <= r; l++)
-            {
-                T sum = this.Query(l);
-                if (this.comp(sum, value) >= 0)
-                {
-                    return l;
-                }
-            }
-
-            return -1;
+            return pos + 1;
         }
     }
 }

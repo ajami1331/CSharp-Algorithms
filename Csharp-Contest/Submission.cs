@@ -13,6 +13,7 @@ namespace CLown1331
     using System.Linq;
     using System.Text;
     using System.Threading;
+    using Library.FenwickTree;
 
     /*
      *
@@ -20,70 +21,72 @@ namespace CLown1331
 
     static class Program
     {
-        private const int NumberOfTestCase = 2;
-        private const int StackSize = 64 * (1 << 20);
+        private const int NumberOfTestCase = 3;
+        private const int StackSize = 8 * (1 << 20);
         private const int Sz = (int)2e5 + 10;
         private const int Mod = (int)1e9 + 7;
         private static int n;
-        private static int foundCount;
-        private static int[] cnt;
-        private static int[] ar;
-        private static int maxLen;
-        private static StringBuilder sb;
-        private static LinkedList<string>[] ans;
+        private static int q;
+        private static FenwickTree<int> ft;
 
         private static void Solve()
         {
             n = NextInt();
-            cnt = new int[1005];
-            maxLen = 0;
-            ar = Repeat(0, n).Select(_ =>
+            q = NextInt();
+            ft = new FenwickTree<int>(n + 10, (x, y) => x + y, (x, y) => Math.Sign(x - y));
+            int k;
+            for (int i = 0; i < n; i++)
             {
-                int x = NextInt();
-                maxLen = Math.Max(maxLen, x);
-                cnt[x]++;
-                return x;
-            }).ToArray();
-            sb = new StringBuilder();
-            ans = Repeat(0, 1005).Select(_ => new LinkedList<string>()).ToArray();
-            foundCount = 0;
-            Traverse();
-            if (foundCount == n)
+                k = NextInt();
+                ft.Update(k, 1);
+            }
+ 
+            for (int i = 0; i < q; i++)
             {
-                OutputPrinter.WriteLine("YES");
-                foreach (var x in ar)
+                k = NextInt();
+                if (k < 0)
                 {
-                    OutputPrinter.WriteLine(ans[x].First());
-                    ans[x].RemoveFirst();
+                    k = ft.LowerBound(-k);
+                    ft.Update(k, -1);
+                    n--;
+                }
+                else
+                {
+                    ft.Update(k, 1);
+                    n++;
                 }
             }
-            else 
-            {
-                OutputPrinter.WriteLine("NO");
-            }
+ 
+            OutputPrinter.WriteLine(n == 0 ? 0 : ft.LowerBound(1));
         }
 
-        private static void Traverse()
+        private static int LowerBound<T1, T2>(T1 arr, int l, int r, T2 value, Func<T2, T2, int> comp)
+            where T1: IList<T2>
         {
-            if (sb.Length > maxLen || foundCount == n)
+            while (r - l > 4)
             {
-                return;
+                int mid = l + (r - l) / 2;
+                T2 sum = arr[mid];
+                if (comp(sum, value) < 0)
+                {
+                    l = mid;
+                }
+                else
+                {
+                    r = mid;
+                }
             }
 
-            if (cnt[sb.Length] > 0)
+            for (; l <= r; l++)
             {
-                cnt[sb.Length]--;
-                foundCount++;
-                ans[sb.Length].AddLast(sb.ToString());
-                return;
+                T2 sum = arr[l];
+                if (comp(sum, value) == 0)
+                {
+                    return l;
+                }
             }
 
-            sb.Append('0');
-            Traverse();
-            sb.Remove(sb.Length - 1, 1);
-            sb.Append('1');
-            Traverse();
-            sb.Remove(sb.Length - 1, 1);
+            return -1;
         }
 
         public static void Main(string[] args)
@@ -210,6 +213,89 @@ namespace CLown1331
             }
 
             public override IFormatProvider FormatProvider => CultureInfo.InvariantCulture;
+        }
+    }
+}
+// FenwickTree.cs
+// Authors: Araf Al-Jami
+// Created: 21-08-2020 2:52 PM
+// Updated: 08-07-2021 3:44 PM
+
+namespace Library.FenwickTree
+{
+    using System;
+
+    public class FenwickTree<T>
+    {
+        private readonly T[] tree;
+        private readonly int size;
+        private readonly Func<T, T, T> merge;
+        private readonly int logn;
+        private Func<T, T, int> comp;
+
+        public FenwickTree(int size, Func<T, T, T> merge)
+            : this(size, merge, (arg1, arg2) => throw new NotImplementedException()) { }
+
+        public FenwickTree(int size, Func<T, T, T> merge, Func<T, T, int> comp)
+        {
+            this.size = size;
+            this.tree = new T[size];
+            this.merge = merge;
+            this.logn = (int)Math.Floor(Math.Log(this.size, 2));
+            this.comp = comp;
+        }
+
+        public T this[int node]
+        {
+            get => this.Query(node);
+            set => this.Update(node, value);
+        }
+
+        public void Update(int index, T value)
+        {
+            for (; index < this.size; index += index & -index)
+            {
+                this.tree[index] = this.merge(this.tree[index], value);
+            }
+        }
+
+        public T Query(int index)
+        {
+            T ret = default(T);
+            for (; index > 0; index -= index & -index)
+            {
+                ret = this.merge(ret, this.tree[index]);
+            }
+
+            return ret;
+        }
+
+        public int LowerBound(T value)
+        {
+            T sum = default(T);
+            T newSum = default(T);
+            int pos = 0;
+            int newPos = 0;
+            for (int i = logn; i >= 0; i--)
+            {
+                newPos = pos + (1 << i);
+                if (newPos >= this.size)
+                {
+                    continue;
+                }
+
+                newSum = this.merge(sum, this.tree[pos + (1 << i)]);
+
+                if (this.comp(newSum, value) >= 0)
+                {
+                    continue;
+                }
+
+                sum = newSum;
+                pos = newPos;
+            }
+
+            return pos + 1;
         }
     }
 }
