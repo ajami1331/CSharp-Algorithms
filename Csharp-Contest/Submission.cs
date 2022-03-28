@@ -60,6 +60,40 @@ namespace CLown1331
             OutputPrinter.WriteLine(n == 0 ? 0 : ft.LowerBound(1));
         }
 
+        private static int FastInt()
+        {
+            int ret = 0;
+            int sign = 1;
+            while (true)
+            {
+                int x = Reader.Read();
+                if (char.IsNumber((char)x))
+                {
+                    ret = x - '0';
+                    break;
+                }
+
+                if (x == '-')
+                {
+                    sign = -1;
+                    break;
+                }
+            }
+
+            while (true)
+            {
+                int x = Reader.Read();
+                if (!char.IsNumber((char)x))
+                {
+                    break;
+                }
+
+                ret = (ret * 10) + x - '0';
+            }
+
+            return ret * sign;
+        }
+
         private static int LowerBound<T1, T2>(T1 arr, int l, int r, T2 value, Func<T2, T2, int> comp)
             where T1: IList<T2>
         {
@@ -163,6 +197,8 @@ namespace CLown1331
         private static class Reader
         {
             private static readonly Queue<string> Param = new Queue<string>();
+
+            private static readonly StringBuilder Sb = new StringBuilder();
 #if CLown1331
             private static readonly StreamReader InputReader = new StreamReader("input.txt");
 #else
@@ -171,6 +207,30 @@ namespace CLown1331
 
             public static string NextString()
             {
+                Sb.Clear();
+                int x;
+                do
+                {
+                    x = Read();
+                    if (!(char.IsSeparator((char)x) || (char)x == '\r' || (char)x == '\n'))
+                    {
+                        Sb.Append((char)x);
+                        break;
+                    }
+                } while (x != -1);
+
+                do
+                {
+                    x = Read();
+                    if ((char.IsSeparator((char)x) || (char)x == '\r' || (char)x == '\n'))
+                    {
+                        break;
+                    }
+
+                    Sb.Append((char)x);
+                } while (x != -1);
+
+                return Sb.ToString();
                 if (Param.Count == 0)
                 {
                     foreach (string item in ReadLine().Split(' '))
@@ -190,6 +250,11 @@ namespace CLown1331
             public static string ReadLine()
             {
                 return InputReader.ReadLine();
+            }
+
+            public static int Read()
+            {
+                return InputReader.Read();
             }
         }
 

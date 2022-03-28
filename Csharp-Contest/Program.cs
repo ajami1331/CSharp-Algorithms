@@ -22,7 +22,7 @@ namespace CLown1331
     static class Program
     {
         private const int NumberOfTestCase = 3;
-        private const int StackSize = 8 * (1 << 20);
+        private const int StackSize = 64 * (1 << 20);
         private const int Sz = (int)2e5 + 10;
         private const int Mod = (int)1e9 + 7;
         private static int n;
@@ -190,6 +190,11 @@ namespace CLown1331
             public static string ReadLine()
             {
                 return InputReader.ReadLine();
+            }
+
+            public static int Read()
+            {
+                return InputReader.Read();
             }
         }
 

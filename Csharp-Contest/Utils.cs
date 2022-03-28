@@ -63,7 +63,6 @@ namespace CLown1331
                         if (!string.IsNullOrWhiteSpace(import))
                         {
                             string filePath = Path.Combine(path,  Path.Combine(import.Split("."))) + ".cs";
-                            string searchString = $"{import}.cs";
                             if (!string.IsNullOrWhiteSpace(filePath) && !files.Contains(filePath))
                             {
                                 queue.Enqueue(filePath);
