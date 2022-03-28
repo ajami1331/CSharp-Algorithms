@@ -29,9 +29,9 @@ namespace Library.Dinic
 
         public void ClearFlow()
         {
-            for (int i = 0; i < this.edges.Count; i++)
+            foreach (var edge in this.edges)
             {
-                this.edges[i].flow = 0;
+                edge.flow = 0;
             }
         }
 

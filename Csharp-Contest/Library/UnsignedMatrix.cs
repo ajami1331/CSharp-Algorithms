@@ -9,7 +9,8 @@ namespace Library.UnsignedMatrix
 
     public class UnsignedMatrix: Matrix<uint>
     {
-        public UnsignedMatrix(int size) : base(size)
+        public UnsignedMatrix(int size)
+            : base(size)
         {
         }
 

@@ -152,6 +152,7 @@ namespace Library.PushRelabel
                 }
             }
         }
+
         public Edge GetEdge(int id)
         {
             return this.edges[id];

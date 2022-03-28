@@ -11,7 +11,8 @@ namespace Library.LongMatrix
     {
         private readonly long mod;
 
-        public LongMatrix(int size, long mod) : base(size)
+        public LongMatrix(int size, long mod)
+            : base(size)
         {
             this.mod = mod;
         }

@@ -16,32 +16,15 @@ namespace Library.Matrix
             this.a = new T[this.size, this.size];
         }
 
-        public void Reset()
-        {
-            for (int i = 0; i < this.size; i++)
-            {
-                for (int j = 0; j < this.size; j++)
-                {
-                    this[i, j] = default(T);
-                }
-            }
-        }
-
-        public abstract void Identity();
-
         public static Matrix<T> operator+ (Matrix<T> a, Matrix<T> b)
         {
             return a.Add(b);
         }
 
-        protected abstract Matrix<T> Add(Matrix<T> right);
-
         public static Matrix<T> operator *(Matrix<T> a, Matrix<T> b)
         {
             return a.Multiply(b);
         }
-
-        protected abstract Matrix<T> Multiply(Matrix<T> right);
 
         public static Matrix<T> operator ^(Matrix<T> a, long power)
         {
@@ -58,6 +41,23 @@ namespace Library.Matrix
             get => this.a[i, j];
             set => this.a[i, j] = value;
         }
+
+        public void Reset()
+        {
+            for (int i = 0; i < this.size; i++)
+            {
+                for (int j = 0; j < this.size; j++)
+                {
+                    this[i, j] = default(T);
+                }
+            }
+        }
+
+        public abstract void Identity();
+
+        protected abstract Matrix<T> Add(Matrix<T> right);
+
+        protected abstract Matrix<T> Multiply(Matrix<T> right);
 
         protected abstract Matrix<T> Power(long power);
 

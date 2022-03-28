@@ -9,7 +9,8 @@ namespace Library.DoubleMatrix
 
     public class DoubleMatrix : Matrix<double>
     {
-        public DoubleMatrix(int size) : base(size)
+        public DoubleMatrix(int size)
+            : base(size)
         {
         }
 
