@@ -57,7 +57,7 @@ namespace CLown1331
                     ans[x].RemoveFirst();
                 }
             }
-            else
+            else 
             {
                 OutputPrinter.WriteLine("NO");
             }

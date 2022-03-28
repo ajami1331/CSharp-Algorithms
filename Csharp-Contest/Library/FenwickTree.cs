@@ -11,24 +11,33 @@ namespace Library.FenwickTree
     {
         private readonly T[] tree;
         private readonly int size;
-        private readonly Func<T, T, T> func;
+        private readonly Func<T, T, T> merge;
         private readonly int logn;
         private Func<T, T, int> comp;
 
-        public FenwickTree(int size, Func<T, T, T> func, Func<T, T, int> comp)
+        public FenwickTree(int size, Func<T, T, T> merge)
+            : this(size, merge, (arg1, arg2) => throw new NotImplementedException()) { }
+
+        public FenwickTree(int size, Func<T, T, T> merge, Func<T, T, int> comp)
         {
             this.size = size;
             this.tree = new T[size];
-            this.func = func;
+            this.merge = merge;
             this.logn = (int)Math.Floor(Math.Log(this.size, 2));
             this.comp = comp;
+        }
+
+        public T this[int node]
+        {
+            get => this.Query(node);
+            set => this.Update(node, value);
         }
 
         public void Update(int index, T value)
         {
             for (; index < size; index += index & -index)
             {
-                this.tree[index] = this.func(this.tree[index], value);
+                this.tree[index] = this.merge(this.tree[index], value);
             }
         }
 
@@ -37,7 +46,7 @@ namespace Library.FenwickTree
             T ret = default(T);
             for (; index > 0; index -= index & -index)
             {
-                ret = this.func(ret, this.tree[index]);
+                ret = this.merge(ret, this.tree[index]);
             }
 
             return ret;
@@ -64,7 +73,7 @@ namespace Library.FenwickTree
             for (; l <= r; l++)
             {
                 T sum = this.Query(l);
-                if (this.comp(sum, value) == 0)
+                if (this.comp(sum, value) >= 0)
                 {
                     return l;
                 }

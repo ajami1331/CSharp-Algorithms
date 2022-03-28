@@ -63,6 +63,35 @@ namespace CLown1331
             }
         }
 
+        private static int LowerBound<T1, T2>(T1 arr, int l, int r, T2 value, Func<T2, T2, int> comp)
+            where T1: IList<T2>
+        {
+            while (r - l > 4)
+            {
+                int mid = l + (r - l) / 2;
+                T2 sum = arr[mid];
+                if (comp(sum, value) < 0)
+                {
+                    l = mid;
+                }
+                else
+                {
+                    r = mid;
+                }
+            }
+
+            for (; l <= r; l++)
+            {
+                T2 sum = arr[l];
+                if (comp(sum, value) == 0)
+                {
+                    return l;
+                }
+            }
+
+            return -1;
+        }
+
         private static void Traverse()
         {
             if (sb.Length > maxLen || foundCount == n)
