@@ -70,7 +70,7 @@ namespace CLown1331
                     }
 
                     string filePath = Path.Combine(path,  Path.Combine(import.Split("."))) + ".cs";
-                    if (string.IsNullOrWhiteSpace(filePath) || !files.Contains(filePath))
+                    if (string.IsNullOrWhiteSpace(filePath) || files.Contains(filePath))
                     {
                         continue;
                     }

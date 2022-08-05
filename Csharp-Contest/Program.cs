@@ -13,80 +13,27 @@ namespace CLown1331
     using System.Linq;
     using System.Text;
     using System.Threading;
-    using Library.FenwickTree;
-
-    /*
-     *
-     */
 
     static class Program
     {
-        private const int NumberOfTestCase = 3;
+        private const int NumberOfTestCase = 2;
         private const int StackSize = 64 * (1 << 20);
         private const int Sz = (int)2e5 + 10;
         private const int Mod = (int)1e9 + 7;
-        private static int n;
-        private static int q;
-        private static FenwickTree<int> ft;
 
         private static void Solve()
         {
-            n = NextInt();
-            q = NextInt();
-            ft = new FenwickTree<int>(n + 10, (x, y) => x + y, (x, y) => Math.Sign(x - y));
-            int k;
-            for (int i = 0; i < n; i++)
+            int n = NextInt();
+            int m = NextInt();
+            int a = NextInt();
+            int b = NextInt();
+            int ans = int.MaxValue;
+            for (int singleTicket = 0, left = n; singleTicket <= n; singleTicket++, left--)
             {
-                k = NextInt();
-                ft.Update(k, 1);
-            }
- 
-            for (int i = 0; i < q; i++)
-            {
-                k = NextInt();
-                if (k < 0)
-                {
-                    k = ft.LowerBound(-k);
-                    ft.Update(k, -1);
-                    n--;
-                }
-                else
-                {
-                    ft.Update(k, 1);
-                    n++;
-                }
-            }
- 
-            OutputPrinter.WriteLine(n == 0 ? 0 : ft.LowerBound(1));
-        }
-
-        private static int LowerBound<T1, T2>(T1 arr, int l, int r, T2 value, Func<T2, T2, int> comp)
-            where T1: IList<T2>
-        {
-            while (r - l > 4)
-            {
-                int mid = l + (r - l) / 2;
-                T2 sum = arr[mid];
-                if (comp(sum, value) < 0)
-                {
-                    l = mid;
-                }
-                else
-                {
-                    r = mid;
-                }
+                ans = Math.Min(ans, (singleTicket * a) + (((left / m) + (left % m == 0 ? 0 : 1)) * b));
             }
 
-            for (; l <= r; l++)
-            {
-                T2 sum = arr[l];
-                if (comp(sum, value) == 0)
-                {
-                    return l;
-                }
-            }
-
-            return -1;
+            OutputPrinter.WriteLine(ans);
         }
 
         public static void Main(string[] args)
