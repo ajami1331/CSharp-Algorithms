@@ -13,27 +13,103 @@ namespace CLown1331
     using System.Linq;
     using System.Text;
     using System.Threading;
+    using Library.DisjointSet;
 
     static class Program
     {
-        private const int NumberOfTestCase = 2;
+        private const int NumberOfTestCase = 3;
         private const int StackSize = 64 * (1 << 20);
         private const int Sz = (int)2e5 + 10;
-        private const int Mod = (int)1e9 + 7;
+        private const int Mod = 998244353;
+        private static long[] ans;
+        private static string[] type;
+        private static int[] pos;
+        private static int[] hCuts;
+        private static int[] vCuts;
+        private static long hMax;
+        private static long vMax;
 
         private static void Solve()
         {
+            ans = new long[Sz];
+            type = new string[Sz];
+            pos = new int[Sz];
+            hCuts = new int[Sz];
+            vCuts = new int[Sz];
+            int w = NextInt();
+            int h = NextInt();
             int n = NextInt();
-            int m = NextInt();
-            int a = NextInt();
-            int b = NextInt();
-            int ans = int.MaxValue;
-            for (int singleTicket = 0, left = n; singleTicket <= n; singleTicket++, left--)
+            for (int i = 1; i <= n; i++)
             {
-                ans = Math.Min(ans, (singleTicket * a) + (((left / m) + (left % m == 0 ? 0 : 1)) * b));
+                type[i] = NextString();
+                pos[i] = NextInt();
+                switch (type[i])
+                {
+                    case "V":
+                        vCuts[pos[i]] = pos[i];
+                        break;
+                    case "H":
+                        hCuts[pos[i]] = pos[i];
+                        break;
+                    default:
+                        break;
+                }
             }
 
-            OutputPrinter.WriteLine(ans);
+            DisjointSet vDsu = new DisjointSet(Sz);
+            DisjointSet hDsu = new DisjointSet(Sz);
+            hMax = long.MinValue;
+            vMax = long.MinValue;
+            for (int i = w; i > 0; i--)
+            {
+                if (vCuts[i] == 0 && i + 1 <= w)
+                {
+                    vDsu.MergeSet(i + 1, i);
+                }
+
+                vMax = Math.Max(vMax, vDsu.GetComponentSize(i));
+            }
+
+            for (int i = h; i > 0; i--)
+            {
+                if (hCuts[i] == 0 && i + 1 <= h)
+                {
+                    hDsu.MergeSet(i + 1, i);
+                }
+
+                hMax = Math.Max(hMax, hDsu.GetComponentSize(i));
+            }
+
+            for (int i = n; i > 0; i--)
+            {
+                ans[i] = hMax * vMax;
+                switch (type[i])
+                {
+                    case "V":
+                        if (pos[i] + 1 <= w)
+                        {
+                            vDsu.MergeSet(pos[i] + 1, pos[i]);
+                        }
+
+                        vMax = Math.Max(vMax, vDsu.GetComponentSize(pos[i]));
+                        break;
+                    case "H":
+                        if (pos[i] + 1 <= h)
+                        {
+                            hDsu.MergeSet(pos[i] + 1, pos[i]);
+                        }
+
+                        hMax = Math.Max(hMax, hDsu.GetComponentSize(pos[i]));
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            for (int i = 1; i <= n; i++)
+            {
+                OutputPrinter.WriteLine(ans[i]);
+            }
         }
 
         public static void Main(string[] args)
@@ -48,7 +124,7 @@ namespace CLown1331
                 Solve();
                 stopWatch.Stop();
                 totalTime += stopWatch.ElapsedMilliseconds;
-                ErrorPrinter.WriteLine($"{testCase} -------- {stopWatch.ElapsedMilliseconds}ms");
+                ErrorPrinter.WriteLine($"Case: {testCase} -------- {stopWatch.ElapsedMilliseconds}ms");
             }
 
             ErrorPrinter.WriteLine($"Runtime: {totalTime}ms");
@@ -105,6 +181,17 @@ namespace CLown1331
                 w = (w ^ (w >> 19)) ^ (t ^ (t >> 8));
                 yield return w;
             }
+        }
+
+        private static void Debug(params object[] args)
+        {
+            foreach (var arg in args)
+            {
+                ErrorPrinter.Write(arg);
+                ErrorPrinter.Write(" ");
+            }
+
+            ErrorPrinter.WriteLine();
         }
 
         private static class Reader
