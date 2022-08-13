@@ -3,12 +3,10 @@
 // Created: 23-08-2020 1:44 PM
 // Updated: 08-07-2021 3:44 PM
 
-using System.Diagnostics;
-
 namespace CLown1331
 {
-    using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.IO;
     using System.Linq;
 
@@ -17,6 +15,7 @@ namespace CLown1331
         private const string Using = "using";
         private const string SemiColon = ";";
         private const string NamespacePrefix = "Library.";
+        private const string CommentPrefix = "//";
 
         public static void CreateFileForSubmission(StreamWriter writer)
         {
@@ -26,14 +25,7 @@ namespace CLown1331
             path = Directory.GetParent(path)?.Parent.Parent.FullName;
             List<string> content = ProcessUsing(path, writer);
             string submissionFile = Path.Combine(path, "Submission.cs");
-            using (StreamWriter w = File.CreateText(submissionFile))
-            {
-                foreach (string line in content)
-                {
-                    w.WriteLine(line);
-                }
-            }
-
+            File.WriteAllLines(submissionFile, content);
             stopWatch.Stop();
             writer.WriteLine($"File created for submission: {stopWatch.ElapsedMilliseconds}ms");
         }

@@ -86,7 +86,7 @@ namespace CLown1331
                     ans = minValue;
                 }
 
-                Debug(ar, 2);
+                // Debug(ar, 2);
                 OutputPrinter.WriteLine(ans);
             }
         }
