@@ -3,6 +3,8 @@
 // Created: 23-11-2020 2:57 AM
 // Updated: 08-07-2021 3:44 PM
 
+using Library.DisjointSet;
+
 namespace CLown1331
 {
     using System;
@@ -16,79 +18,115 @@ namespace CLown1331
 
     static class Program
     {
-        private const int NumberOfTestCase = 1;
+        private const int NumberOfTestCase = 3;
         private const int StackSize = 64 * (1 << 20);
-        private const int Sz = (int)1e5 + 10;
+        private const int Sz = (int)2e5 + 10;
         private const int MxAdd = 1000000000;
         private const int Mod = 998244353;
-        private static long[] ar = new long[Sz];
-        private static long ans;
+        private static int[] ar = new int[Sz];
+        private static List<int>[] G;
+        private static int[] x = new int[Sz];
+        private static int[] y = new int[Sz];
+        private static int[] v = new int[Sz];
+        private static int[] ans = new int[Sz];
+        private static bool[] mk = new bool[Sz];
+        private static bool[] vis = new bool[Sz];
+        private static int n;
+        private static int m;
 
         private static void Solve()
         {
-            int t = NextInt();
+            int t = 1;
             for (int cs = 1; cs <= t; cs++)
             {
-                int n = NextInt();
-                int k = NextInt();
-
-                for (int i = 0; i < n; i++)
+                n = NextInt();
+                m = NextInt();
+                G = Repeat(0, n + 2).Select(_ => new List<int>()).ToArray();
+                for (int i = 0; i <= n; i++)
                 {
-                    ar[i] = NextLong();
+                    ar[i] = (1 << 30) - 1;
+                    ans[i] = 0;
+                    mk[i] = false;
+                    vis[i] = false;
                 }
 
-                var sortedAr = ar.Take(n).Select((value, index) => (value, index)).OrderBy(kv => kv.value).ToArray();
-
-                for (int i = 0; i < k; i++)
+                for (int i = 1; i <= m; i++)
                 {
-                    // Debug(sortedAr[i].index, sortedAr[i].value, "sorted");
-                    ar[sortedAr[i].index] = MxAdd;
+                    x[i] = NextInt();
+                    y[i] = NextInt();
+                    v[i] = NextInt();
+                    G[Math.Max(x[i], y[i])].Add(Math.Min(x[i], y[i]));
+                    ar[x[i]] &= v[i];
+                    ar[y[i]] &= v[i];
+                    mk[x[i]] = true;
+                    mk[y[i]] = true;
                 }
 
-                long minValue = long.MaxValue;
-
-                for (int i = 0; i < n; i++)
+                for (int i = 0; i <= n; i++)
                 {
-                    minValue = Math.Min(minValue, ar[i]);
-                }
-
-                for (int i = 0; i < n; i++)
-                {
-                    ar[i] = Math.Min(minValue + minValue, ar[i]);
-                }
-
-                ans = long.MinValue;
-
-                for (int i = 0; i < n; i++)
-                {
-                    ans = Math.Max(ans, ar[i]);
-                }
-
-                long minXValue = long.MaxValue;
-
-                for (int i = 0; i < n; i++)
-                {
-                    if (ar[i] == minValue)
+                    if (mk[i])
                     {
                         continue;
                     }
 
-                    minXValue = Math.Min(minXValue, ar[i]);
+                    ar[i] = 0;
                 }
 
-                if (minValue + minValue > minXValue)
+                for (int i = n; i > 0; i--)
                 {
-                    ans = minXValue;
+                    if (ar[i] == 0)
+                    {
+                        continue;
+                    }
+
+                    Dfs(u: i, value: 0);
                 }
 
-                if (n == 2)
+                for (int i = 1; i <= n; i++)
                 {
-                    ans = minValue;
+                    OutputPrinter.Write($"{ans[i]} ");
                 }
 
-                // Debug(ar, 2);
-                OutputPrinter.WriteLine(ans);
+                OutputPrinter.WriteLine();
+                // Debug(ar, n + 1);
             }
+        }
+
+        private static void Dfs(int u, int value)
+        {
+            vis[u] = true;
+            ans[u] = ar[u] & ~value;
+            value |= ar[u];
+            ar[u] = ans[u];
+            foreach (int v in G[u].OrderByDescending(xv => xv))
+            {
+                if (vis[v])
+                {
+                    continue;
+                }
+
+                Dfs(v, value);
+            }
+        }
+
+        private static int GetNext(int x)
+        {
+            if (x + 1 > n)
+            {
+                return -1;
+            }
+
+            return ar[x + 1];
+        }
+
+        private static int GetPrev(int x)
+        {
+            if (x == 1)
+            {
+                return -1;
+            }
+
+            return ar[x - 1];
         }
 
         public static void Main(string[] args)
@@ -97,7 +135,7 @@ namespace CLown1331
             var stopWatch = new Stopwatch();
             var totalTime = stopWatch.ElapsedMilliseconds;
             stopWatch.Start();
-            for (int testCase = 0; testCase < NumberOfTestCase; testCase++)
+            for (int testCase = 1; !Reader.IsEndOfStream; testCase++)
             {
                 stopWatch.Restart();
                 Solve();
@@ -199,6 +237,7 @@ namespace CLown1331
 #else
             private static readonly StreamReader InputReader = new StreamReader(Console.OpenStandardInput());
 #endif
+            public static bool IsEndOfStream => InputReader.EndOfStream;
 
             public static string NextString()
             {
