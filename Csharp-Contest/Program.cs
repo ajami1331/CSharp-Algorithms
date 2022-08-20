@@ -3,8 +3,6 @@
 // Created: 23-11-2020 2:57 AM
 // Updated: 08-07-2021 3:44 PM
 
-using Library.DisjointSet;
-
 namespace CLown1331
 {
     using System;
@@ -20,7 +18,7 @@ namespace CLown1331
     {
         private const int NumberOfTestCase = 3;
         private const int StackSize = 64 * (1 << 20);
-        private const int Sz = (int)2e5 + 10;
+        private const int Sz = (int) 2e5 + 10;
         private const int MxAdd = 1000000000;
         private const int Mod = 998244353;
         private static int[] ar = new int[Sz];
@@ -88,7 +86,6 @@ namespace CLown1331
                 }
 
                 OutputPrinter.WriteLine();
-                // Debug(ar, n + 1);
             }
         }
 
@@ -107,26 +104,6 @@ namespace CLown1331
 
                 Dfs(v, value);
             }
-        }
-
-        private static int GetNext(int x)
-        {
-            if (x + 1 > n)
-            {
-                return -1;
-            }
-
-            return ar[x + 1];
-        }
-
-        private static int GetPrev(int x)
-        {
-            if (x == 1)
-            {
-                return -1;
-            }
-
-            return ar[x - 1];
         }
 
         public static void Main(string[] args)
@@ -171,9 +148,9 @@ namespace CLown1331
 
         private static long Count<T>(this IEnumerable<T> x, Func<T, bool> pred) => Enumerable.Count(x, pred);
 
-        private static IEnumerable<T> Repeat<T>(T v, long n) => Enumerable.Repeat<T>(v, (int)n);
+        private static IEnumerable<T> Repeat<T>(T v, long n) => Enumerable.Repeat<T>(v, (int) n);
 
-        private static IEnumerable<int> Range(long s, long c) => Enumerable.Range((int)s, (int)c);
+        private static IEnumerable<int> Range(long s, long c) => Enumerable.Range((int) s, (int) c);
 
         private static readonly IEnumerator<uint> Xsi = Xsc();
 
@@ -188,7 +165,7 @@ namespace CLown1331
 
         private static IEnumerator<uint> Xsc()
         {
-            uint x = 123456789, y = 362436069, z = 521288629, w = (uint)(DateTime.Now.Ticks & 0xffffffff);
+            uint x = 123456789, y = 362436069, z = 521288629, w = (uint) (DateTime.Now.Ticks & 0xffffffff);
             while (true)
             {
                 uint t = x ^ (x << 11);
@@ -203,8 +180,10 @@ namespace CLown1331
         private static void Debug<T>(
             IEnumerable<T> args,
             int len = int.MaxValue,
-            [System.Runtime.CompilerServices.CallerLineNumber] int callerLinerNumber = default,
-            [System.Runtime.CompilerServices.CallerMemberName] string callerMemberName = default)
+            [System.Runtime.CompilerServices.CallerLineNumber]
+            int callerLinerNumber = default,
+            [System.Runtime.CompilerServices.CallerMemberName]
+            string callerMemberName = default)
         {
             int count = 0;
             foreach (var arg in args)
@@ -275,7 +254,9 @@ namespace CLown1331
         private sealed class Printer : StreamWriter
         {
             public Printer(Stream stream)
-                : this(stream, new UTF8Encoding(false, true)) { }
+                : this(stream, new UTF8Encoding(false, true))
+            {
+            }
 
             public Printer(Stream stream, Encoding encoding)
                 : base(stream, encoding)
