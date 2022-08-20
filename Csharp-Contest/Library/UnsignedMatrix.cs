@@ -1,13 +1,12 @@
 ﻿// UnsignedMatrix.cs
-// Authors: Araf Al-Jami
-// Created: 22-08-2020 6:16 PM
-// Updated: 08-07-2021 3:44 PM
+// Author: Araf Al Jami
+// Last Updated: 21-08-2565 01:43
 
 namespace Library.UnsignedMatrix
 {
-    using Library.Matrix;
+    using Matrix;
 
-    public class UnsignedMatrix: Matrix<uint>
+    public class UnsignedMatrix : Matrix<uint>
     {
         public UnsignedMatrix(int size)
             : base(size)
@@ -16,22 +15,22 @@ namespace Library.UnsignedMatrix
 
         public override void Identity()
         {
-            for (int i = 0; i < this.Size; i++)
+            for (var i = 0; i < this.Size; i++)
             {
-                for (int j = 0; j < this.Size; j++)
+                for (var j = 0; j < this.Size; j++)
                 {
-                    this[i, j] = (i == j) ? 1u : 0;
+                    this[i, j] = i == j ? 1u : 0;
                 }
             }
         }
 
         protected override Matrix<uint> Add(Matrix<uint> right)
         {
-            UnsignedMatrix temp = new UnsignedMatrix(this.Size);
+            var temp = new UnsignedMatrix(this.Size);
             temp.Reset();
-            for (int i = 0; i < this.Size; i++)
+            for (var i = 0; i < this.Size; i++)
             {
-                for (int j = 0; j < this.Size; j++)
+                for (var j = 0; j < this.Size; j++)
                 {
                     unchecked
                     {
@@ -45,13 +44,13 @@ namespace Library.UnsignedMatrix
 
         protected override Matrix<uint> Multiply(Matrix<uint> right)
         {
-            UnsignedMatrix temp = new UnsignedMatrix(this.Size);
+            var temp = new UnsignedMatrix(this.Size);
             temp.Reset();
-            for (int i = 0; i < this.Size; i++)
+            for (var i = 0; i < this.Size; i++)
             {
-                for (int j = 0; j < this.Size; j++)
+                for (var j = 0; j < this.Size; j++)
                 {
-                    for (int k = 0; k < this.Size; k++)
+                    for (var k = 0; k < this.Size; k++)
                     {
                         unchecked
                         {
@@ -66,7 +65,7 @@ namespace Library.UnsignedMatrix
 
         protected override Matrix<uint> Power(long power)
         {
-            UnsignedMatrix ans = new UnsignedMatrix(this.Size);
+            var ans = new UnsignedMatrix(this.Size);
             ans.Identity();
             UnsignedMatrix num = this;
             for (; power > 0; power >>= 1)

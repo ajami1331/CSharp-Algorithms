@@ -1,7 +1,6 @@
 ﻿// SegmentTree.cs
-// Authors: Araf Al-Jami
-// Created: 21-08-2020 2:52 PM
-// Updated: 08-07-2021 3:44 PM
+// Author: Araf Al Jami
+// Last Updated: 21-08-2565 01:43
 
 namespace Library.SegmentTree
 {
@@ -42,7 +41,7 @@ namespace Library.SegmentTree
                 return;
             }
 
-            int mid = (b + e) >> 1;
+            int mid = b + e >> 1;
             int left = node << 1;
             int right = left | 1;
             this.Build(left, b, mid, arr);
@@ -64,7 +63,7 @@ namespace Library.SegmentTree
 
             int left = node << 1;
             int right = left | 1;
-            int mid = (b + e) >> 1;
+            int mid = b + e >> 1;
             T x = this.Query(left, b, mid, l, r);
             T y = this.Query(right, mid + 1, e, l, r);
             return this.merge(x, y);
@@ -80,7 +79,7 @@ namespace Library.SegmentTree
 
             int left = node << 1;
             int right = left | 1;
-            int mid = (b + e) >> 1;
+            int mid = b + e >> 1;
             if (index <= mid)
             {
                 this.Update(left, b, mid, index, value);

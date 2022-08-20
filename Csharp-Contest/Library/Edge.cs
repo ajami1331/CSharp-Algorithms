@@ -1,7 +1,6 @@
 ﻿// Edge.cs
-// Authors: Araf Al-Jami
-// Created: 30-08-2020 5:46 PM
-// Updated: 08-07-2021 3:44 PM
+// Author: Araf Al Jami
+// Last Updated: 21-08-2565 01:43
 
 namespace Library.Edge
 {

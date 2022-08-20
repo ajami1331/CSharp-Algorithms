@@ -1,7 +1,6 @@
 ﻿// FenwickTree.cs
-// Authors: Araf Al-Jami
-// Created: 21-08-2020 2:52 PM
-// Updated: 08-07-2021 3:44 PM
+// Author: Araf Al Jami
+// Last Updated: 21-08-2565 01:43
 
 namespace Library.FenwickTree
 {
@@ -16,7 +15,9 @@ namespace Library.FenwickTree
         private Func<T, T, int> comp;
 
         public FenwickTree(int size, Func<T, T, T> merge)
-            : this(size, merge, (arg1, arg2) => throw new NotImplementedException()) { }
+            : this(size, merge, (arg1, arg2) => throw new NotImplementedException())
+        {
+        }
 
         public FenwickTree(int size, Func<T, T, T> merge, Func<T, T, int> comp)
         {
@@ -43,7 +44,7 @@ namespace Library.FenwickTree
 
         public T Query(int index)
         {
-            T ret = default(T);
+            var ret = default(T);
             for (; index > 0; index -= index & -index)
             {
                 ret = this.merge(ret, this.tree[index]);
@@ -54,11 +55,11 @@ namespace Library.FenwickTree
 
         public int LowerBound(T value)
         {
-            T sum = default(T);
-            T newSum = default(T);
-            int pos = 0;
-            int newPos = 0;
-            for (int i = logn; i >= 0; i--)
+            var sum = default(T);
+            var newSum = default(T);
+            var pos = 0;
+            var newPos = 0;
+            for (int i = this.logn; i >= 0; i--)
             {
                 newPos = pos + (1 << i);
                 if (newPos >= this.size)

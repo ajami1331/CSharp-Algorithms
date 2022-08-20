@@ -1,7 +1,6 @@
 ﻿// EdmondsKarp.cs
-// Authors: Araf Al-Jami
-// Created: 28-08-2020 9:14 PM
-// Updated: 08-07-2021 3:44 PM
+// Author: Araf Al Jami
+// Last Updated: 21-08-2565 01:43
 
 namespace Library.EdmondsKarp
 {
@@ -66,7 +65,7 @@ namespace Library.EdmondsKarp
         /// <returns>The maximum flow.</returns>
         public int MaxFlow(int src, int sink)
         {
-            int maxFlow = 0;
+            var maxFlow = 0;
             while (this.Bfs(src, sink))
             {
                 int minCap;
@@ -79,14 +78,14 @@ namespace Library.EdmondsKarp
 
         private bool Bfs(int src, int sink)
         {
-            for (int i = 0; i < this.Nodes; i++)
+            for (var i = 0; i < this.Nodes; i++)
             {
                 this.visited[i] = false;
                 this.parents[i] = -1;
             }
 
             this.visited[src] = true;
-            Queue<int> q = new Queue<int>();
+            var q = new Queue<int>();
             q.Enqueue(src);
             while (q.Count > 0)
             {
@@ -96,7 +95,7 @@ namespace Library.EdmondsKarp
                     return true;
                 }
 
-                for (int i = 0; i < this.Nodes; i++)
+                for (var i = 0; i < this.Nodes; i++)
                 {
                     if (this.graph[u, i] > 0 && !this.visited[i])
                     {
@@ -112,7 +111,7 @@ namespace Library.EdmondsKarp
 
         private int MinValue(int i)
         {
-            int ret = int.MaxValue;
+            var ret = int.MaxValue;
             for (; this.parents[i] != -1; i = this.parents[i])
             {
                 ret = Math.Min(ret, this.graph[this.parents[i], i]);

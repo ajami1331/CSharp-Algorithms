@@ -1,7 +1,6 @@
 ﻿// CommonMath.cs
-// Authors: Araf Al-Jami
-// Created: 08-07-2021 3:43 PM
-// Updated: 08-07-2021 3:44 PM
+// Author: Araf Al Jami
+// Last Updated: 21-08-2565 01:43
 
 namespace Library.CommonMath
 {
@@ -68,10 +67,10 @@ namespace Library.CommonMath
             {
                 if (power % 2 == 1)
                 {
-                    ans = (ans * num) % mod;
+                    ans = ans * num % mod;
                 }
 
-                num = (num * num) % mod;
+                num = num * num % mod;
             }
 
             return ans;

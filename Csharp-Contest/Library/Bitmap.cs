@@ -1,7 +1,6 @@
 ﻿// Bitmap.cs
-// Authors: Araf Al-Jami
-// Created: 22-04-2021 5:16 AM
-// Updated: 08-07-2021 3:44 PM
+// Author: Araf Al Jami
+// Last Updated: 21-08-2565 01:43
 
 namespace Library.Bitmap
 {
@@ -50,7 +49,7 @@ namespace Library.Bitmap
                 throw new Exception("Number of indexes != _dimensions");
             }
 
-            for (int i = 0; i < indexes.Length; i++)
+            for (var i = 0; i < indexes.Length; i++)
             {
                 if (indexes[i] < 0 || indexes[i] >= this.dimensions[i])
                 {
@@ -61,9 +60,9 @@ namespace Library.Bitmap
 
         private int GetIndex(int[] indexes)
         {
-            int ret = 0;
-            int power = 1;
-            for (int i = 1; i <= indexes.Length; i++)
+            var ret = 0;
+            var power = 1;
+            for (var i = 1; i <= indexes.Length; i++)
             {
                 ret += power * indexes[^i];
                 power *= this.dimensions[^i];

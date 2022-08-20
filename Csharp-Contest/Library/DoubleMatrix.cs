@@ -1,11 +1,10 @@
 ﻿// DoubleMatrix.cs
-// Authors: Araf Al-Jami
-// Created: 21-08-2020 2:52 PM
-// Updated: 08-07-2021 3:44 PM
+// Author: Araf Al Jami
+// Last Updated: 21-08-2565 01:43
 
 namespace Library.DoubleMatrix
 {
-    using Library.Matrix;
+    using Matrix;
 
     public class DoubleMatrix : Matrix<double>
     {
@@ -16,22 +15,22 @@ namespace Library.DoubleMatrix
 
         public override void Identity()
         {
-            for (int i = 0; i < this.Size; i++)
+            for (var i = 0; i < this.Size; i++)
             {
-                for (int j = 0; j < this.Size; j++)
+                for (var j = 0; j < this.Size; j++)
                 {
-                    this[i, j] = (i == j) ? 1.0 : 0;
+                    this[i, j] = i == j ? 1.0 : 0;
                 }
             }
         }
 
         protected override Matrix<double> Add(Matrix<double> right)
         {
-            DoubleMatrix temp = new DoubleMatrix(this.Size);
+            var temp = new DoubleMatrix(this.Size);
             temp.Reset();
-            for (int i = 0; i < this.Size; i++)
+            for (var i = 0; i < this.Size; i++)
             {
-                for (int j = 0; j < this.Size; j++)
+                for (var j = 0; j < this.Size; j++)
                 {
                     temp[i, j] = this[i, j] + right[i, j];
                 }
@@ -41,13 +40,13 @@ namespace Library.DoubleMatrix
 
         protected override Matrix<double> Multiply(Matrix<double> right)
         {
-            DoubleMatrix temp = new DoubleMatrix(this.Size);
+            var temp = new DoubleMatrix(this.Size);
             temp.Reset();
-            for (int i = 0; i < this.Size; i++)
+            for (var i = 0; i < this.Size; i++)
             {
-                for (int j = 0; j < this.Size; j++)
+                for (var j = 0; j < this.Size; j++)
                 {
-                    for (int k = 0; k < this.Size; k++)
+                    for (var k = 0; k < this.Size; k++)
                     {
                         temp[i, k] += this[i, j] * right[j, k];
                     }
@@ -58,16 +57,16 @@ namespace Library.DoubleMatrix
 
         protected override Matrix<double> Power(long power)
         {
-            DoubleMatrix ans = new DoubleMatrix(this.Size);
+            var ans = new DoubleMatrix(this.Size);
             ans.Identity();
             DoubleMatrix num = this;
             for (; power > 0; power >>= 1)
             {
                 if (power % 2 == 1)
                 {
-                    ans = (DoubleMatrix) (ans * num);
+                    ans = (DoubleMatrix)(ans * num);
                 }
-                num = (DoubleMatrix) (num * num);
+                num = (DoubleMatrix)(num * num);
             }
             return ans;
         }

@@ -1,7 +1,6 @@
 ﻿// Utils.cs
-// Authors: Araf Al-Jami
-// Created: 23-08-2020 1:44 PM
-// Updated: 08-07-2021 3:44 PM
+// Author: Araf Al Jami
+// Last Updated: 21-08-2565 01:43
 
 namespace CLown1331
 {
@@ -32,9 +31,9 @@ namespace CLown1331
 
         private static List<string> ProcessUsing(string path, StreamWriter writer)
         {
-            List<string> content = new List<string>();
-            HashSet<string> files = new HashSet<string>();
-            Queue<string> queue = new Queue<string>();
+            var content = new List<string>();
+            var files = new HashSet<string>();
+            var queue = new Queue<string>();
             string startingFile = Path.Combine(path, "Program.cs");
             queue.Enqueue(startingFile);
             files.Add(startingFile);
@@ -61,7 +60,7 @@ namespace CLown1331
                         continue;
                     }
 
-                    string filePath = Path.Combine(path,  Path.Combine(import.Split("."))) + ".cs";
+                    string filePath = Path.Combine(path, Path.Combine(import.Split("."))) + ".cs";
                     if (string.IsNullOrWhiteSpace(filePath) || files.Contains(filePath))
                     {
                         continue;

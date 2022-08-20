@@ -1,7 +1,6 @@
 ﻿// DisjointSet.cs
-// Authors: Araf Al-Jami
-// Created: 26-08-2020 11:48 PM
-// Updated: 08-07-2021 3:44 PM
+// Author: Araf Al Jami
+// Last Updated: 21-08-2565 01:43
 
 namespace Library.DisjointSet
 {
@@ -28,7 +27,7 @@ namespace Library.DisjointSet
 
         public void Reset()
         {
-            for (int i = 0; i < this.size; i++)
+            for (var i = 0; i < this.size; i++)
             {
                 this.count[i] = 1;
                 this.parent[i] = i;
@@ -47,10 +46,7 @@ namespace Library.DisjointSet
             return this.parent[u] = this.GetParent(this.parent[u]);
         }
 
-        public bool IsSameSet(int u, int v)
-        {
-            return this.GetParent(u) == this.GetParent(v);
-        }
+        public bool IsSameSet(int u, int v) => this.GetParent(u) == this.GetParent(v);
 
         public void MergeSet(int u, int v)
         {
@@ -72,9 +68,6 @@ namespace Library.DisjointSet
             this.NumberOfComponent--;
         }
 
-        public int GetComponentSize(int u)
-        {
-            return this.count[this[u]];
-        }
+        public int GetComponentSize(int u) => this.count[this[u]];
     }
 }

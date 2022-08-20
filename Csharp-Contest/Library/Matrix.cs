@@ -1,7 +1,6 @@
 ﻿// Matrix.cs
-// Authors: Araf Al-Jami
-// Created: 21-08-2020 2:52 PM
-// Updated: 08-07-2021 3:44 PM
+// Author: Araf Al Jami
+// Last Updated: 21-08-2565 01:43
 
 namespace Library.Matrix
 {
@@ -16,25 +15,13 @@ namespace Library.Matrix
             this.a = new T[this.size, this.size];
         }
 
-        public static Matrix<T> operator+ (Matrix<T> a, Matrix<T> b)
-        {
-            return a.Add(b);
-        }
+        public static Matrix<T> operator +(Matrix<T> a, Matrix<T> b) => a.Add(b);
 
-        public static Matrix<T> operator *(Matrix<T> a, Matrix<T> b)
-        {
-            return a.Multiply(b);
-        }
+        public static Matrix<T> operator *(Matrix<T> a, Matrix<T> b) => a.Multiply(b);
 
-        public static Matrix<T> operator ^(Matrix<T> a, long power)
-        {
-            return a.Power(power);
-        }
+        public static Matrix<T> operator ^(Matrix<T> a, long power) => a.Power(power);
 
-        public static Matrix<T> operator ^(Matrix<T> a, int power)
-        {
-            return a.Power(power);
-        }
+        public static Matrix<T> operator ^(Matrix<T> a, int power) => a.Power(power);
 
         public T this[int i, int j]
         {
@@ -44,9 +31,9 @@ namespace Library.Matrix
 
         public void Reset()
         {
-            for (int i = 0; i < this.size; i++)
+            for (var i = 0; i < this.size; i++)
             {
-                for (int j = 0; j < this.size; j++)
+                for (var j = 0; j < this.size; j++)
                 {
                     this[i, j] = default(T);
                 }

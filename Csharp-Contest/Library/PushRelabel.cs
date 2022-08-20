@@ -1,14 +1,13 @@
 ﻿// PushRelabel.cs
-// Authors: Araf Al-Jami
-// Created: 29-08-2020 3:15 PM
-// Updated: 08-07-2021 3:44 PM
+// Author: Araf Al Jami
+// Last Updated: 21-08-2565 01:43
 
 namespace Library.PushRelabel
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Library.Edge;
+    using Edge;
 
     public class PushRelabel
     {
@@ -98,7 +97,7 @@ namespace Library.PushRelabel
 
         private void Gap(int k)
         {
-            for (int v = 0; v < this.nodes; v++)
+            for (var v = 0; v < this.nodes; v++)
             {
                 if (this.dist[v] >= k)
                 {
@@ -128,7 +127,7 @@ namespace Library.PushRelabel
 
         private void Discharge(int v)
         {
-            for (int i = 0; i < this.adj[v].Count; i++)
+            for (var i = 0; i < this.adj[v].Count; i++)
             {
                 if (this.excess[v] > 0)
                 {
@@ -153,9 +152,6 @@ namespace Library.PushRelabel
             }
         }
 
-        public Edge GetEdge(int id)
-        {
-            return this.edges[id];
-        }
+        public Edge GetEdge(int id) => this.edges[id];
     }
 }

@@ -1,14 +1,13 @@
 ﻿// Dinic.cs
-// Authors: Araf Al-Jami
-// Created: 28-08-2020 10:58 PM
-// Updated: 08-07-2021 3:44 PM
+// Author: Araf Al Jami
+// Last Updated: 21-08-2565 01:43
 
 namespace Library.Dinic
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Library.Edge;
+    using Edge;
 
     public class Dinic
     {
@@ -29,7 +28,7 @@ namespace Library.Dinic
 
         public void ClearFlow()
         {
-            foreach (var edge in this.edges)
+            foreach (Edge edge in this.edges)
             {
                 edge.flow = 0;
             }
@@ -48,7 +47,7 @@ namespace Library.Dinic
             long maxFlow = 0;
             while (this.Bfs(src, sink))
             {
-                for (int i = 0; i < this.nodes; i++)
+                for (var i = 0; i < this.nodes; i++)
                 {
                     this.ptr[i] = 0;
                 }
@@ -68,12 +67,12 @@ namespace Library.Dinic
         private bool Bfs(int src, int sink)
         {
 
-            for (int i = 0; i < this.nodes; i++)
+            for (var i = 0; i < this.nodes; i++)
             {
                 this.level[i] = -1;
             }
 
-            Queue<int> q = new Queue<int>();
+            var q = new Queue<int>();
             this.level[src] = 0;
             q.Enqueue(src);
 
@@ -137,9 +136,6 @@ namespace Library.Dinic
             return 0;
         }
 
-        public Edge GetEdge(int id)
-        {
-            return this.edges[id];
-        }
+        public Edge GetEdge(int id) => this.edges[id];
     }
 }

@@ -1,7 +1,6 @@
 ﻿// SegmentTreeLazy.cs
-// Authors: Araf Al-Jami
-// Created: 15-09-2020 12:44 PM
-// Updated: 08-07-2021 3:44 PM
+// Author: Araf Al Jami
+// Last Updated: 21-08-2565 01:43
 
 namespace Library.SegmentTreeLazy
 {
@@ -34,7 +33,7 @@ namespace Library.SegmentTreeLazy
             set => this.tree[node] = value;
         }
 
-        public SegmentTreeLazy(int length, Func<T, T, T> merge, Func<int, int, int, SegmentTreeLazy<T>, bool> propagate, Func<Node<T>,  T, bool> setValue, T outOfBound)
+        public SegmentTreeLazy(int length, Func<T, T, T> merge, Func<int, int, int, SegmentTreeLazy<T>, bool> propagate, Func<Node<T>, T, bool> setValue, T outOfBound)
         {
             this.length = length;
             this.tree = Enumerable.Repeat(0, length << 2).Select(_ => new Node<T>()).ToArray();
@@ -52,7 +51,7 @@ namespace Library.SegmentTreeLazy
                 return;
             }
 
-            int mid = (b + e) >> 1;
+            int mid = b + e >> 1;
             int left = node << 1;
             int right = left | 1;
             this.Build(left, b, mid);
@@ -75,7 +74,7 @@ namespace Library.SegmentTreeLazy
 
             int left = node << 1;
             int right = left | 1;
-            int mid = (b + e) >> 1;
+            int mid = b + e >> 1;
             T x = this.Query(left, b, mid, l, r);
             T y = this.Query(right, mid + 1, e, l, r);
             return this.merge(x, y);
@@ -98,7 +97,7 @@ namespace Library.SegmentTreeLazy
 
             int left = node << 1;
             int right = left | 1;
-            int mid = (b + e) >> 1;
+            int mid = b + e >> 1;
 
             this.Update(left, b, mid, l, r, value);
             this.Update(right, mid + 1, e, l, r, value);

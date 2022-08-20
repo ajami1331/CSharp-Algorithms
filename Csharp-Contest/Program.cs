@@ -1,7 +1,6 @@
 ﻿// Program.cs
-// Authors: Araf Al-Jami
-// Created: 23-11-2020 2:57 AM
-// Updated: 08-07-2021 3:44 PM
+// Author: Araf Al Jami
+// Last Updated: 21-08-2565 01:43
 
 namespace CLown1331
 {
@@ -14,11 +13,11 @@ namespace CLown1331
     using System.Text;
     using System.Threading;
 
-    static class Program
+    internal static class Program
     {
         private const int NumberOfTestCase = 3;
         private const int StackSize = 64 * (1 << 20);
-        private const int Sz = (int) 2e5 + 10;
+        private const int Sz = (int)2e5 + 10;
         private const int MxAdd = 1000000000;
         private const int Mod = 998244353;
         private static int[] ar = new int[Sz];
@@ -34,13 +33,13 @@ namespace CLown1331
 
         private static void Solve()
         {
-            int t = 1;
-            for (int cs = 1; cs <= t; cs++)
+            var t = 1;
+            for (var cs = 1; cs <= t; cs++)
             {
                 n = NextInt();
                 m = NextInt();
                 G = Repeat(0, n + 2).Select(_ => new List<int>()).ToArray();
-                for (int i = 0; i <= n; i++)
+                for (var i = 0; i <= n; i++)
                 {
                     ar[i] = (1 << 30) - 1;
                     ans[i] = 0;
@@ -48,7 +47,7 @@ namespace CLown1331
                     vis[i] = false;
                 }
 
-                for (int i = 1; i <= m; i++)
+                for (var i = 1; i <= m; i++)
                 {
                     x[i] = NextInt();
                     y[i] = NextInt();
@@ -60,7 +59,7 @@ namespace CLown1331
                     mk[y[i]] = true;
                 }
 
-                for (int i = 0; i <= n; i++)
+                for (var i = 0; i <= n; i++)
                 {
                     if (mk[i])
                     {
@@ -77,10 +76,10 @@ namespace CLown1331
                         continue;
                     }
 
-                    Dfs(u: i, value: 0);
+                    Dfs(i, 0);
                 }
 
-                for (int i = 1; i <= n; i++)
+                for (var i = 1; i <= n; i++)
                 {
                     OutputPrinter.Write($"{ans[i]} ");
                 }
@@ -110,9 +109,9 @@ namespace CLown1331
         {
 #if CLown1331
             var stopWatch = new Stopwatch();
-            var totalTime = stopWatch.ElapsedMilliseconds;
+            long totalTime = stopWatch.ElapsedMilliseconds;
             stopWatch.Start();
-            for (int testCase = 1; !Reader.IsEndOfStream; testCase++)
+            for (var testCase = 1; !Reader.IsEndOfStream; testCase++)
             {
                 stopWatch.Restart();
                 Solve();
@@ -148,9 +147,9 @@ namespace CLown1331
 
         private static long Count<T>(this IEnumerable<T> x, Func<T, bool> pred) => Enumerable.Count(x, pred);
 
-        private static IEnumerable<T> Repeat<T>(T v, long n) => Enumerable.Repeat<T>(v, (int) n);
+        private static IEnumerable<T> Repeat<T>(T v, long n) => Enumerable.Repeat<T>(v, (int)n);
 
-        private static IEnumerable<int> Range(long s, long c) => Enumerable.Range((int) s, (int) c);
+        private static IEnumerable<int> Range(long s, long c) => Enumerable.Range((int)s, (int)c);
 
         private static readonly IEnumerator<uint> Xsi = Xsc();
 
@@ -165,14 +164,14 @@ namespace CLown1331
 
         private static IEnumerator<uint> Xsc()
         {
-            uint x = 123456789, y = 362436069, z = 521288629, w = (uint) (DateTime.Now.Ticks & 0xffffffff);
+            uint x = 123456789, y = 362436069, z = 521288629, w = (uint)(DateTime.Now.Ticks & 0xffffffff);
             while (true)
             {
-                uint t = x ^ (x << 11);
+                uint t = x ^ x << 11;
                 x = y;
                 y = z;
                 z = w;
-                w = (w ^ (w >> 19)) ^ (t ^ (t >> 8));
+                w = w ^ w >> 19 ^ t ^ t >> 8;
                 yield return w;
             }
         }
@@ -181,12 +180,12 @@ namespace CLown1331
             IEnumerable<T> args,
             int len = int.MaxValue,
             [System.Runtime.CompilerServices.CallerLineNumber]
-            int callerLinerNumber = default,
+            int callerLinerNumber = default(int),
             [System.Runtime.CompilerServices.CallerMemberName]
-            string callerMemberName = default)
+            string callerMemberName = default(string))
         {
-            int count = 0;
-            foreach (var arg in args)
+            var count = 0;
+            foreach (T arg in args)
             {
                 ErrorPrinter.Write(arg + " ");
                 if (++count >= len)
@@ -200,7 +199,7 @@ namespace CLown1331
 
         private static void Debug(params object[] args)
         {
-            foreach (var arg in args)
+            foreach (object arg in args)
             {
                 ErrorPrinter.Write(arg + " ");
             }
@@ -236,15 +235,9 @@ namespace CLown1331
                 return Param.Dequeue();
             }
 
-            public static string ReadLine()
-            {
-                return InputReader.ReadLine();
-            }
+            public static string ReadLine() => InputReader.ReadLine();
 
-            public static int Read()
-            {
-                return InputReader.Read();
-            }
+            public static int Read() => InputReader.Read();
         }
 
         private static readonly Printer OutputPrinter = new Printer(Console.OpenStandardOutput());
