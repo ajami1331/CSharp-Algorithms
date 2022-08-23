@@ -1,6 +1,6 @@
 ﻿// Utils.cs
 // Author: Araf Al Jami
-// Last Updated: 21-08-2565 01:43
+// Last Updated: 23-08-2565 21:39
 
 namespace CLown1331
 {
@@ -14,7 +14,6 @@ namespace CLown1331
         private const string Using = "using";
         private const string SemiColon = ";";
         private const string NamespacePrefix = "Library.";
-        private const string CommentPrefix = "//";
 
         public static void CreateFileForSubmission(StreamWriter writer)
         {
@@ -22,14 +21,14 @@ namespace CLown1331
             stopWatch.Start();
             string path = Directory.GetCurrentDirectory();
             path = Directory.GetParent(path)?.Parent.Parent.FullName;
-            List<string> content = ProcessUsing(path, writer);
+            IEnumerable<string> content = ProcessUsing(path, writer);
             string submissionFile = Path.Combine(path, "Submission.cs");
             File.WriteAllLines(submissionFile, content);
             stopWatch.Stop();
             writer.WriteLine($"File created for submission: {stopWatch.ElapsedMilliseconds}ms");
         }
 
-        private static List<string> ProcessUsing(string path, StreamWriter writer)
+        private static IEnumerable<string> ProcessUsing(string path, TextWriter writer)
         {
             var content = new List<string>();
             var files = new HashSet<string>();

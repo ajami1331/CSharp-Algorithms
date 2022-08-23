@@ -1,10 +1,10 @@
 ﻿// DoubleMatrix.cs
 // Author: Araf Al Jami
-// Last Updated: 21-08-2565 01:43
+// Last Updated: 23-08-2565 21:39
 
 namespace Library.DoubleMatrix
 {
-    using Matrix;
+    using Library.Matrix;
 
     public class DoubleMatrix : Matrix<double>
     {
