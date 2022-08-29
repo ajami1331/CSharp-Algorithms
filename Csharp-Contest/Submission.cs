@@ -149,36 +149,6 @@ namespace CLown1331
             }
         }
 
-        private static void Debug<T>(
-            IEnumerable<T> args,
-            int len = int.MaxValue,
-            [System.Runtime.CompilerServices.CallerLineNumber]
-            int callerLinerNumber = default(int),
-            [System.Runtime.CompilerServices.CallerMemberName]
-            string callerMemberName = default(string))
-        {
-            var count = 0;
-            foreach (T arg in args)
-            {
-                ErrorPrinter.Write(arg + " ");
-                if (++count >= len)
-                {
-                    break;
-                }
-            }
-
-            ErrorPrinter.WriteLine($"Method: {callerMemberName} Line: {callerLinerNumber}");
-        }
-
-        private static void Debug(params object[] args)
-        {
-            foreach (object arg in args)
-            {
-                ErrorPrinter.Write(arg + " ");
-            }
-
-            ErrorPrinter.WriteLine();
-        }
 
         private static class Reader
         {

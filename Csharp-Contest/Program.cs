@@ -1,6 +1,6 @@
 ﻿// Program.cs
 // Author: Araf Al Jami
-// Last Updated: 29-08-2565 21:49
+// Last Updated: 29-08-2565 22:11
 
 namespace CLown1331
 {
@@ -23,8 +23,8 @@ namespace CLown1331
 
         private static void Solve()
         {
-            var t = NextInt();
-            var dy = new[] {1, 0, -1, 0};
+            int t = NextInt();
+            int[] dy = new[] {1, 0, -1, 0};
             (int x, int y) st = (1, 1);
             for (var cs = 1; cs <= t; cs++)
             {
@@ -35,7 +35,7 @@ namespace CLown1331
                 int d = NextInt();
                 (int x, int y) s = (sx, sy);
                 (int x, int y) en = (n, m);
-                bool possible = false;
+                var possible = false;
                 possible = BottomRight(n, m, sx, sy, d) || RightBottom(n, m, sx, sy, d);
                 if (possible)
                 {
@@ -51,7 +51,7 @@ namespace CLown1331
         private static bool BottomRight(int n, int m, int sx, int sy, int d)
         {
             (int x, int y) s = (sx, sy);
-            for (int i = 1; i <= n; i++)
+            for (var i = 1; i <= n; i++)
             {
                 if (Distance((i, 1), s) <= d)
                 {
@@ -59,7 +59,7 @@ namespace CLown1331
                 }
             }
 
-            for (int i = 1; i <= m; i++)
+            for (var i = 1; i <= m; i++)
             {
                 if (Distance((n, i), s) <= d)
                 {
@@ -73,7 +73,7 @@ namespace CLown1331
         private static bool RightBottom(int n, int m, int sx, int sy, int d)
         {
             (int x, int y) s = (sx, sy);
-            for (int i = 1; i <= m; i++)
+            for (var i = 1; i <= m; i++)
             {
                 if (Distance((1, i), s) <= d)
                 {
@@ -81,7 +81,7 @@ namespace CLown1331
                 }
             }
 
-            for (int i = 1; i <= n; i++)
+            for (var i = 1; i <= n; i++)
             {
                 if (Distance((i, m), s) <= d)
                 {
@@ -92,10 +92,7 @@ namespace CLown1331
             return true;
         }
 
-        private static int Distance((int x, int y) a, (int x, int y) b)
-        {
-            return Math.Abs(a.x - b.x) + Math.Abs(a.y - b.y);
-        }
+        private static int Distance((int x, int y) a, (int x, int y) b) => Math.Abs(a.x - b.x) + Math.Abs(a.y - b.y);
 
         public static void Main(string[] args)
         {
@@ -169,6 +166,7 @@ namespace CLown1331
             }
         }
 
+#if CLown1331
         private static void Debug<T>(
             IEnumerable<T> args,
             int len = int.MaxValue,
@@ -200,6 +198,7 @@ namespace CLown1331
             ErrorPrinter.WriteLine();
         }
 
+#endif
         private static class Reader
         {
             private static readonly Queue<string> Param = new Queue<string>();
