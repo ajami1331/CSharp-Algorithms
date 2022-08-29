@@ -1,6 +1,6 @@
 ﻿// Utils.cs
 // Author: Araf Al Jami
-// Last Updated: 23-08-2565 21:39
+// Last Updated: 29-08-2565 21:59
 
 namespace CLown1331
 {
@@ -14,13 +14,21 @@ namespace CLown1331
         private const string Using = "using";
         private const string SemiColon = ";";
         private const string NamespacePrefix = "Library.";
+        private const string IfCLown1331 = "#if CLown1331";
+        private const string Else = "#else";
+        private const string EndIf = "#endif";
+
+        public static string GetRootDirectoryPath()
+        {
+            string path = Directory.GetCurrentDirectory();
+            return Directory.GetParent(path)?.Parent.Parent.FullName;
+        }
 
         public static void CreateFileForSubmission(StreamWriter writer)
         {
             var stopWatch = new Stopwatch();
             stopWatch.Start();
-            string path = Directory.GetCurrentDirectory();
-            path = Directory.GetParent(path)?.Parent.Parent.FullName;
+            string path = GetRootDirectoryPath();
             IEnumerable<string> content = ProcessUsing(path, writer);
             string submissionFile = Path.Combine(path, "Submission.cs");
             File.WriteAllLines(submissionFile, content);
@@ -40,8 +48,25 @@ namespace CLown1331
             {
                 string u = queue.Dequeue();
                 writer.WriteLine(u);
+                var skip = false;
                 foreach (string line in File.ReadAllLines(u))
                 {
+                    if (line.Trim().StartsWith(IfCLown1331))
+                    {
+                        skip = true;
+                    }
+
+                    if (line.Trim().StartsWith(EndIf) || line.Trim().StartsWith(Else))
+                    {
+                        skip = false;
+                        continue;
+                    }
+
+                    if (skip)
+                    {
+                        continue;
+                    }
+
                     content.Add(line);
 
                     if (!line.Contains(Using))

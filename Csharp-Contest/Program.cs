@@ -1,6 +1,6 @@
 ﻿// Program.cs
 // Author: Araf Al Jami
-// Last Updated: 23-08-2565 21:39
+// Last Updated: 29-08-2565 21:49
 
 namespace CLown1331
 {
@@ -20,89 +20,81 @@ namespace CLown1331
         private const int Sz = (int)2e5 + 10;
         private const int MxAdd = 1000000000;
         private const int Mod = 998244353;
-        private static int[] ar = new int[Sz];
-        private static List<int>[] G;
-        private static int[] x = new int[Sz];
-        private static int[] y = new int[Sz];
-        private static int[] v = new int[Sz];
-        private static int[] ans = new int[Sz];
-        private static bool[] mk = new bool[Sz];
-        private static bool[] vis = new bool[Sz];
-        private static int n;
-        private static int m;
 
         private static void Solve()
         {
-            var t = 1;
+            var t = NextInt();
+            var dy = new[] {1, 0, -1, 0};
+            (int x, int y) st = (1, 1);
             for (var cs = 1; cs <= t; cs++)
             {
-                n = NextInt();
-                m = NextInt();
-                G = Repeat(0, n + 2).Select(_ => new List<int>()).ToArray();
-                for (var i = 0; i <= n; i++)
+                int n = NextInt();
+                int m = NextInt();
+                int sx = NextInt();
+                int sy = NextInt();
+                int d = NextInt();
+                (int x, int y) s = (sx, sy);
+                (int x, int y) en = (n, m);
+                bool possible = false;
+                possible = BottomRight(n, m, sx, sy, d) || RightBottom(n, m, sx, sy, d);
+                if (possible)
                 {
-                    ar[i] = (1 << 30) - 1;
-                    ans[i] = 0;
-                    mk[i] = false;
-                    vis[i] = false;
+                    OutputPrinter.WriteLine(Distance(st, en));
                 }
-
-                for (var i = 1; i <= m; i++)
+                else
                 {
-                    x[i] = NextInt();
-                    y[i] = NextInt();
-                    v[i] = NextInt();
-                    G[Math.Max(x[i], y[i])].Add(Math.Min(x[i], y[i]));
-                    ar[x[i]] &= v[i];
-                    ar[y[i]] &= v[i];
-                    mk[x[i]] = true;
-                    mk[y[i]] = true;
+                    OutputPrinter.WriteLine(-1);
                 }
-
-                for (var i = 0; i <= n; i++)
-                {
-                    if (mk[i])
-                    {
-                        continue;
-                    }
-
-                    ar[i] = 0;
-                }
-
-                for (int i = n; i > 0; i--)
-                {
-                    if (ar[i] == 0)
-                    {
-                        continue;
-                    }
-
-                    Dfs(i, 0);
-                }
-
-                for (var i = 1; i <= n; i++)
-                {
-                    OutputPrinter.Write($"{ans[i]} ");
-                }
-
-                OutputPrinter.WriteLine();
             }
         }
 
-        private static void Dfs(int u, int value)
+        private static bool BottomRight(int n, int m, int sx, int sy, int d)
         {
-            vis[u] = true;
-            ans[u] = ar[u] & ~value;
-            value |= ar[u];
-            ar[u] = ans[u];
-            foreach (int v in G[u].OrderByDescending(xv => xv))
+            (int x, int y) s = (sx, sy);
+            for (int i = 1; i <= n; i++)
             {
-                if (vis[v])
+                if (Distance((i, 1), s) <= d)
                 {
-                    continue;
+                    return false;
                 }
-
-                Dfs(v, value);
             }
+
+            for (int i = 1; i <= m; i++)
+            {
+                if (Distance((n, i), s) <= d)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static bool RightBottom(int n, int m, int sx, int sy, int d)
+        {
+            (int x, int y) s = (sx, sy);
+            for (int i = 1; i <= m; i++)
+            {
+                if (Distance((1, i), s) <= d)
+                {
+                    return false;
+                }
+            }
+
+            for (int i = 1; i <= n; i++)
+            {
+                if (Distance((i, m), s) <= d)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static int Distance((int x, int y) a, (int x, int y) b)
+        {
+            return Math.Abs(a.x - b.x) + Math.Abs(a.y - b.y);
         }
 
         public static void Main(string[] args)
@@ -113,6 +105,7 @@ namespace CLown1331
             stopWatch.Start();
             for (var testCase = 1; !Reader.IsEndOfStream; testCase++)
             {
+                File.Delete(Path.Combine(Utils.GetRootDirectoryPath(), "output.txt"));
                 stopWatch.Restart();
                 Solve();
                 stopWatch.Stop();
@@ -240,9 +233,21 @@ namespace CLown1331
             public static int Read() => InputReader.Read();
         }
 
+#if CLown1331
+        private static readonly Printer OutputPrinter = new Printer(
+            new MultiStream(
+                File.OpenWrite(Path.Combine(Utils.GetRootDirectoryPath(), "output.txt")),
+                Console.OpenStandardOutput()));
+
+        private static readonly Printer ErrorPrinter = new Printer(
+            new MultiStream(
+                File.OpenWrite(Path.Combine(Utils.GetRootDirectoryPath(), "error.txt")),
+                Console.OpenStandardOutput()));
+#else
         private static readonly Printer OutputPrinter = new Printer(Console.OpenStandardOutput());
 
         private static readonly Printer ErrorPrinter = new Printer(Console.OpenStandardError());
+#endif
 
         private sealed class Printer : StreamWriter
         {
