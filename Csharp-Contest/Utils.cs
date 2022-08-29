@@ -49,16 +49,19 @@ namespace CLown1331
                 string u = queue.Dequeue();
                 writer.WriteLine(u);
                 var skip = false;
+                bool clown1331Start = false;
                 foreach (string line in File.ReadAllLines(u))
                 {
                     if (line.Trim().StartsWith(IfCLown1331))
                     {
                         skip = true;
+                        clown1331Start = true;
                     }
 
-                    if (skip && (line.Trim().StartsWith(EndIf) || line.Trim().StartsWith(Else)))
+                    if (clown1331Start && (line.Trim().StartsWith(EndIf) || line.Trim().StartsWith(Else)))
                     {
                         skip = false;
+                        clown1331Start = !line.Trim().StartsWith(EndIf);
                         continue;
                     }
 

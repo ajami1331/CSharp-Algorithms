@@ -1,4 +1,5 @@
-Case: 1 -------- 12ms
-Runtime: 12ms
+Case: 1 -------- 10ms
+Runtime: 10ms
 /Users/clown1331/Codes/Csharp-Contest/Csharp-Contest/Program.cs
-File created for submission: 1ms
+File created for submission: 2ms
+50ms
