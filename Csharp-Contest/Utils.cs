@@ -1,6 +1,6 @@
 ﻿// Utils.cs
 // Author: Araf Al Jami
-// Last Updated: 29-08-2565 21:59
+// Last Updated: 29-08-2565 22:16
 
 namespace CLown1331
 {
@@ -56,7 +56,7 @@ namespace CLown1331
                         skip = true;
                     }
 
-                    if (line.Trim().StartsWith(EndIf) || line.Trim().StartsWith(Else))
+                    if (skip && (line.Trim().StartsWith(EndIf) || line.Trim().StartsWith(Else)))
                     {
                         skip = false;
                         continue;
