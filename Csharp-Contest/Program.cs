@@ -1,6 +1,6 @@
 ﻿// Program.cs
 // Author: Araf Al Jami
-// Last Updated: 29-08-2565 22:11
+// Last Updated: 31-08-2565 00:07
 
 namespace CLown1331
 {
@@ -20,79 +20,113 @@ namespace CLown1331
         private const int Sz = (int)2e5 + 10;
         private const int MxAdd = 1000000000;
         private const int Mod = 998244353;
+        private static int[] ans = new int[Sz];
 
         private static void Solve()
         {
             int t = NextInt();
-            int[] dy = new[] {1, 0, -1, 0};
-            (int x, int y) st = (1, 1);
             for (var cs = 1; cs <= t; cs++)
             {
                 int n = NextInt();
-                int m = NextInt();
-                int sx = NextInt();
-                int sy = NextInt();
-                int d = NextInt();
-                (int x, int y) s = (sx, sy);
-                (int x, int y) en = (n, m);
-                var possible = false;
-                possible = BottomRight(n, m, sx, sy, d) || RightBottom(n, m, sx, sy, d);
-                if (possible)
+                int k = n / 8 * 8;
+                for (var i = 0; i < k; i++)
                 {
-                    OutputPrinter.WriteLine(Distance(st, en));
+                    ans[i] = i;
                 }
-                else
+
+                int bk = n - k;
+
+                switch (bk)
                 {
-                    OutputPrinter.WriteLine(-1);
+                    case 1:
+                        ans[k] = NextTwo(k - 1);
+                        ans[k - 1] ^= ans[k];
+                        break;
+                    case 2:
+                        ans[k] = NextTwo(k - 1);
+                        ans[k + 1] = ans[k] * 2;
+                        ans[k - 1] ^= ans[k + 1];
+                        ans[k + 1] ^= ans[k];
+                        break;
+                    case 3:
+                        ans[k + 1] = NextTwo(k - 1);
+                        ans[k] = ans[k + 1] * 2;
+                        ans[k + 2] = ans[k + 1] ^ ans[k];
+                        break;
+                    case 4:
+                        ans[k + 1] = NextTwo(k - 1);
+                        ans[k] = ans[k + 1] * 2;
+                        ans[k + 2] = ans[k + 1] ^ ans[k];
+                        ans[k + 3] = ans[k] * 2;
+                        ans[k + 1] ^= ans[k + 3];
+                        break;
+                    case 5:
+                        ans[k + 1] = NextTwo(k - 1);
+                        ans[k] = ans[k + 1] * 2;
+                        ans[k + 2] = ans[k + 1] ^ ans[k];
+                        ans[k + 3] = ans[k] * 2;
+                        ans[k + 4] = ans[k + 3] * 2;
+                        ans[k] ^= ans[k + 4];
+                        ans[k + 1] ^= ans[k + 3];
+                        break;
+                    case 6:
+                        ans[k + 1] = NextTwo(k - 1);
+                        ans[k] = ans[k + 1] * 2;
+                        ans[k + 2] = ans[k + 1] ^ ans[k];
+                        ans[k + 3] = ans[k] * 2;
+                        ans[k + 4] = ans[k + 3] * 2;
+                        ans[k + 5] = ans[k + 4] * 2;
+                        ans[k] ^= ans[k + 4];
+                        ans[k + 1] ^= ans[k + 5];
+                        ans[k + 1] ^= ans[k + 3];
+                        break;
+                    case 7:
+                        ans[k + 1] = NextTwo(k - 1);
+                        ans[k] = ans[k + 1] * 2;
+                        ans[k + 2] = ans[k + 1] ^ ans[k];
+                        ans[k + 3] = ans[k] * 2;
+                        ans[k + 4] = ans[k + 3] * 2;
+                        ans[k + 5] = ans[k + 4] * 2;
+                        ans[k + 6] = ans[k + 5] * 2;
+                        ans[k] ^= ans[k + 4];
+                        ans[k] ^= ans[k + 6];
+                        ans[k + 1] ^= ans[k + 5];
+                        ans[k + 1] ^= ans[k + 3];
+                        break;
+                    default:
+                        break;
                 }
+
+                for (var i = 0; i < n; i++)
+                {
+                    OutputPrinter.Write(ans[i] + " ");
+                }
+
+                OutputPrinter.WriteLine();
+
+                // int a = 0;
+                // int b = 0;
+                // for (int i = 0; i < n; i++)
+                // {
+                //     if (i % 2 == 1) a ^= ans[i];
+                //     else b ^= ans[i];
+                // }
+                //
+                // if (a != b)
+                // Debug(bk, ": ", a, b, " ss");
             }
         }
 
-        private static bool BottomRight(int n, int m, int sx, int sy, int d)
+        private static int NextTwo(int x)
         {
-            (int x, int y) s = (sx, sy);
-            for (var i = 1; i <= n; i++)
+            var ret = 2;
+            while (x > 1)
             {
-                if (Distance((i, 1), s) <= d)
-                {
-                    return false;
-                }
+                x /= 2;
+                ret *= 2;
             }
-
-            for (var i = 1; i <= m; i++)
-            {
-                if (Distance((n, i), s) <= d)
-                {
-                    return false;
-                }
-            }
-
-            return true;
+            return ret;
         }
-
-        private static bool RightBottom(int n, int m, int sx, int sy, int d)
-        {
-            (int x, int y) s = (sx, sy);
-            for (var i = 1; i <= m; i++)
-            {
-                if (Distance((1, i), s) <= d)
-                {
-                    return false;
-                }
-            }
-
-            for (var i = 1; i <= n; i++)
-            {
-                if (Distance((i, m), s) <= d)
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        private static int Distance((int x, int y) a, (int x, int y) b) => Math.Abs(a.x - b.x) + Math.Abs(a.y - b.y);
 
         public static void Main(string[] args)
         {
