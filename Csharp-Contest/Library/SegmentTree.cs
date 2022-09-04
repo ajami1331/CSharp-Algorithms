@@ -1,6 +1,6 @@
 ﻿// SegmentTree.cs
 // Author: Araf Al Jami
-// Last Updated: 23-08-2565 21:39
+// Last Updated: 05-09-2565 01:48
 
 namespace Library.SegmentTree
 {
@@ -15,8 +15,8 @@ namespace Library.SegmentTree
 
         public T this[int node]
         {
-            get => this.tree[node];
-            set => this.tree[node] = value;
+            get { return this.tree[node]; }
+            set { this.tree[node] = value; }
         }
 
         public SegmentTree(int length, Func<T, T, T> merge, T outOfBound)

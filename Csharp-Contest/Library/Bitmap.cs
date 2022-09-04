@@ -1,6 +1,6 @@
 ﻿// Bitmap.cs
 // Author: Araf Al Jami
-// Last Updated: 23-08-2565 21:39
+// Last Updated: 05-09-2565 01:48
 
 namespace Library.Bitmap
 {
@@ -38,8 +38,8 @@ namespace Library.Bitmap
 
         public bool this[params int[] indexes]
         {
-            get => this.GetValue(indexes);
-            set => this.SetValue(value, indexes);
+            get { return this.GetValue(indexes); }
+            set { this.SetValue(value, indexes); }
         }
 
         private void ValidateIndexes(int[] indexes)
@@ -64,8 +64,8 @@ namespace Library.Bitmap
             var power = 1;
             for (var i = 1; i <= indexes.Length; i++)
             {
-                ret += power * indexes[^i];
-                power *= this.dimensions[^i];
+                ret += power * indexes[indexes.Length - i];
+                power *= this.dimensions[indexes.Length - i];
             }
 
             return ret;

@@ -1,6 +1,6 @@
 ﻿// Utils.cs
 // Author: Araf Al Jami
-// Last Updated: 29-08-2565 22:16
+// Last Updated: 05-09-2565 01:48
 
 namespace CLown1331
 {
@@ -49,7 +49,7 @@ namespace CLown1331
                 string u = queue.Dequeue();
                 writer.WriteLine(u);
                 var skip = false;
-                bool clown1331Start = false;
+                var clown1331Start = false;
                 foreach (string line in File.ReadAllLines(u))
                 {
                     if (line.Trim().StartsWith(IfCLown1331))

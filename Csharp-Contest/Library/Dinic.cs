@@ -1,6 +1,6 @@
 ﻿// Dinic.cs
 // Author: Araf Al Jami
-// Last Updated: 23-08-2565 21:39
+// Last Updated: 05-09-2565 01:48
 
 namespace Library.Dinic
 {
@@ -62,7 +62,10 @@ namespace Library.Dinic
             return maxFlow;
         }
 
-        public List<int> this[int i] => this.adj[i];
+        public List<int> this[int i]
+        {
+            get { return this.adj[i]; }
+        }
 
         private bool Bfs(int src, int sink)
         {

@@ -1,6 +1,6 @@
 ﻿// FenwickTree.cs
 // Author: Araf Al Jami
-// Last Updated: 23-08-2565 21:39
+// Last Updated: 05-09-2565 01:48
 
 namespace Library.FenwickTree
 {
@@ -15,7 +15,10 @@ namespace Library.FenwickTree
         private Func<T, T, int> comp;
 
         public FenwickTree(int size, Func<T, T, T> merge)
-            : this(size, merge, (arg1, arg2) => throw new NotImplementedException())
+            : this(size, merge, (arg1, arg2) =>
+            {
+                throw new NotImplementedException();
+            })
         {
         }
 
@@ -30,8 +33,8 @@ namespace Library.FenwickTree
 
         public T this[int node]
         {
-            get => this.Query(node);
-            set => this.Update(node, value);
+            get { return this.Query(node); }
+            set { this.Update(node, value); }
         }
 
         public void Update(int index, T value)

@@ -1,6 +1,6 @@
 // MultiStream.cs
 // Author: Araf Al Jami
-// Last Updated: 29-08-2565 21:48
+// Last Updated: 05-09-2565 01:48
 
 namespace CLown1331
 {
@@ -10,7 +10,10 @@ namespace CLown1331
     {
         private readonly System.Collections.Generic.List<System.IO.Stream> _streams;
 
-        public MultiStream(params System.IO.Stream[] streams) => this._streams = streams.ToList();
+        public MultiStream(params System.IO.Stream[] streams)
+        {
+            this._streams = streams.ToList();
+        }
 
         public override void Flush()
         {
@@ -66,11 +69,14 @@ namespace CLown1331
             get { return this._streams.TrueForAll(x => x.CanWrite); }
         }
 
-        public override long Length => this._streams.Min(x => x.Length);
+        public override long Length
+        {
+            get { return this._streams.Min(x => x.Length); }
+        }
 
         public override long Position
         {
-            get => this._streams.First().Position;
+            get { return this._streams.First().Position; }
             set { this._streams.ForEach(x => x.Position = value); }
         }
     }

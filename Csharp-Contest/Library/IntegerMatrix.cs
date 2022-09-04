@@ -1,6 +1,6 @@
 ﻿// IntegerMatrix.cs
 // Author: Araf Al Jami
-// Last Updated: 23-08-2565 21:39
+// Last Updated: 05-09-2565 01:48
 
 namespace Library.IntegerMatrix
 {
@@ -10,7 +10,10 @@ namespace Library.IntegerMatrix
     {
         private readonly int mod;
 
-        public IntegerMatrix(int size, int mod) : base(size) => this.mod = mod;
+        public IntegerMatrix(int size, int mod) : base(size)
+        {
+            this.mod = mod;
+        }
 
         public override void Identity()
         {

@@ -3,7 +3,7 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>netcoreapp6</TargetFramework>
-        <LangVersion>preview</LangVersion>
+        <LangVersion>6</LangVersion>
         <RootNamespace>CLown1331</RootNamespace>
         <AssemblyName>CLown1331</AssemblyName>
     </PropertyGroup>
@@ -23,10 +23,10 @@
         <None Update="input.txt">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <Compile Remove="Submission.cs" />
-        <None Include="Submission.cs" />
+        <Compile Remove="Submission.cs"/>
+        <None Include="Submission.cs"/>
         <None Update="output.txt">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
     </ItemGroup>
 

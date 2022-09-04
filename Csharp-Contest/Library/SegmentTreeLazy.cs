@@ -1,6 +1,6 @@
 ﻿// SegmentTreeLazy.cs
 // Author: Araf Al Jami
-// Last Updated: 23-08-2565 21:39
+// Last Updated: 05-09-2565 01:48
 
 namespace Library.SegmentTreeLazy
 {
@@ -29,8 +29,8 @@ namespace Library.SegmentTreeLazy
 
         public Node<T> this[int node]
         {
-            get => this.tree[node];
-            set => this.tree[node] = value;
+            get { return this.tree[node]; }
+            set { this.tree[node] = value; }
         }
 
         public SegmentTreeLazy(int length, Func<T, T, T> merge, Func<int, int, int, SegmentTreeLazy<T>, bool> propagate, Func<Node<T>, T, bool> setValue, T outOfBound)

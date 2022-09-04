@@ -1,6 +1,6 @@
 ﻿// Matrix.cs
 // Author: Araf Al Jami
-// Last Updated: 23-08-2565 21:39
+// Last Updated: 05-09-2565 01:48
 
 namespace Library.Matrix
 {
@@ -25,8 +25,8 @@ namespace Library.Matrix
 
         public T this[int i, int j]
         {
-            get => this.a[i, j];
-            set => this.a[i, j] = value;
+            get { return this.a[i, j]; }
+            set { this.a[i, j] = value; }
         }
 
         public void Reset()
@@ -48,6 +48,9 @@ namespace Library.Matrix
 
         protected abstract Matrix<T> Power(long power);
 
-        public int Size => this.size;
+        public int Size
+        {
+            get { return this.size; }
+        }
     }
 }

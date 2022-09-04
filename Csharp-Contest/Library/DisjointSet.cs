@@ -1,6 +1,6 @@
 ﻿// DisjointSet.cs
 // Author: Araf Al Jami
-// Last Updated: 23-08-2565 21:39
+// Last Updated: 05-09-2565 01:48
 
 namespace Library.DisjointSet
 {
@@ -12,9 +12,15 @@ namespace Library.DisjointSet
 
         public int NumberOfComponent { get; private set; }
 
-        public int[] RealParent => this.parent;
+        public int[] RealParent
+        {
+            get { return this.parent; }
+        }
 
-        public int this[int u] => this.GetParent(u);
+        public int this[int u]
+        {
+            get { return this.GetParent(u); }
+        }
 
         public DisjointSet(int size)
         {
@@ -59,7 +65,9 @@ namespace Library.DisjointSet
             v = this.GetParent(v);
             if (this.count[u] < this.count[v])
             {
-                (u, v) = (v, u);
+                int temp = u;
+                u = v;
+                v = temp;
             }
 
             this.parent[u] = this.parent[v];
