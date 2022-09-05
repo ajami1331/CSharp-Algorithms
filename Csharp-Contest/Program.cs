@@ -1,6 +1,6 @@
 ﻿// Program.cs
 // Author: Araf Al Jami
-// Last Updated: 05-09-2565 01:48
+// Last Updated: 05-09-2565 17:43
 
 namespace CLown1331
 {
@@ -36,7 +36,6 @@ namespace CLown1331
             stopWatch.Start();
             for (var testCase = 1; !Reader.IsEndOfStream; testCase++)
             {
-                // File.Delete(Path.Combine(Utils.GetRootDirectoryPath(), "output.txt"));
                 stopWatch.Restart();
                 Solve();
                 stopWatch.Stop();
@@ -172,12 +171,12 @@ namespace CLown1331
 #if CLown1331
         private static readonly Printer OutputPrinter = new Printer(
             new MultiStream(
-                File.OpenWrite(Path.Combine(Utils.GetRootDirectoryPath(), "output.txt")),
+                File.Create(Path.Combine(Utils.GetRootDirectoryPath(), "output.txt")),
                 Console.OpenStandardOutput()));
 
         private static readonly Printer ErrorPrinter = new Printer(
             new MultiStream(
-                File.OpenWrite(Path.Combine(Utils.GetRootDirectoryPath(), "error.txt")),
+                File.Create(Path.Combine(Utils.GetRootDirectoryPath(), "error.txt")),
                 Console.OpenStandardOutput()));
 #else
         private static readonly Printer OutputPrinter = new Printer(Console.OpenStandardOutput());
