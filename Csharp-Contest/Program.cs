@@ -36,7 +36,7 @@ namespace CLown1331
             stopWatch.Start();
             for (var testCase = 1; !Reader.IsEndOfStream; testCase++)
             {
-                File.Delete(Path.Combine(Utils.GetRootDirectoryPath(), "output.txt"));
+                // File.Delete(Path.Combine(Utils.GetRootDirectoryPath(), "output.txt"));
                 stopWatch.Restart();
                 Solve();
                 stopWatch.Stop();

@@ -79,7 +79,7 @@ namespace CLown1331
 
                     string import = line.Split(' ')
                         .SingleOrDefault(s => s.StartsWith(NamespacePrefix) && s.EndsWith(SemiColon))?
-                        .Split(SemiColon)
+                        .Split(SemiColon[0])
                         .FirstOrDefault();
 
                     if (string.IsNullOrWhiteSpace(import))
@@ -87,7 +87,7 @@ namespace CLown1331
                         continue;
                     }
 
-                    string filePath = Path.Combine(path, Path.Combine(import.Split("."))) + ".cs";
+                    string filePath = Path.Combine(path, Path.Combine(import.Split('.'))) + ".cs";
                     if (string.IsNullOrWhiteSpace(filePath) || files.Contains(filePath))
                     {
                         continue;
