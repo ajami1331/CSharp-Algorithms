@@ -1,6 +1,6 @@
 ﻿// SegmentTree.cs
 // Author: Araf Al Jami
-// Last Updated: 05-09-2565 01:48
+// Last Updated: 07-09-2565 03:03
 
 namespace Library.SegmentTree
 {

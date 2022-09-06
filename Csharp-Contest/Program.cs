@@ -1,6 +1,6 @@
 ﻿// Program.cs
 // Author: Araf Al Jami
-// Last Updated: 05-09-2565 17:43
+// Last Updated: 07-09-2565 03:19
 
 namespace CLown1331
 {
@@ -11,21 +11,75 @@ namespace CLown1331
     using System.Linq;
     using System.Text;
     using System.Threading;
+    using Library.PriorityQueue;
 
     internal static class Program
     {
         private const int NumberOfTestCase = 3;
-        private const int StackSize = 64 * (1 << 20);
-        private const int Sz = (int)21e5 + 10;
+        private const int StackSize = 32 * (1 << 20);
+        private const int Sz = (int)1e5 + 10;
         private const int Mod = (int)1e9 + 7;
+        private static List<KeyValuePair<int, int>>[] G;
+        private static int[] parent;
+        private static long[] distance;
 
         private static void Solve()
         {
-            int t = NextInt();
-            for (var cs = 1; cs <= t; cs++)
+            int n = NextInt();
+            int m = NextInt();
+            G = Repeat(0, n + 1).Select(_ => new List<KeyValuePair<int, int>>()).ToArray();
+            parent = Repeat(-1, n + 1).ToArray();
+            distance = Repeat(long.MaxValue, n + 1).ToArray();
+            for (var i = 0; i < m; i++)
             {
-                OutputPrinter.WriteLine($"Case {cs}: {NextInt() + NextInt()}");
+                int u = NextInt();
+                int v = NextInt();
+                int c = NextInt();
+                G[u].Add(new KeyValuePair<int, int>(v, c));
+                G[v].Add(new KeyValuePair<int, int>(u, c));
             }
+
+            if (Dijkstra(n))
+            {
+                Print(n);
+                OutputPrinter.WriteLine();
+            }
+            else
+            {
+                OutputPrinter.WriteLine(-1);
+            }
+        }
+
+        private static bool Dijkstra(int n)
+        {
+            distance[1] = 0;
+            var priorityQueue = new PriorityQueue<KeyValuePair<int, long>>((x, y) => x.Value.CompareTo(y.Value));
+            priorityQueue.Enqueue(new KeyValuePair<int, long>(1, 0));
+            while (!priorityQueue.Empty())
+            {
+                KeyValuePair<int, long> u = priorityQueue.Dequeue();
+                foreach (KeyValuePair<int, int> v in G[u.Key])
+                {
+                    if (u.Value + v.Value < distance[v.Key])
+                    {
+                        distance[v.Key] = u.Value + v.Value;
+                        priorityQueue.Enqueue(new KeyValuePair<int, long>(v.Key, distance[v.Key]));
+                        parent[v.Key] = u.Key;
+                    }
+                }
+            }
+
+            return parent[n] != -1;
+        }
+
+        private static void Print(int x)
+        {
+            if (parent[x] != -1)
+            {
+                Print(parent[x]);
+            }
+
+            OutputPrinter.Write(x + " ");
         }
 
         public static void Main(string[] args)
