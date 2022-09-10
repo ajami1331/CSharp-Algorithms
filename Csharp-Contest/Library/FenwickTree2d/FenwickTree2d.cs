@@ -1,8 +1,8 @@
 ﻿// FenwickTree2d.cs
 // Author: Araf Al Jami
-// Last Updated: 07-09-2565 03:03
+// Last Updated: 10-09-2565 20:57
 
-namespace Library.FenwickTree2d
+namespace CLown1331.Library.FenwickTree2d
 {
     using System;
 

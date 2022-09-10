@@ -1,6 +1,6 @@
-Case: 1 -------- 20ms
-Case: 2 -------- 0ms
-Runtime: 20ms
+Case: 1 -------- 36ms
+Case: 2 -------- 1ms
+Runtime: 37ms
 /Users/clown1331/Codes/Csharp-Contest/Csharp-Contest/Program.cs
-/Users/clown1331/Codes/Csharp-Contest/Csharp-Contest/Library/PriorityQueue.cs
-File created for submission: 34ms
+/Users/clown1331/Codes/Csharp-Contest/Csharp-Contest/Library/PriorityQueue/PriorityQueue.cs
+File created for submission: 33427ms

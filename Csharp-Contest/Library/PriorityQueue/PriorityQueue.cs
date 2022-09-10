@@ -1,8 +1,8 @@
 // PriorityQueue.cs
 // Author: Araf Al Jami
-// Last Updated: 07-09-2565 03:18
+// Last Updated: 10-09-2565 20:57
 
-namespace Library.PriorityQueue
+namespace CLown1331.Library.PriorityQueue
 {
     using System;
     using System.Collections.Generic;

@@ -1,6 +1,6 @@
 // Program.cs
 // Author: Araf Al Jami
-// Last Updated: 07-09-2565 03:18
+// Last Updated: 10-09-2565 20:57
 
 namespace CLown1331
 {
@@ -11,7 +11,7 @@ namespace CLown1331
     using System.Linq;
     using System.Text;
     using System.Threading;
-    using Library.PriorityQueue;
+    using CLown1331.Library.PriorityQueue;
 
     internal static class Program
     {
@@ -54,7 +54,6 @@ namespace CLown1331
         {
             distance[1] = 0;
             var priorityQueue = new PriorityQueue<KeyValuePair<int, long>>((x, y) => x.Value.CompareTo(y.Value));
-            priorityQueue.Clear();
             priorityQueue.Enqueue(new KeyValuePair<int, long>(1, 0));
             while (!priorityQueue.Empty())
             {
@@ -193,9 +192,9 @@ namespace CLown1331
 }
 // PriorityQueue.cs
 // Author: Araf Al Jami
-// Last Updated: 07-09-2565 03:18
+// Last Updated: 10-09-2565 20:57
 
-namespace Library.PriorityQueue
+namespace CLown1331.Library.PriorityQueue
 {
     using System;
     using System.Collections.Generic;

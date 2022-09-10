@@ -1,8 +1,8 @@
 ﻿// CommonMath.cs
 // Author: Araf Al Jami
-// Last Updated: 07-09-2565 03:03
+// Last Updated: 10-09-2565 20:57
 
-namespace Library.CommonMath
+namespace CLown1331.Library.CommonMath
 {
     public class CommonMath
     {

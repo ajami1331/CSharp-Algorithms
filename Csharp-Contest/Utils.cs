@@ -1,6 +1,6 @@
 ﻿// Utils.cs
 // Author: Araf Al Jami
-// Last Updated: 07-09-2565 03:03
+// Last Updated: 10-09-2565 20:57
 
 namespace CLown1331
 {
@@ -13,7 +13,7 @@ namespace CLown1331
     {
         private const string Using = "using";
         private const string SemiColon = ";";
-        private const string NamespacePrefix = "Library.";
+        private static readonly string RootNamespace = typeof(Program).Namespace + ".";
         private const string IfCLown1331 = "#if CLown1331";
         private const string Else = "#else";
         private const string EndIf = "#endif";
@@ -78,7 +78,8 @@ namespace CLown1331
                     }
 
                     string import = line.Split(' ')
-                        .SingleOrDefault(s => s.StartsWith(NamespacePrefix) && s.EndsWith(SemiColon))?
+                        .SingleOrDefault(s => s.StartsWith(RootNamespace) && s.EndsWith(SemiColon))?
+                        .Remove(0, RootNamespace.Length)
                         .Split(SemiColon[0])
                         .FirstOrDefault();
 
@@ -87,14 +88,18 @@ namespace CLown1331
                         continue;
                     }
 
-                    string filePath = Path.Combine(path, Path.Combine(import.Split('.'))) + ".cs";
-                    if (string.IsNullOrWhiteSpace(filePath) || files.Contains(filePath))
+                    string dirPath = Path.Combine(path, Path.Combine(import.Split('.')));
+                    foreach (FileInfo fileInfo in new DirectoryInfo(dirPath).GetFiles())
                     {
-                        continue;
-                    }
+                        string filePath = fileInfo.FullName;
+                        if (string.IsNullOrWhiteSpace(filePath) || files.Contains(filePath))
+                        {
+                            continue;
+                        }
 
-                    queue.Enqueue(filePath);
-                    files.Add(filePath);
+                        queue.Enqueue(filePath);
+                        files.Add(filePath);
+                    }
                 }
             }
 

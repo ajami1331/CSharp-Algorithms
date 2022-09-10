@@ -1,8 +1,8 @@
 ﻿// Bitmap.cs
 // Author: Araf Al Jami
-// Last Updated: 07-09-2565 03:03
+// Last Updated: 10-09-2565 20:57
 
-namespace Library.Bitmap
+namespace CLown1331.Library.Bitmap
 {
     using System;
     using System.Collections;

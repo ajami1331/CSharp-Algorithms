@@ -1,6 +1,6 @@
 ﻿// Program.cs
 // Author: Araf Al Jami
-// Last Updated: 07-09-2565 03:19
+// Last Updated: 10-09-2565 20:57
 
 namespace CLown1331
 {
@@ -11,7 +11,7 @@ namespace CLown1331
     using System.Linq;
     using System.Text;
     using System.Threading;
-    using Library.PriorityQueue;
+    using CLown1331.Library.PriorityQueue;
 
     internal static class Program
     {

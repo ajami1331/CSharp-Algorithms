@@ -23,8 +23,8 @@
         <None Update="input.txt">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <Compile Remove="Submission.cs"/>
-        <None Include="Submission.cs"/>
+        <Compile Remove="Submission.cs" />
+        <None Include="Submission.cs" />
         <None Update="output.txt">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
