@@ -1,2 +1,5 @@
-1 4 3 5 
-1 4 3 5 
+Case 1: 0
+Case 2: 4
+Case 3: 2
+Case 4: 5
+Case 5: 1

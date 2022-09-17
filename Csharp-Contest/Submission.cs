@@ -11,7 +11,7 @@ namespace CLown1331
     using System.Linq;
     using System.Text;
     using System.Threading;
-    using CLown1331.Library.PriorityQueue;
+    using CLown1331.Library.ZAlgorithm;
 
     internal static class Program
     {
@@ -19,67 +19,17 @@ namespace CLown1331
         private const int StackSize = 32 * (1 << 20);
         private const int Sz = (int)1e5 + 10;
         private const int Mod = (int)1e9 + 7;
-        private static List<KeyValuePair<int, int>>[] G;
-        private static int[] parent;
-        private static long[] distance;
 
         private static void Solve()
         {
-            int n = NextInt();
-            int m = NextInt();
-            G = Repeat(0, n + 1).Select(_ => new List<KeyValuePair<int, int>>()).ToArray();
-            parent = Repeat(-1, n + 1).ToArray();
-            distance = Repeat(long.MaxValue, n + 1).ToArray();
-            for (var i = 0; i < m; i++)
+            int t = NextInt();
+            for (int cs = 1; cs <= t; cs++)
             {
-                int u = NextInt();
-                int v = NextInt();
-                int c = NextInt();
-                G[u].Add(new KeyValuePair<int, int>(v, c));
-                G[v].Add(new KeyValuePair<int, int>(u, c));
+                string s = NextString();
+                string m = NextString();
+                ZAlgorithm<char> zAlgorithm = new ZAlgorithm<char>(m, s, '-');
+                OutputPrinter.WriteLine("Case {0}: {1}", cs, zAlgorithm.Occurance[m.Length]);
             }
-
-            if (Dijkstra(n))
-            {
-                Print(n);
-                OutputPrinter.WriteLine();
-            }
-            else
-            {
-                OutputPrinter.WriteLine(-1);
-            }
-        }
-
-        private static bool Dijkstra(int n)
-        {
-            distance[1] = 0;
-            var priorityQueue = new PriorityQueue<KeyValuePair<int, long>>((x, y) => x.Value.CompareTo(y.Value));
-            priorityQueue.Enqueue(new KeyValuePair<int, long>(1, 0));
-            while (!priorityQueue.Empty())
-            {
-                KeyValuePair<int, long> u = priorityQueue.Dequeue();
-                foreach (KeyValuePair<int, int> v in G[u.Key])
-                {
-                    if (u.Value + v.Value < distance[v.Key])
-                    {
-                        distance[v.Key] = u.Value + v.Value;
-                        priorityQueue.Enqueue(new KeyValuePair<int, long>(v.Key, distance[v.Key]));
-                        parent[v.Key] = u.Key;
-                    }
-                }
-            }
-
-            return parent[n] != -1;
-        }
-
-        private static void Print(int x)
-        {
-            if (parent[x] != -1)
-            {
-                Print(parent[x]);
-            }
-
-            OutputPrinter.Write(x + " ");
         }
 
         public static void Main(string[] args)
@@ -190,84 +140,79 @@ namespace CLown1331
         }
     }
 }
-// PriorityQueue.cs
+// ZAlgorithm.cs
 // Author: Araf Al Jami
-// Last Updated: 10-09-2565 20:57
+// Last Updated: 11-09-2565 20:09
 
-namespace CLown1331.Library.PriorityQueue
+namespace CLown1331.Library.ZAlgorithm
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
-    public class PriorityQueue<T>
+    public class ZAlgorithm<T>
     {
-        private readonly List<T> data;
-        private readonly Comparison<T> compare;
+        private readonly T[] s;
+        private readonly int n;
 
-        public PriorityQueue(Comparison<T> compare)
+        public int[] Z { get; }
+
+        public int[] Occurance { get; }
+
+        public int MaxZ { get; private set; }
+
+        public ZAlgorithm(IEnumerable<T> a, IEnumerable<T> b, T outOf)
         {
-            this.compare = compare;
-            this.data = new List<T> {default(T)};
+            this.s = a.Concat(new[] {outOf}).Concat(b).ToArray();
+            this.n = this.s.Length;
+            this.Z = new int[this.n];
+            this.Occurance = new int[this.n];
+            this.Compute();
         }
 
-        public int Count
+        private void Compute()
         {
-            get { return this.data.Count - 1; }
-        }
-
-        public T Peek() => this.data[1];
-
-        public void Clear()
-        {
-            this.data.Clear();
-            this.data.Add(default(T));
-        }
-
-        public void Enqueue(T item)
-        {
-            this.data.Add(item);
-            int curPlace = this.Count;
-            while (curPlace > 1 && this.compare(item, this.data[curPlace / 2]) < 0)
+            var l = 0;
+            var r = 0;
+            for (var i = 1; i < this.n; i++)
             {
-                this.data[curPlace] = this.data[curPlace / 2];
-                this.data[curPlace / 2] = item;
-                curPlace /= 2;
-            }
-        }
-
-        public T Dequeue()
-        {
-            T ret = this.data[1];
-            this.data[1] = this.data[this.Count];
-            this.data.RemoveAt(this.Count);
-            var curPlace = 1;
-            while (true)
-            {
-                int max = curPlace;
-                if (this.Count >= curPlace * 2 && this.compare(this.data[max], this.data[2 * curPlace]) > 0)
+                if (i > r)
                 {
-                    max = 2 * curPlace;
-                }
+                    l = r = i;
+                    while (r < this.n && this.s[r - l].Equals(this.s[r]))
+                    {
+                        r++;
+                    }
 
-                if (this.Count >= curPlace * 2 + 1 && this.compare(this.data[max], this.data[2 * curPlace + 1]) > 0)
+                    this.Z[i] = r - l;
+                    r--;
+                }
+                else
                 {
-                    max = 2 * curPlace + 1;
-                }
+                    int k = i - l;
+                    if (this.Z[k] < r - i + 1)
+                    {
+                        this.Z[i] = this.Z[k];
+                    }
+                    else
+                    {
+                        l = i;
+                        while (r < this.n && this.s[r - l].Equals(this.s[r]))
+                        {
+                            r++;
+                        }
 
-                if (max == curPlace)
-                {
-                    break;
+                        this.Z[i] = r - l;
+                        r--;
+                    }
                 }
-
-                T item = this.data[max];
-                this.data[max] = this.data[curPlace];
-                this.data[curPlace] = item;
-                curPlace = max;
             }
 
-            return ret;
+            for (int i = 1; i < this.n; i++)
+            {
+                this.MaxZ = Math.Max(this.MaxZ, this.Z[i]);
+                this.Occurance[this.Z[i]]++;
+            }
         }
-
-        public bool Empty() => this.Count == 0;
     }
 }

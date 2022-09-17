@@ -12,32 +12,20 @@ namespace CLown1331.Library.ZAlgorithm
     {
         private readonly T[] s;
         private readonly int n;
-        private int[] z;
+
+        public int[] Z { get; }
+
+        public int[] Occurance { get; }
+
+        public int MaxZ { get; private set; }
 
         public ZAlgorithm(IEnumerable<T> a, IEnumerable<T> b, T outOf)
         {
             this.s = a.Concat(new[] {outOf}).Concat(b).ToArray();
             this.n = this.s.Length;
-            this.z = new int[this.n];
+            this.Z = new int[this.n];
+            this.Occurance = new int[this.n];
             this.Compute();
-        }
-
-        public int MaxZ(out int res)
-        {
-            var maxZ = 0;
-            res = 0;
-            for (var i = 1; i < this.n; i++)
-            {
-                if (this.z[i] == this.n - i && maxZ >= this.n - i)
-                {
-                    res = this.n - i;
-                    break;
-                }
-
-                maxZ = Math.Max(maxZ, this.z[i]);
-            }
-
-            return maxZ;
         }
 
         private void Compute()
@@ -54,15 +42,15 @@ namespace CLown1331.Library.ZAlgorithm
                         r++;
                     }
 
-                    this.z[i] = r - l;
+                    this.Z[i] = r - l;
                     r--;
                 }
                 else
                 {
                     int k = i - l;
-                    if (this.z[k] < r - i + 1)
+                    if (this.Z[k] < r - i + 1)
                     {
-                        this.z[i] = this.z[k];
+                        this.Z[i] = this.Z[k];
                     }
                     else
                     {
@@ -72,10 +60,16 @@ namespace CLown1331.Library.ZAlgorithm
                             r++;
                         }
 
-                        this.z[i] = r - l;
+                        this.Z[i] = r - l;
                         r--;
                     }
                 }
+            }
+
+            for (int i = 1; i < this.n; i++)
+            {
+                this.MaxZ = Math.Max(this.MaxZ, this.Z[i]);
+                this.Occurance[this.Z[i]]++;
             }
         }
     }
