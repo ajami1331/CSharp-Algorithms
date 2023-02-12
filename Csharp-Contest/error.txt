@@ -1,7 +1,7 @@
 Test 1: Success!
 Test 2: Success!
 2/2 Tests passed!
-Runtime: 40ms
+Runtime: 41ms
 /Users/clown1331/Codes/CSharp-Algorithms/Csharp-Contest/Program.cs
 /Users/clown1331/Codes/CSharp-Algorithms/Csharp-Contest/IO/Printer.cs
 /Users/clown1331/Codes/CSharp-Algorithms/Csharp-Contest/IO/Output.cs
@@ -9,4 +9,4 @@ Runtime: 40ms
 /Users/clown1331/Codes/CSharp-Algorithms/Csharp-Contest/IO/Input.cs
 /Users/clown1331/Codes/CSharp-Algorithms/Csharp-Contest/Solution/TaskSolution.cs
 /Users/clown1331/Codes/CSharp-Algorithms/Csharp-Contest/Helper/Helper.cs
-File created for submission: 39ms
+File created for submission: 40ms
