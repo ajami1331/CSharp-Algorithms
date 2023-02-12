@@ -1,5 +1,12 @@
-Case: 1 -------- 21ms
-Runtime: 21ms
-/Users/clown1331/Codes/Csharp-Contest/Csharp-Contest/Program.cs
-/Users/clown1331/Codes/Csharp-Contest/Csharp-Contest/Library/ZAlgorithm/ZAlgorithm.cs
-File created for submission: 46ms
+Test 1: Success!
+Test 2: Success!
+2/2 Tests passed!
+Runtime: 40ms
+/Users/clown1331/Codes/CSharp-Algorithms/Csharp-Contest/Program.cs
+/Users/clown1331/Codes/CSharp-Algorithms/Csharp-Contest/IO/Printer.cs
+/Users/clown1331/Codes/CSharp-Algorithms/Csharp-Contest/IO/Output.cs
+/Users/clown1331/Codes/CSharp-Algorithms/Csharp-Contest/IO/Reader.cs
+/Users/clown1331/Codes/CSharp-Algorithms/Csharp-Contest/IO/Input.cs
+/Users/clown1331/Codes/CSharp-Algorithms/Csharp-Contest/Solution/TaskSolution.cs
+/Users/clown1331/Codes/CSharp-Algorithms/Csharp-Contest/Helper/Helper.cs
+File created for submission: 39ms
