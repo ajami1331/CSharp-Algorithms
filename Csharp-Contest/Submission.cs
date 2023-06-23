@@ -20,6 +20,22 @@ namespace CLown1331
         }
     }
 }
+// Output.cs
+// Author: Araf Al Jami
+// Last Updated: 12-02-2023 17:50
+
+namespace CLown1331.IO
+{
+    using System;
+    using System.IO;
+
+    public static class Output
+    {
+        public static readonly Printer OutputPrinter = new Printer(Console.OpenStandardOutput());
+
+        public static readonly Printer ErrorPrinter = new Printer(Console.OpenStandardError());
+    }
+}
 // Printer.cs
 // Author: Araf Al Jami
 // Last Updated: 12-02-2023 17:45
@@ -48,22 +64,6 @@ namespace CLown1331.IO
         {
             get { return CultureInfo.InvariantCulture; }
         }
-    }
-}
-// Output.cs
-// Author: Araf Al Jami
-// Last Updated: 12-02-2023 17:50
-
-namespace CLown1331.IO
-{
-    using System;
-    using System.IO;
-
-    public static class Output
-    {
-        public static readonly Printer OutputPrinter = new Printer(Console.OpenStandardOutput());
-
-        public static readonly Printer ErrorPrinter = new Printer(Console.OpenStandardError());
     }
 }
 // Reader.cs
