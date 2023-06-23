@@ -25,10 +25,10 @@ namespace CLown1331.Library.ZAlgorithm
             this.n = this.s.Length;
             this.Z = new int[this.n];
             this.Occurance = new int[this.n];
-            this.Compute();
+            this.Compute(outOf);
         }
 
-        private void Compute()
+        private void Compute(T outOf)
         {
             var l = 0;
             var r = 0;
@@ -66,7 +66,13 @@ namespace CLown1331.Library.ZAlgorithm
                 }
             }
 
-            for (int i = 1; i < this.n; i++)
+            int iter = 0;
+            while (iter < this.n && !this.s[iter].Equals(outOf))
+            {
+                iter++;
+            }
+            
+            for (int i = iter + 1; i < this.n; i++)
             {
                 this.MaxZ = Math.Max(this.MaxZ, this.Z[i]);
                 this.Occurance[this.Z[i]]++;
