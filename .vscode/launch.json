@@ -10,9 +10,9 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/Csharp-Contest/bin/Debug/netcoreapp6/CLown1331.dll",
+            "program": "${workspaceFolder}/Csharp-Contest/bin/Debug/netcoreapp8/CLown1331.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/Csharp-Contest/bin/Debug/netcoreapp6/",
+            "cwd": "${workspaceFolder}/Csharp-Contest/bin/Debug/netcoreapp8/",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
             "console": "integratedTerminal",
             "stopAtEntry": false

@@ -20,6 +20,48 @@ namespace CLown1331
         }
     }
 }
+// Reader.cs
+// Author: Araf Al Jami
+// Last Updated: 12-02-2023 17:37
+
+namespace CLown1331.IO
+{
+    using System.Collections.Generic;
+    using System.IO;
+
+    public static class Reader
+    {
+        private static readonly Queue<string> Param = new Queue<string>();
+        private static readonly StreamReader InputReader = new StreamReader(Console.OpenStandardInput());
+        public static bool IsEndOfStream
+        {
+            get { return InputReader.EndOfStream; }
+        }
+
+
+        public static string NextString()
+        {
+            if (Param.Count == 0)
+            {
+                foreach (string item in ReadLine().Split(' '))
+                {
+                    if (string.IsNullOrWhiteSpace(item))
+                    {
+                        continue;
+                    }
+
+                    Param.Enqueue(item);
+                }
+            }
+
+            return Param.Dequeue();
+        }
+
+        public static string ReadLine() => InputReader.ReadLine();
+
+        public static int Read() => InputReader.Read();
+    }
+}
 // Output.cs
 // Author: Araf Al Jami
 // Last Updated: 12-02-2023 17:50
@@ -64,48 +106,6 @@ namespace CLown1331.IO
         {
             get { return CultureInfo.InvariantCulture; }
         }
-    }
-}
-// Reader.cs
-// Author: Araf Al Jami
-// Last Updated: 12-02-2023 17:37
-
-namespace CLown1331.IO
-{
-    using System.Collections.Generic;
-    using System.IO;
-
-    public static class Reader
-    {
-        private static readonly Queue<string> Param = new Queue<string>();
-        private static readonly StreamReader InputReader = new StreamReader(Console.OpenStandardInput());
-        public static bool IsEndOfStream
-        {
-            get { return InputReader.EndOfStream; }
-        }
-
-
-        public static string NextString()
-        {
-            if (Param.Count == 0)
-            {
-                foreach (string item in ReadLine().Split(' '))
-                {
-                    if (string.IsNullOrWhiteSpace(item))
-                    {
-                        continue;
-                    }
-
-                    Param.Enqueue(item);
-                }
-            }
-
-            return Param.Dequeue();
-        }
-
-        public static string ReadLine() => InputReader.ReadLine();
-
-        public static int Read() => InputReader.Read();
     }
 }
 // Input.cs
